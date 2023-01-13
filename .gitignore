@@ -1,6 +1,7 @@
 /bin
 /.settings
 /test
+/META-INF
 # Compiled class file
 *.class
 

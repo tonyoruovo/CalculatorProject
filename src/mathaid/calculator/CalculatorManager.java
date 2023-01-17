@@ -6,19 +6,16 @@ package mathaid.calculator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import mathaid.calculator.base.evaluator.Calculator;
 import mathaid.calculator.base.gui.GUIComponent;
 import mathaid.calculator.base.gui.Typesetable;
-import mathaid.calculator.base.typeset.ErrorMarker;
-import mathaid.calculator.base.typeset.FormatAction;
-import mathaid.calculator.base.typeset.ForwardRunningMarker;
+import mathaid.calculator.base.typeset.BasicFormatter;
+import mathaid.calculator.base.typeset.Formatter;
+import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.Log;
 import mathaid.calculator.base.typeset.NumberAdapter;
-import mathaid.calculator.base.typeset.Segment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 
 /*
@@ -66,7 +63,7 @@ public class CalculatorManager<T extends GUIComponent<T>, F> {
 	private class OutputDisplay implements Runnable {
 		@Override
 		public void run() {
-			ans.toSegment().format(outputTypesetter, Segment.emptyMiddleware(), new ArrayList<>(Arrays.asList(-1)));
+			ans.toSegment().format(outputTypesetter, Formatter.empty(), new ArrayList<>(Arrays.asList(-1)));
 			outputTypesetter.typeset();
 			new Thread(new Details()).start();
 		}
@@ -83,13 +80,14 @@ public class CalculatorManager<T extends GUIComponent<T>, F> {
 		this.position = new ArrayList<>(Arrays.asList(-1));
 		this.errorPosition = new ArrayList<>(Arrays.asList(-1));
 
-		this.caret = new ForwardRunningMarker();
-		this.middleware = new HashMap<>();
-		middleware.put(Segment.CARET, caret);
-		middleware.put(Segment.CSSID, Segment.cssId());
+//		this.caret = new ForwardRunningMarker();
+//		this.middleware = new HashMap<>();
+		this.middleware = new BasicFormatter();
+//		middleware.put(LinkedSegment.CARET, caret);
+//		middleware.put(LinkedSegment.CSSID, LinkedSegment.cssId());
 
-		middleware.put(Segment.STYLE, Segment.style(Segment.defaultStyles()));
-		middleware.put(Segment.ERROR, new ErrorMarker());
+//		middleware.put(LinkedSegment.STYLE, LinkedSegment.style(LinkedSegment.defaultStyles()));
+//		middleware.put(LinkedSegment.ERROR, new ErrorMarker());
 
 		this.inputTypesetter = input;
 		this.outputTypesetter = output;
@@ -118,8 +116,8 @@ public class CalculatorManager<T extends GUIComponent<T>, F> {
 		return c.get(index);
 	}
 
-	public void input(Segment s) {
-		switch (caret.getInputMode()) {
+	public void input(LinkedSegment s) {
+		switch (middleware.getCaretMarker().getInputMode()) {
 		case APPEND:
 			input.append(s);
 			break;
@@ -155,9 +153,9 @@ public class CalculatorManager<T extends GUIComponent<T>, F> {
 		return ans;
 	}
 
-	public ForwardRunningMarker getCaretFormatter() {
-		return caret;
-	}
+//	public ForwardRunningMarker getCaretFormatter() {
+//		return caret;
+//	}
 
 	private final List<Calculator<T, F>> c;
 	private int index;
@@ -177,8 +175,9 @@ public class CalculatorManager<T extends GUIComponent<T>, F> {
 	private final Log logger;
 	private final List<Integer> position;
 	private final List<Integer> errorPosition;
-	private final Map<Integer, FormatAction> middleware;
-	private final ForwardRunningMarker caret;
+//	private final Map<Integer, FormatAction> middleware;
+	private final Formatter middleware;
+//	private final ForwardRunningMarker caret;
 
 	private final Typesetable<T> inputTypesetter;
 	private final Typesetable<T> outputTypesetter;

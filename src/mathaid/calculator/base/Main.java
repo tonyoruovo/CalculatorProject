@@ -10,13 +10,13 @@ import static java.lang.System.out;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import mathaid.calculator.base.util.Figurate;
 import mathaid.calculator.base.util.Utility;
+import mathaid.calculator.base.value.BigFraction;
+import mathaid.calculator.base.value.UnitVector;
 
 /*
  * Date: 18 Mar 2020----------------------------------------------------
@@ -62,12 +62,16 @@ public class Main {
 	public static void main(String[] args) {
 		out.println(err + "\t" + in);
 		
-		Iterator<BigInteger> i = Figurate.getTriangular();
-		for(BigInteger b = i.next(); i.hasNext(); b = i.next()) {
-			out.println(b);
-			
-			if(b.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) >= 0) break;
-		}
+		UnitVector v = new UnitVector(UnitVector.CURRENCY, BigFraction.valueOf(1));
+		v = v.add(UnitVector.ANGLE, BigFraction.valueOf(2));
+		v = v.add(UnitVector.AREA, BigFraction.valueOf(3));
+		
+		UnitVector v2 = new UnitVector(UnitVector.CURRENCY, BigFraction.valueOf(-2));
+		v2 = v2.add(UnitVector.AREA, BigFraction.valueOf(4));
+		v2 = v2.add(UnitVector.ANGLE, BigFraction.valueOf(0));
+//		out.println(v2);
+		
+		out.println(v.add(v2).unitVector());
 		
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;

@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import mathaid.MomentString;
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.ExpressionParams;
-import mathaid.calculator.base.typeset.Segment;
+import mathaid.calculator.base.typeset.LinkedSegment;
 
 /*
  * Date: 17 Sep 2022----------------------------------------------------------- 
@@ -65,17 +65,17 @@ public abstract class DetailsList<P extends ExpressionParams> implements Runnabl
 		}
 	}
 
-	public void setSource(Segment segment) {
+	public void setSource(LinkedSegment segment) {
 //		this.src = Tuple.of(params, segment);
 		this.src = segment;
 		details.clear();
 	}
 
-	protected NavigableMap<MomentString, Segment> getLastDetails() {
+	protected NavigableMap<MomentString, LinkedSegment> getLastDetails() {
 		return details;
 	}
 
-	final NavigableMap<MomentString, Segment> details = new TreeMap<>();
+	final NavigableMap<MomentString, LinkedSegment> details = new TreeMap<>((x, y) -> x.compareTo(y));
 //	Couple<P, Segment> src;
-	Segment src;
+	protected LinkedSegment src;
 }

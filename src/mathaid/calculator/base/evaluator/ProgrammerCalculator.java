@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import mathaid.MomentString;
@@ -31,11 +32,11 @@ import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpressio
 import mathaid.calculator.base.gui.GUIComponent;
 import mathaid.calculator.base.gui.KeyAction;
 import mathaid.calculator.base.gui.KeyBoard;
+import mathaid.calculator.base.typeset.DigitPunc;
 import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.Segment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
-import mathaid.calculator.base.typeset.Segments;
 import mathaid.calculator.base.util.Tuple;
 import mathaid.calculator.base.util.Tuple.Couple;
 import mathaid.calculator.base.value.BinaryFPPrecision;
@@ -64,257 +65,281 @@ import mathaid.functional.Supplier.Function;
  * @email tonyoruovo@gmail.com
  */
 public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calculator<T, F>, PExpression.Params {
-	
-	private static void fixFPDetails(Map<MomentString, LinkedSegment> details, Tuple.Couple<BinaryFP, BigInteger> temp, Params p) {
-		if(temp.get() == null) {
+
+	private static void fixFPDetails(Map<MomentString, LinkedSegment> details, Tuple.Couple<BinaryFP, BigInteger> temp,
+			Params p) {
+		if (temp.get() == null) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp.get2nd());
-			LinkedSegment seg = Digits.toSegment(fp, p.getRadix(), 10, false, p.getDecimalPoint().charAt(0), Calculator.fromParams(p, Segment.Type.VINCULUM));
+			LinkedSegment seg = Digits.toSegment(fp, p.getRadix(), 10, false, p.getDecimalPoint().charAt(0),
+					Calculator.fromParams(p, Segment.Type.VINCULUM));
 			details.put(new MomentString("As decimal floating-point"), seg);
-		} else if(temp.get2nd() == null) {
+		} else if (temp.get2nd() == null) {
 			BinaryFP fp = temp.get();
-			LinkedSegment seg = Segments.toSegment(Tuple.of(BigInteger.valueOf(fp.signum() < 0 ? 1 : 0), Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-					.toSegment();
-			details.put(new MomentString("Signed magnitude (Binary)"), seg);
+			LinkedSegment seg = Digits.toSegment(fp, 10, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("Expression"), seg);
+
+			seg = Digits.toRadixedSegment(BigInteger.valueOf(fp.signum() < 0 ? 1 : 0), p.getRadix(), fromParams(p));
+			details.put(new MomentString("Sign (unsigned)"), seg);
+
+			seg = Digits.toRadixedSegment(BigInteger.valueOf(fp.getExponent()), 2, fromParams(p));
+			details.put(new MomentString("Exponent"), seg);
+
+			seg = Digits.toRadixedSegment(fp.getSignificand(), 2, fromParams(p));
+			details.put(new MomentString("Significand"), seg);
+
+			seg = Digits.toRadixedSegment(fp.toBigInteger(), 2, fromParams(p));
+			details.put(new MomentString("Bit layout (2's complement)"), seg);
+
+			seg = Digits.toSegment(fp, 2, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("normalised (Binary Significand)"), seg);
+			seg = Digits.toSegment(fp, 8, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("normalised (Octal Significand)"), seg);
+			seg = Digits.toSegment(fp, 10, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("normalised"), seg);
+			seg = Digits.toSegment(fp, 16, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("normalised (Hexadecimal Significand)"), seg);
+
+			seg = Digits.toSegment(fp, 2, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("Binary Significand"), seg);
+			seg = Digits.toSegment(fp, 8, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("Octal Significand"), seg);
+			seg = Digits.toSegment(fp, 16, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			details.put(new MomentString("Hexadecimal Significand"), seg);
 		}
 	}
-	
+
 	private static void fixUSDetails(Map<MomentString, LinkedSegment> details, BigInteger[] temp, Params p) {
 		BigInteger[] r = { temp[0], temp[1] };
 		// SMR
 		SMR.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-				.toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Hexadecimal)"), seg);
 		// 1's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		OC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("1's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("1's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("1's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("1's complement (Hexadecimal)"), seg);
 		// 2's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		TC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("2's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("2's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("2's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("2's complement (Hexadecimal)"), seg);
 		// nega
 		r[0] = temp[0];
 		r[1] = temp[1];
 		NB.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Negabinary (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Negabinary (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Negabinary (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Negabinary (Hexadecimal)"), seg);
 		// math
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 2, fromParams(p));
 		details.put(new MomentString("Mathematical (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 8, fromParams(p));
 		details.put(new MomentString("Mathematical (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 10, fromParams(p));
 		details.put(new MomentString("Mathematical (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 16, fromParams(p));
 		details.put(new MomentString("Mathematical (Hexadecimal)"), seg);
 		// excess-n
 		r[0] = temp[0];
 		r[1] = temp[1];
 		Ex.fromDecimal(p.getBitLength(), r);
 		String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Binary)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Octal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Decimal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Hexadecimal)", n)), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Unsigned)"), seg);
 		}
 	}
-	
+
 	private static void fixSMRDetails(Map<MomentString, LinkedSegment> details, BigInteger[] temp, Params p) {
 		BigInteger[] r = { temp[0], temp[1] };
 		// nega
 		r[0] = temp[0];
 		r[1] = temp[1];
 		NB.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Negabinary (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Negabinary (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Negabinary (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Negabinary (Hexadecimal)"), seg);
 		// 1's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		OC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("1's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("1's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("1's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("1's complement (Hexadecimal)"), seg);
 		// 2's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		TC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("2's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("2's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("2's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("2's complement (Hexadecimal)"), seg);
 		// excess-n
 		r[0] = temp[0];
 		r[1] = temp[1];
 		Ex.fromDecimal(p.getBitLength(), r);
 		String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Binary)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Octal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Decimal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Hexadecimal)", n)), seg);
 		// math
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 2, fromParams(p));
 		details.put(new MomentString("Mathematical (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 8, fromParams(p));
 		details.put(new MomentString("Mathematical (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 10, fromParams(p));
 		details.put(new MomentString("Mathematical (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 16, fromParams(p));
 		details.put(new MomentString("Mathematical (Hexadecimal)"), seg);
 		// unsigned
 		r[0] = temp[0];
 		r[1] = temp[1];
 		US.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Unsigned (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Unsigned (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Unsigned (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Unsigned (Hexadecimal)"), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Signed magnitude)"), seg);
 		}
 	}
-	
+
 	private static void fixTCDetails(Map<MomentString, LinkedSegment> details, BigInteger[] temp, Params p) {
 		BigInteger[] r = { temp[0], temp[1] };
 		// SMR
 		SMR.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-				.toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Hexadecimal)"), seg);
 		// 1's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		OC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("1's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("1's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("1's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("1's complement (Hexadecimal)"), seg);
 		// excess-n
 		r[0] = temp[0];
 		r[1] = temp[1];
 		Ex.fromDecimal(p.getBitLength(), r);
 		String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Binary)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Octal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Decimal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Hexadecimal)", n)), seg);
 		// nega
 		r[0] = temp[0];
 		r[1] = temp[1];
 		NB.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Negabinary (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Negabinary (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Negabinary (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Negabinary (Hexadecimal)"), seg);
 		// math
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 2, fromParams(p));
 		details.put(new MomentString("Mathematical (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 8, fromParams(p));
 		details.put(new MomentString("Mathematical (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 10, fromParams(p));
 		details.put(new MomentString("Mathematical (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 16, fromParams(p));
 		details.put(new MomentString("Mathematical (Hexadecimal)"), seg);
 		// unsigned
 		r[0] = temp[0];
 		r[1] = temp[1];
 		US.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Unsigned (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Unsigned (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Unsigned (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Unsigned (Hexadecimal)"), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString("As decimal floating-point (2's complement)"), seg);
 		}
 	}
@@ -323,158 +348,154 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 		BigInteger[] r = { temp[0], temp[1] };
 		// SMR
 		SMR.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-				.toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Hexadecimal)"), seg);
 		// nega
 		r[0] = temp[0];
 		r[1] = temp[1];
 		NB.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Negabinary (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Negabinary (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Negabinary (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Negabinary (Hexadecimal)"), seg);
 		// 2's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		TC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("2's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("2's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("2's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("2's complement (Hexadecimal)"), seg);
 		// excess-n
 		r[0] = temp[0];
 		r[1] = temp[1];
 		Ex.fromDecimal(p.getBitLength(), r);
 		String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Binary)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Octal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Decimal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Hexadecimal)", n)), seg);
 		// math
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 2, fromParams(p));
 		details.put(new MomentString("Mathematical (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 8, fromParams(p));
 		details.put(new MomentString("Mathematical (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 10, fromParams(p));
 		details.put(new MomentString("Mathematical (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 16, fromParams(p));
 		details.put(new MomentString("Mathematical (Hexadecimal)"), seg);
 		// unsigned
 		r[0] = temp[0];
 		r[1] = temp[1];
 		US.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Unsigned (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Unsigned (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Unsigned (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Unsigned (Hexadecimal)"), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString("As decimal floating-point (1's complement)"), seg);
 		}
 	}
-	
+
 	private static void fixNBDetails(Map<MomentString, LinkedSegment> details, BigInteger[] temp, Params p) {
 		BigInteger[] r = { temp[0], temp[1] };
 		// SMR
 		SMR.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-				.toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Hexadecimal)"), seg);
 		// 1's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		OC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("1's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("1's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("1's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("1's complement (Hexadecimal)"), seg);
 		// 2's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		TC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("2's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("2's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("2's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("2's complement (Hexadecimal)"), seg);
 		// excess-n
 		r[0] = temp[0];
 		r[1] = temp[1];
 		Ex.fromDecimal(p.getBitLength(), r);
 		String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Binary)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Octal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Decimal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Hexadecimal)", n)), seg);
 		// math
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 2, fromParams(p));
 		details.put(new MomentString("Mathematical (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 8, fromParams(p));
 		details.put(new MomentString("Mathematical (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 10, fromParams(p));
 		details.put(new MomentString("Mathematical (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 16, fromParams(p));
 		details.put(new MomentString("Mathematical (Hexadecimal)"), seg);
 		// unsigned
 		r[0] = temp[0];
 		r[1] = temp[1];
 		US.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Unsigned (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Unsigned (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Unsigned (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Unsigned (Hexadecimal)"), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Negabinary)"), seg);
 		}
 	}
@@ -483,81 +504,79 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 		BigInteger[] r = { temp[0], temp[1] };
 		// SMR
 		SMR.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-				.toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Hexadecimal)"), seg);
 		// 1's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		OC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("1's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("1's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("1's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("1's complement (Hexadecimal)"), seg);
 		// 2's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		TC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("2's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("2's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("2's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("2's complement (Hexadecimal)"), seg);
 		// nega
 		r[0] = temp[0];
 		r[1] = temp[1];
 		NB.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Negabinary (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Negabinary (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Negabinary (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Negabinary (Hexadecimal)"), seg);
 		// excess-n
 		r[0] = temp[0];
 		r[1] = temp[1];
 		Ex.fromDecimal(p.getBitLength(), r);
 		String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Binary)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Octal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Decimal)", n)), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString(String.format("Excess-%s (Hexadecimal)", n)), seg);
 		// unsigned
 		r[0] = temp[0];
 		r[1] = temp[1];
 		US.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Unsigned (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Unsigned (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Unsigned (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Unsigned (Hexadecimal)"), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Mathematical)"), seg);
 		}
 	}
@@ -566,78 +585,76 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 		BigInteger[] r = { temp[0], temp[1] };
 		// SMR
 		SMR.fromDecimal(p.getBitLength(), r);
-		LinkedSegment seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize())))
-				.toSegment();
+		LinkedSegment seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Signed magnitude (Hexadecimal)"), seg);
 		// 1's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		OC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("1's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("1's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("1's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("1's complement (Hexadecimal)"), seg);
 		// 2's
 		r[0] = temp[0];
 		r[1] = temp[1];
 		TC.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("2's complement (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("2's complement (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("2's complement (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("2's complement (Hexadecimal)"), seg);
 		// nega
 		r[0] = temp[0];
 		r[1] = temp[1];
 		NB.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Negabinary (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Negabinary (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Negabinary (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Negabinary (Hexadecimal)"), seg);
 		// math
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 2, fromParams(p));
 		details.put(new MomentString("Mathematical (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 8, fromParams(p));
 		details.put(new MomentString("Mathematical (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 10, fromParams(p));
 		details.put(new MomentString("Mathematical (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(temp[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(temp[0], 16, fromParams(p));
 		details.put(new MomentString("Mathematical (Hexadecimal)"), seg);
 		// unsigned
 		r[0] = temp[0];
 		r[1] = temp[1];
 		US.fromDecimal(p.getBitLength(), r);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(2, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 2, fromParams(p));
 		details.put(new MomentString("Unsigned (Binary)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(8, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 8, fromParams(p));
 		details.put(new MomentString("Unsigned (Octal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(10, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 10, fromParams(p));
 		details.put(new MomentString("Unsigned (Decimal)"), seg);
-		seg = Segments.toSegment(Tuple.of(r[0], Tuple.of(16, p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+		seg = Digits.toRadixedSegment(r[0], 16, fromParams(p));
 		details.put(new MomentString("Unsigned (Hexadecimal)"), seg);
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
 			String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-			seg = Segments.toSegment(fp, 10, p.getDecimalPoint(), p.getIntSeparator(), p.getMantSeparator(),
-					p.getIntGroupSize(), p.getMantGroupSize(), false).toSegment();
+			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
 			details.put(new MomentString(String.format("As decimal floating-point (Excess-%s)", n)), seg);
 		}
 	}
@@ -665,39 +682,35 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 
 	private static void fixEndianDetails(Map<MomentString, LinkedSegment> details, BigInteger val, Params p) {
 		if (p.getEndianess() == ENDIAN_BIG) {
-			LinkedSegment seg = Segments
-					.toSegment(Tuple.of(val, Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize())))
-					.toSegment();
+			LinkedSegment seg = Digits.toRadixedSegment(val, p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (Big endian)"), seg);
-			seg = Segments.toSegment(Tuple.of(BitLength.toSmallEndian(val),
-					Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+			seg = Digits.toRadixedSegment(BitLength.toSmallEndian(val), p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (Little endian)"), seg);
-			seg = Segments.toSegment(Tuple.of(BitLength.toPDP11Endian(val),
-					Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+			seg = Digits.toRadixedSegment(BitLength.toPDP11Endian(val), p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (PDP-11 endian)"), seg);
 
 		} else if (p.getEndianess() == ENDIAN_SMALL) {
-			LinkedSegment seg = Segments.toSegment(Tuple.of(BitLength.toSmallEndian(val),
-					Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+			LinkedSegment seg = Digits.toRadixedSegment(BitLength.toSmallEndian(val), p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (Big endian)"), seg);
-			seg = Segments.toSegment(Tuple.of(val, Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize())))
-					.toSegment();
+			seg = Digits.toRadixedSegment(val, p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (Little endian)"), seg);
-			seg = Segments.toSegment(Tuple.of(BitLength.toPDP11Endian(BitLength.toSmallEndian(val)),
-					Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+			seg = Digits.toRadixedSegment(BitLength.toPDP11Endian(BitLength.toSmallEndian(val)), p.getRadix(),
+					fromParams(p));
 			details.put(new MomentString("Expression (PDP-11 endian)"), seg);
 		} else if (p.getEndianess() == ENDIAN_PDP_11) {
-			LinkedSegment seg = Segments.toSegment(Tuple.of(BitLength.toPDP11Endian(val),
-					Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+			LinkedSegment seg = Digits.toRadixedSegment(BitLength.toPDP11Endian(val), p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (Big endian)"), seg);
-			seg = Segments.toSegment(Tuple.of(BitLength.toSmallEndian(BitLength.toPDP11Endian(val)),
-					Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize()))).toSegment();
+			seg = Digits.toRadixedSegment(BitLength.toSmallEndian(BitLength.toPDP11Endian(val)), p.getRadix(),
+					fromParams(p));
 			details.put(new MomentString("Expression (Little endian)"), seg);
-			seg = Segments.toSegment(Tuple.of(val, Tuple.of(p.getRadix(), p.getIntSeparator(), p.getIntGroupSize())))
-					.toSegment();
+			seg = Digits.toRadixedSegment(val, p.getRadix(), fromParams(p));
 			details.put(new MomentString("Expression (PDP-11 endian)"), seg);
 		}
 
+	}
+
+	private static DigitPunc fromParams(Params p) {
+		return Calculator.fromParams(p, Segment.Type.VINCULUM);
 	}
 
 	/*
@@ -709,6 +722,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	public ProgrammerCalculator(KeyBoard<T, F> keyboard, KeyAction<T, String> modKeys) {
 		this.keyboard = keyboard;
 		this.modKeys = modKeys;
+		parser = new PrattParser<>();
+		this.lexer = new ProgrammerLexer();
+		details = new Programmer();
+		this.constants = new HashMap<>();
+		this.boundVariables = new HashMap<>();
 	}
 
 	class Programmer extends DetailsList<PExpression.Params> {
@@ -719,14 +737,14 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 			String s = sb.toString();
 			BigInteger val = null;
 			BinaryFP fval = null;
-			try{
+			try {
 				val = new BigInteger(s, getRadix());
-			} catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				fval = getPrecision(ProgrammerCalculator.this).createFP(s, getRadix());
 			}
 			if (getBitRepresentation() == REP_MATH || getBitRepresentation() == REP_FLOATING_POINT)
 				details.put(new MomentString("Expression"), src);
-			else if(val != null)
+			else if (val != null)
 				fixEndianDetails(details, val, ProgrammerCalculator.this);
 			switch (getBitRepresentation()) {
 			case REP_EXCESS_K: {
@@ -792,9 +810,9 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 				break;
 			}
 			case REP_FLOATING_POINT:
-			default:{
+			default: {
 				// An extra val to prevent the array mutators from changing the original answer
-				// value so as to retrieve it for floatingpoint details
+				// value so as to retrieve it for floating-point details
 				Tuple.Couple<BinaryFP, BigInteger> temp = Tuple.of(fval, val);
 				fixFPDetails(details, temp, ProgrammerCalculator.this);
 			}
@@ -896,8 +914,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getResultType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return rt;
+	}
+	
+	public void setResultType(int resultType) {
+		rt = resultType;
 	}
 
 	/*
@@ -911,8 +932,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public String getDecimalPoint() {
-		// TODO Auto-generated method stub
-		return null;
+		return dp;
+	}
+	
+	public void setDecimalPoint(char c) {
+		dp = String.valueOf(c);
 	}
 
 	/*
@@ -926,8 +950,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public String getIntSeparator() {
-		// TODO Auto-generated method stub
-		return null;
+		return is;
+	}
+	
+	public void setIntSeparator(String s) {
+		is = s;
 	}
 
 	/*
@@ -941,10 +968,13 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public String getMantSeparator() {
-		// TODO Auto-generated method stub
-		return null;
+		return ms;
 	}
 
+	public void setMantSeparator(String s) {
+		ms = s;
+	}
+	
 	/*
 	 * Most Recent Date: 11 Dec 2022-----------------------------------------------
 	 * Most recent time created: 13:49:22--------------------------------------
@@ -956,8 +986,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getIntGroupSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return igs;
+	}
+	
+	public void setIntGroupSize(int size) {
+		igs = size;
 	}
 
 	/*
@@ -971,8 +1004,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getMantGroupSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return mgs;
+	}
+	
+	public void setMantGroupSize(int size) {
+		mgs = size;
 	}
 
 	/*
@@ -986,8 +1022,12 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getRadix() {
-		// TODO Auto-generated method stub
-		return 0;
+		return r;
+	}
+	
+	public void setRadix(int r) {
+		this.r = r;
+		lexer.setRadix(r);
 	}
 
 	/*
@@ -1001,8 +1041,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public Map<String, Couple<String, Function<Params, SegmentBuilder>>> getConstants() {
-		// TODO Auto-generated method stub
-		return null;
+		return constants;
+	}
+	
+	public void addConstant(String name, Couple<String, Function<Params, SegmentBuilder>> constant) {
+		constants.put(name, constant);
 	}
 
 	/*
@@ -1016,8 +1059,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public Map<String, Couple<String, Function<Params, SegmentBuilder>>> getBoundVariables() {
-		// TODO Auto-generated method stub
-		return null;
+		return boundVariables;
+	}
+	
+	public void addBoundVariable(String name, Couple<String, Function<Params, SegmentBuilder>> boundVariable) {
+		boundVariables.put(name, boundVariable);
 	}
 
 	/*
@@ -1031,8 +1077,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public String[] getDivisionString() {
-		// TODO Auto-generated method stub
-		return null;
+		return div;
+	}
+	
+	public void setDivisionString(String[] div) {
+		this.div = div;
 	}
 
 	/*
@@ -1046,8 +1095,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public String[] getMultiplicationString() {
-		// TODO Auto-generated method stub
-		return null;
+		return mul;
+	}
+	
+	public void setMultiplicationString(String[] mul) {
+		this.mul = mul;
 	}
 
 	/*
@@ -1061,8 +1113,7 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public AngleUnit getTrig() {
-		// TODO Auto-generated method stub
-		return null;
+		return AngleUnit.RAD;
 	}
 
 	/*
@@ -1076,8 +1127,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getBitRepresentation() {
-		// TODO Auto-generated method stub
-		return 0;
+		return br;
+	}
+	
+	public void setBitRepresentation(int bitRep) {
+		br = bitRep;
 	}
 
 	/*
@@ -1091,8 +1145,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getEndianess() {
-		// TODO Auto-generated method stub
-		return 0;
+		return end;
+	}
+	
+	public void setEndianess(int e) {
+		this.end = e;
 	}
 
 	/*
@@ -1106,8 +1163,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public int getBitLength() {
-		// TODO Auto-generated method stub
-		return 0;
+		return bl;
+	}
+	
+	public void setBitLength(int bitLength) {
+		bl = bitLength;
 	}
 
 	/*
@@ -1121,8 +1181,11 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	 */
 	@Override
 	public RoundingMode getRoundingMode() {
-		// TODO Auto-generated method stub
-		return null;
+		return rm;
+	}
+	
+	public void setRoundingMode(RoundingMode rm) {
+		this.rm = rm;
 	}
 
 	/*
@@ -1149,5 +1212,19 @@ public class ProgrammerCalculator<T extends GUIComponent<T>, F> implements Calcu
 	private final DetailsList<PExpression.Params> details;
 	private final Map<String, Couple<String, Function<Params, SegmentBuilder>>> constants;
 	private final Map<String, Couple<String, Function<Params, SegmentBuilder>>> boundVariables;
-
+	
+	//values
+	private RoundingMode rm;
+	private int bl;//bitlength
+	private int end;//endianess
+	private int br;//bit representation
+	private int r;//radix
+	private int igs;//integer group size
+	private int mgs;//mantissa group size
+	private int rt;//result type
+	private String[] mul;//multiplication strings
+	private String[] div;//division strings
+	private String is;//integer separator
+	private String ms;//mantissa separator
+	private String dp;//decimal point
 }

@@ -90,7 +90,9 @@ public final class Digits {
 
 	// floating-point exponent
 	public static LinkedSegment radixExponent(boolean binary) {
-		return new BasicSegment(binary ? "p" : "e", EXPONENT);
+		if(!binary)
+			return new BasicSegment("\\mathrm{e}", "e", EXPONENT);
+		return new BasicSegment("\\mathrm{p}", "p", EXPONENT);
 	}
 
 	public static LinkedSegment toSegment(BigInteger n, int radix, DigitPunc dp) {

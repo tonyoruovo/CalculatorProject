@@ -12,8 +12,16 @@ package mathaid;
  * Class name: Moment------------------------------------------------ 
  */
 /**
+ * An object used to track time-related actions, method calls and objects. It
+ * exists precisely for use as keys in {@link java.util.TreeMap TreeMap} objects, when insertion
+ * order is warranted/desired. The ideal way to implement this is at the
+ * constructor when the object is being created so as to sort of "brand" the
+ * object with the "manufacturing date".
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
+ * 
+ * @see MomentString
  */
 public interface Moment extends Comparable<Moment> {
 
@@ -35,19 +43,44 @@ public interface Moment extends Comparable<Moment> {
 	 * Most recent time created: 19:41:39--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * A comparative function for 2 moment string in which both are compared down to
+	 * the last millisecond (or even nanosecond).
 	 * 
-	 * @param m
-	 * @return
+	 * @param m a reference {@code Moment} object to be compare with {@code this}
+	 * @return a negative integer, zero, or a positive integer as this
+	 *         {@code Moment} is less than, equal to, or greater than the specified
+	 *         {@code Moment}
 	 */
 	@Override
 	default int compareTo(Moment m) {
 		return Long.valueOf(getMoment() - m.getMoment()).intValue();
 	}
 
+	/*
+	 * Date: Jan 16, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 9:14:04 AM ---------------------------------------------------
+	 */
+	/**
+	 * A unique value which may enable use in hash tables and maps
+	 * 
+	 * @return the hash code of {@code this}
+	 */
 	@Override
 	int hashCode();
 
+	/*
+	 * Date: Jan 16, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 9:15:08 AM ---------------------------------------------------
+	 */
+	/**
+	 * Compares the given object with {@code this} and returns {@code true} if it is
+	 * equal to this {@code Moment} object, otherwise returns {@code false}.
+	 * 
+	 * @param o a reference to the object to be compared to {@code this}
+	 * @return true if this object is the same as the o parameter; false otherwise.
+	 */
 	@Override
 	boolean equals(Object o);
 }

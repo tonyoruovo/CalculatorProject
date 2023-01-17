@@ -43,7 +43,7 @@ public class MomentString implements Moment {
 	
 	@Override
 	public int hashCode() {
-		return string.hashCode() ^ Objects.hashCode(moment);
+		return (string.hashCode() + Objects.hashCode(moment)) / 2;
 	}
 	
 	@Override

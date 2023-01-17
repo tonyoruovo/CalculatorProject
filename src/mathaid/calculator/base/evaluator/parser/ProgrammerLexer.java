@@ -99,6 +99,24 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 		this.syntax = syntax;
 		this.radix = radix;
 	}
+	
+	public ProgrammerLexer(String src, CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> syntax,
+			int radix) {
+		this(src, 0, src.length(), syntax, radix);
+	}
+	
+	public ProgrammerLexer(String src,
+			int radix) {
+		this(src, buildSyntax(), radix);
+	}
+	
+	public ProgrammerLexer(String src) {
+		this(src, 10);
+	}
+	
+	public ProgrammerLexer() {
+		this("");
+	}
 
 	public int getRadix() {
 		return radix;

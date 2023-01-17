@@ -31,7 +31,7 @@ public class BasicFormatter implements Formatter {
 		this(getDefaults());
 	}
 
-	public BasicFormatter(Map<Integer, Marker> m) {
+	protected BasicFormatter(Map<Integer, Marker> m) {
 		active = new TreeMap<>(m);
 		inactive = new HashSet<>();
 	}

@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 import mathaid.ExceptionMessage;
 import mathaid.calculator.base.converter.Currencies.MediumOfExchange;
+import mathaid.calculator.base.util.Utility;
 
 /*
  * Date: 12 Jul 2021----------------------------------------------------------- 
@@ -63,7 +64,7 @@ public class CurrencyUnit implements Convertible<CurrencyUnit, BigDecimal, MathC
 	 *         code of a particular currency.
 	 */
 	public static Set<String> supportedCurrencies() {
-		TreeSet<String> set = new TreeSet<>();
+		TreeSet<String> set = new TreeSet<>(Utility.comparator(null));
 		List<MediumOfExchange> l = Currencies.CURRENCIES;
 		for (MediumOfExchange moe : l)
 			set.add(moe.getIsoCode());

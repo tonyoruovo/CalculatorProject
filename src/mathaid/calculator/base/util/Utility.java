@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 import java.util.TreeMap;
@@ -2757,5 +2758,36 @@ public final class Utility {
 		if (sb.length() > 0)
 			returnValue.add(sb.toString());
 		return returnValue;
+	}
+
+	/*
+	 * Date: Jan 16, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 9:34:09 AM ---------------------------------------------------
+	 */
+	/**
+	 * Gets a {@linkplain java.util.Comparator Comparator} assembled from a
+	 * {@link Comparable}.
+	 * 
+	 * @param <T> the type of the {@code Comparator} to be returned. This type is
+	 *            also a {@code Comparable}
+	 * @param t   a value (can be {@code null}) to provide a unique signature to the
+	 *            returned Comparator
+	 * @return a {@code Comparator} assembled from a {@code Comparable}
+	 */
+	public static <T extends Comparable<T>> Comparator<T> comparator(T t) {
+		return new Comparator<>() {
+			public int compare(T x, T y) {
+				return x.compareTo(y);
+			}
+
+			public int hashCode() {
+				return Figurate.getTetrahedral(Objects.hashCode(t)).next().intValue();
+			}
+
+			public boolean equals(Object o) {
+				return o instanceof Comparator && hashCode() == o.hashCode();
+			}
+		};
 	}
 }

@@ -4,7 +4,10 @@
  */
 package mathaid.calculator.base.typeset;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public interface Formatter {
@@ -15,6 +18,12 @@ public interface Formatter {
 	//other markers can be here
 	int CARET = 0x7F_FF_FF_FE;
 	int ERROR = 0x7F_FF_FF_FF;
+	
+	static Formatter empty() {
+		Map<Integer, Marker> m = new HashMap<>();
+		m.put(0, new EmptyMarker());
+		return new BasicFormatter(Collections.unmodifiableMap(m));
+	}
 
 	String format(Segment segment, String format, int type, List<Integer> position);
 	ForwardRunningMarker getCaretMarker();

@@ -7,11 +7,13 @@
  */
 package mathaid.calculator.base.value;
 
+import static mathaid.calculator.base.util.Arith.pow;
+import static mathaid.calculator.base.util.Utility.d;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
-
-import mathaid.calculator.base.converter.AngleUnit;
-import mathaid.calculator.base.util.Arith;
 
 /*
  * Date: Jan 16, 2023 -----------------------------------------------------------
@@ -25,7 +27,7 @@ import mathaid.calculator.base.util.Arith;
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
-public class UnitVector {//implements Comparable<UnitVector> {
+public class UnitVector {// implements Comparable<UnitVector> {
 
 	// There are 17 of these
 	public static final String ANGLE = "Angle";
@@ -46,11 +48,11 @@ public class UnitVector {//implements Comparable<UnitVector> {
 	public static final String TORQUE = "Torque";
 	public static final String VOLUME = "Volume";
 
-	public UnitVector(Map<String, BigFraction> m) {// (MomentFraction f, String unit) {
+	public UnitVector(Map<String, BigDecimal> m) {// (MomentFraction f, String unit) {
 		vector = new HashMap<>(m);
 	}
-	
-	public UnitVector(String s, BigFraction f) {// (MomentFraction f, String unit) {
+
+	public UnitVector(String s, BigDecimal f) {// (MomentFraction f, String unit) {
 		vector = new HashMap<>();
 		vector.put(s, f);
 	}
@@ -73,94 +75,119 @@ public class UnitVector {//implements Comparable<UnitVector> {
 		return true;
 	}
 
-	public BigFraction magnitude() {
-		BigFraction accumulator = BigFraction.ZERO;
-		for (BigFraction s : vector.values())
-			accumulator = s.exponentiate(2).add(accumulator);
-		return accumulator;
+	public BigDecimal magnitude(MathContext mc) {
+		BigDecimal accumulator = BigDecimal.ZERO;
+		for (BigDecimal s : vector.values())
+			accumulator = pow(s, d(2), mc).add(accumulator);//s.exponentiate(2).add(accumulator);
+//		return accumulator.exponentiate(BigDecimal.HALF);
+		return pow(accumulator, d("0.5"), mc);
 	}
 
-	public BigFraction dotProduct(UnitVector v) {
+	public BigDecimal dotProduct(UnitVector v, MathContext mc) {
 		if (!sameSpace(v))
 			throw new ArithmeticException("Can't be processed. Different spaces");
-		BigFraction accumulator = BigFraction.ZERO;
+		BigDecimal accumulator = BigDecimal.ZERO;
 		for (String s : vector.keySet()) {
-			accumulator = vector.get(s).multiply(v.vector.get(s)).add(accumulator);
+			accumulator = vector.get(s).multiply(v.vector.get(s), mc).add(accumulator, mc);
 		}
 		return accumulator;
 	}
 
-	public UnitVector unitVector() {
-		return divide(magnitude());
+	public UnitVector unitVector(MathContext mc) {
+		return divide(magnitude(mc), mc);
 	}
 
-	public UnitVector crossProduct(UnitVector v) {
-		if (!sameSpace(v))
-			throw new ArithmeticException("Can't be processed. Different spaces");
-		else if (vector.size() != 3 && vector.size() != 7)
-			throw new ArithmeticException("Can't be processed");
-		BigFraction f = magnitude().multiply(v.magnitude());
-		f = f.multiply(new BigFraction(Arith.sin(angle(v).getFraction(), AngleUnit.RAD, f.getMathContext()),
-				f.getMathContext(), null, f.getAccuracy()));
-		return unitVector().multiply(f);
-	}
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 2:32:08 PM ---------------------------------------------------
+	 */
+	/*
+	 * @param v
+	 * @return
+	 * @deprecated Cannot take the cross-product of a vector unit because
+	 *             <ol>
+	 *             <li>Results may often lead to negative values</li>
+	 *             <li>Is logical only for Triple and Septuple vectors</li>
+	 *             <li>Causes cross multiplication which will cause incompatible
+	 *             units to operate on ecah other</li>
+	 *             </ol>
+	 */
+//	public UnitVector crossProduct(UnitVector v) {
+//		if (!sameSpace(v))
+//			throw new ArithmeticException("Can't be processed. Different spaces");
+//		else if (vector.size() != 3 && vector.size() != 7)
+//			throw new ArithmeticException("Can't be processed");
+//		BigDecimal f = magnitude().multiply(v.magnitude());
+//		f = f.multiply(new BigDecimal(Arith.sin(angle(v).getFraction(), AngleUnit.RAD, f.getMathContext()),
+//				f.getMathContext(), null, f.getAccuracy()));
+//		return unitVector().multiply(f);
+//	}
 
-	public BigFraction angle(UnitVector v) {
-		if (!sameSpace(v))
-			throw new ArithmeticException("Can't be processed. Different spaces");
-		BigFraction m = magnitude().multiply(v.magnitude());
-		return new BigFraction(Arith.acos(dotProduct(v).divide(m).getFraction(), AngleUnit.RAD, m.getMathContext()),
-				m.getMathContext(), null, m.getAccuracy());
-	}
+	/*
+	 * Date: Jan 17, 2023 -----------------------------------------------------------
+	 * Time created: 2:59:51 PM ---------------------------------------------------
+	 */
+	/*
+	 * @param v
+	 * @return
+	 * @deprecated Does not function properly
+	 */
+//	public BigDecimal angle(UnitVector v) {
+//		if (!sameSpace(v))
+//			throw new ArithmeticException("Can't be processed. Different spaces");
+//		BigDecimal m = magnitude().multiply(v.magnitude());
+//		return new BigDecimal(Arith.acos(dotProduct(v).divide(m).getFraction(), AngleUnit.RAD, m.getMathContext()),
+//				m.getMathContext(), null, m.getAccuracy());
+//	}
 
-	public UnitVector add(UnitVector addend) {
+	public UnitVector add(UnitVector addend, MathContext mc) {
 		if (!sameSpace(addend))
 			throw new ArithmeticException("Can't be added. Different spaces");
 		for (String s : vector.keySet()) {
-			BigFraction f = vector.get(s);
-			BigFraction f2 = addend.vector.get(s);
-//			System.err.printf("%1$s, %2$s + %3$s = %4$s\r\n", s, f, f2, f.add(f2));
-			vector.put(s, f.add(f2));
+			BigDecimal f = vector.get(s);
+			BigDecimal f2 = addend.vector.get(s);
+			vector.put(s, f.add(f2, mc));
 		}
 		return new UnitVector(vector);
 	}
 
-	public UnitVector add(String s, BigFraction f) {
+	public UnitVector add(String s, BigDecimal f) {
 		vector.put(s, f);
 		return new UnitVector(vector);
 	}
 
-	public UnitVector subtract(UnitVector subtrahend) {
+	public UnitVector subtract(UnitVector subtrahend, MathContext mc) {
 		if (!sameSpace(subtrahend))
 			throw new ArithmeticException("Can't be processed. Different spaces");
 		for (String s : vector.keySet()) {
-			BigFraction f = vector.get(s);
-			BigFraction f2 = subtrahend.vector.get(s);
-			vector.put(s, f.subtract(f2));
+			BigDecimal f = vector.get(s);
+			BigDecimal f2 = subtrahend.vector.get(s);
+			vector.put(s, f.subtract(f2, mc));
 		}
 		return new UnitVector(vector);
 	}
 
-	public UnitVector multiply(BigFraction scalar) {
+	public UnitVector multiply(BigDecimal scalar, MathContext mc) {
 		for (String s : vector.keySet())
-			vector.put(s, vector.get(s).multiply(scalar));
+			vector.put(s, vector.get(s).multiply(scalar, mc));
 
 		return new UnitVector(vector);
 	}
 
-	public UnitVector divide(BigFraction scalar) {
+	public UnitVector divide(BigDecimal scalar, MathContext mc) {
 		for (String s : vector.keySet())
-			vector.put(s, vector.get(s).divide(scalar));
+			vector.put(s, vector.get(s).divide(scalar, mc));
 
 		return new UnitVector(vector);
 	}
-	
+
 	public String toString() {
-		if(vector.size() == 1)
+		if (vector.size() == 1)
 			return vector.values().iterator().next().toString();
 		return vector.toString();
 	}
 
-	private final Map<String, BigFraction> vector;
+	private final Map<String, BigDecimal> vector;
 
 }

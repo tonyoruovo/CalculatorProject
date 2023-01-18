@@ -545,7 +545,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 				ac = new BigDecimal("1.E-15");
 			else
 				ac = new BigDecimal("1.E-10");
-			BigFraction tmp = new BigFraction(bf.decimalFraction, DEFAULT_CONTEXT, null, ac);
+			BigFraction tmp = new BigFraction(bf.decimalFraction, Helper.this.mc, null, ac);
 			return (isRational = bf.toLowestTerms().compareTo(tmp.toLowestTerms()) == 0);
 		}
 
@@ -605,6 +605,38 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	////////////////////////////////////////////////////////////
 	///////////////////// Constructors ////////////////////////
 	//////////////////////////////////////////////////////////
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:42:43 PM ---------------------------------------------------
+	 */
+	/**
+	 * Attempts to create an irrational fraction if {@code isRational} argument is
+	 * {@code false} otherwise attempts to create a rational fraction. Both attempts
+	 * may end up with unintended results, i.e an attempt to create a rational
+	 * fraction may end up creating an irrational fraction and vice-versa
+	 * 
+	 * @param real       a {@code BigDecimal} value representing the fraction
+	 * @param isRational true if irrational is intended false if otherwise
+	 * 
+	 * @implNote Both attempts may end up with unintended results, i.e an attempt to
+	 *           create a rational fraction may end up creating an irrational
+	 *           fraction and vice-versa
+	 */
+	public BigFraction(BigDecimal real, boolean isRational) {// a 'true' value does not guarantee a rational constructor
+		this.decimalFraction = real;
+		MathContext mc = new MathContext(Utility.numOfFractionalDigits(real) + Utility.numOfIntegerDigits(real),
+				RoundingMode.DOWN);
+		BigFraction f = new BigFraction(real, mc, null, DEFAULT_ACCURACY);
+		numerator = f.numerator;
+		denominator = f.denominator;
+		rationalConstructor = isRational ? f.rationalConstructor : false;
+		context = mc;
+		accuracy = f.accuracy;
+		helper = rationalConstructor ? Helper.getHelper(numerator, denominator)
+				: Helper.getHelper(decimalFraction, accuracy, f.helper.max, mc);
+	}
 
 	/*
 	 * Date: 1 Oct 2020-----------------------------------------------------------
@@ -713,9 +745,9 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 * 
 	 * @param decimalFraction the value (a fraction) to be parsed.
 	 * @param maxDenominator  the maximum denominator that the {@code BigFraction}
-	 *                        should have, above which an
-	 *                        {@code ArithmeticException} will be thrown. A
-	 *                        {@code null} value means no maximum.
+	 *                        should have, above which this constructor returns a
+	 *                        non-rational fraction. A {@code null} value means no
+	 *                        maximum.
 	 * @param accuracy        a value between 0 (exclusive) and 1 (exclusive) which
 	 *                        determines the precision of the parsing engine.
 	 * @throws ArithmeticException if the given maximum denominator is exceeded or
@@ -742,17 +774,17 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 * </p>
 	 * <p>
 	 * If the parser is unable to reduce the fraction's denominator to a value less
-	 * than or equal to max denominator, then an {@code ArithmeticException} will be
-	 * thrown to indicate non-convergence.
+	 * than or equal to max denominator, then an irrational fraction will be created
+	 * to indicate non-convergence.
 	 * </p>
 	 * 
 	 * @param decimalFraction the value (a fraction) to be parsed.
 	 * @param context         truncates the decimal fraction to prevent unscalable
 	 *                        or non-terminating mantissa.
 	 * @param maxDenominator  the maximum denominator that the {@code BigFraction}
-	 *                        should have, above which an
-	 *                        {@code ArithmeticException} will be thrown. A
-	 *                        {@code null} value means no maximum.
+	 *                        should have, above which this constructor returns a
+	 *                        non-rational fraction. A {@code null} value means no
+	 *                        maximum.
 	 * @param accuracy        a value between 0 (exclusive) and 1 (exclusive) which
 	 *                        determines the precision of the parsing engine. For a
 	 *                        default, <code>1 &times; 10<sup>-10</sup></code> is a
@@ -775,8 +807,17 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 */
 	/**
 	 * Constructs a {@code BigFraction} using one of the 3 specified algorithms in
-	 * this class. Note that conversion is done only when the
-	 * {@code decimalFraction} argument is not an integer.
+	 * this class. Note that conversion is done only when:
+	 * <ul>
+	 * <li>the {@code decimalFraction} argument is not an integer</li>
+	 * <li>rationalising (moving the point the edge so that {@code decimalFraction}
+	 * is effectively an integer and dividing that integer with 10<sup>points
+	 * moved</sup>) the fraction causes the resultant denominator to be bigger than
+	 * max denominator specified</li>
+	 * <li>after rationalising the fraction, the resultant numerator divided by the
+	 * resultant denominator produces a fraction not equal to the argument fraction
+	 * </li>
+	 * </ul>
 	 * 
 	 * @param decimalFraction the value (a fraction) to be parsed.
 	 * @param context         truncates the decimal fraction to prevent unscalable
@@ -784,9 +825,9 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 *                        means that {@link BigFraction#DEFAULT_CONTEXT this}
 	 *                        value will be used instead.
 	 * @param maxDenominator  the maximum denominator that the {@code BigFraction}
-	 *                        should have, above which an
-	 *                        {@code ArithmeticException} will be thrown. A
-	 *                        {@code null} value means no maximum.
+	 *                        should have, above which this constructor returns a
+	 *                        non-rational fraction. A {@code null} value means no
+	 *                        maximum.
 	 * @param accuracy        a value between 0 (inclusive) and 1 (inclusive) which
 	 *                        determines the precision of the parsing engine.
 	 * @param algorithm       0 for Richards, 1 for stern-brocot and any value for
@@ -816,10 +857,11 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 
 //			System.err.printf("Num:\t%1$s%2$sDenom:\t%3$s%2$s", fauxNumerator, System.lineSeparator(), fauxDenominator);
 
-			if (fauxNumerator.divide(fauxDenominator, new MathContext(fd, RoundingMode.DOWN))
-					.compareTo(this.decimalFraction) == 0) {
-				if (maxDenominator != null && fauxDenominator.toBigInteger().compareTo(maxDenominator.abs()) > 0)
-					new OverflowException(ExceptionMessage.DENOMINATOR_ABOVE_MAX);
+			if (maxDenominator != null && fauxDenominator.toBigInteger().compareTo(maxDenominator) <= 0
+					&& fauxNumerator.divide(fauxDenominator, new MathContext(fd, RoundingMode.DOWN))
+							.compareTo(this.decimalFraction) == 0) {
+//				if (maxDenominator != null && fauxDenominator.toBigInteger().compareTo(maxDenominator.abs()) > 0)
+//					new OverflowException(ExceptionMessage.DENOMINATOR_ABOVE_MAX);
 				this.numerator = fauxNumerator.toBigIntegerExact();
 				this.denominator = fauxDenominator.toBigIntegerExact();
 				rationalConstructor = true;
@@ -975,9 +1017,9 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 		this.numerator = numerator;
 		this.denominator = denominator;
 		this.accuracy = DEFAULT_ACCURACY;
-		this.decimalFraction = new BigDecimal(this.numerator).divide(new BigDecimal(this.denominator), DEFAULT_CONTEXT);
-		rationalConstructor = true;
 		this.context = getContextFromAccuracy(accuracy);
+		this.decimalFraction = new BigDecimal(this.numerator).divide(new BigDecimal(this.denominator), context);
+		rationalConstructor = true;
 		helper = Helper.getHelper(this.numerator, this.denominator);
 	}
 
@@ -994,6 +1036,8 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 * {@code BigFraction}. If this is an integer, then the integer is returned (or
 	 * zero if this is 0) or else if this is in improper form then the unreduced
 	 * numerator is returned.
+	 * <p>
+	 * This value is irrelevant if {@link BigFraction#isRational()} returns false
 	 * 
 	 * @return the unreduced numerator of this common fraction.
 	 */
@@ -1008,6 +1052,8 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	/**
 	 * Returns the denominator of the common fraction representative of this
 	 * {@code BigFraction}. If this is an integer, then 1 is returned.
+	 * <p>
+	 * This value is irrelevant if {@link BigFraction#isRational()} returns false
 	 * 
 	 * @return the unreduced denominator of this common fraction.
 	 */
@@ -1035,17 +1081,19 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	}
 
 	/*
-	 * Date: Jan 11, 2023 -----------------------------------------------------------
-	 * Time created: 2:10:25 AM ---------------------------------------------------
+	 * Date: Jan 11, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 2:10:25 AM ---------------------------------------------------
 	 */
 	/**
 	 * Returns the internal context settings.
+	 * 
 	 * @return the internal context of {@code this}
 	 */
-	public MathContext getMathContext(){
+	public MathContext getMathContext() {
 		return context;
 	}
-	
+
 	/*
 	 * Date: 1 Sep 2020-----------------------------------------------------------
 	 * Time created: 21:16:01--------------------------------------------
@@ -1565,7 +1613,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 				final BigFraction exp = exponent.toLowestTerms();
 				final BigInteger expon = exp.numerator;
 				final BigInteger degree = exp.denominator;
-				final MathContext c = getContextFromAccuracy(f.accuracy);
+				final MathContext c = context;
 				final BigDecimal numerRoot = Arith.pow(new BigDecimal(f.numerator),
 						BigDecimal.ONE.divide(new BigDecimal(degree), c), c);
 				final BigDecimal numer = numerRoot.pow(expon.intValueExact(), c);
@@ -1575,7 +1623,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 				return new BigFraction(numer.divide(denom, c), c, null, f.accuracy, 1);
 			} catch (ArithmeticException e) {
 			}
-		return new BigFraction(Arith.pow(f.decimalFraction, exponent.decimalFraction, DEFAULT_CONTEXT), null, null,
+		return new BigFraction(Arith.pow(f.decimalFraction, exponent.decimalFraction, context), null, null,
 				f.accuracy.min(exponent.accuracy));
 	}
 
@@ -1637,7 +1685,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	public BigDecimal factorial() {
 		if (decimalFraction.compareTo(Calculator.MAX_FACTORIAL) > 0)
 			new MathematicalException(ExceptionMessage.NUMBER_TOO_BIG);
-		return Arith.factorial(decimalFraction, context == null ? getContextFromAccuracy(accuracy) : context);
+		return Arith.factorial(decimalFraction, context);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -1957,7 +2005,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 		do {
 
 			BigInteger d = Arith
-					.floor(new BigDecimal(f.denominator).divide(new BigDecimal(f.numerator), DEFAULT_CONTEXT))
+					.floor(new BigDecimal(f.denominator).divide(new BigDecimal(f.numerator), context))
 					.add(BigDecimal.ONE).toBigIntegerExact();
 
 			BigFraction fr = BigFraction.ONE.divide(d);
@@ -2170,7 +2218,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 
 		if (base.compareTo(ONE) == 0)
 			return ONE;
-		return new BigFraction(Arith.pow(base.decimalFraction, exponent, DEFAULT_CONTEXT), null, null, base.accuracy);
+		return new BigFraction(Arith.pow(base.decimalFraction, exponent, base.context), null, null, base.accuracy);
 	}
 
 	/*

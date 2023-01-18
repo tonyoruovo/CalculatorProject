@@ -2267,7 +2267,9 @@ public final class Utility {
 	 * Time created: 07:37:21--------------------------------------------
 	 */
 	/**
-	 * Returns the number of digits in the mantissa part
+	 * Returns the number of digits in the mantissa part after stripping the
+	 * argument of all it's zeroes and getting it's {@link BigDecimal#scale()
+	 * scale()}
 	 * 
 	 * @param n a {@code BigDecimal}
 	 * @return the number of digits in the mantissa part
@@ -2789,5 +2791,422 @@ public final class Utility {
 				return o instanceof Comparator && hashCode() == o.hashCode();
 			}
 		};
+	}
+
+	// short-hands
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:49:40 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigInteger#valueOf(long)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param i an {@code int} value
+	 * @return the argument as a {@code BigInteger}.
+	 */
+	public static BigInteger i(int i) {
+		return BigInteger.valueOf(i);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:51:35 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigInteger#valueOf(long)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param i a {@code long} value
+	 * @return the argument as a {@code BigInteger}.
+	 */
+	public static BigInteger i(long i) {
+		return BigInteger.valueOf(i);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:51:53 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigInteger(String)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param i a numerical value as a {@code String} value with decimal digits only
+	 * @return the argument as a {@code BigInteger}.
+	 */
+	public static BigInteger i(String i) {
+		return new BigInteger(i);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:53:41 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigInteger(String, int)} for the purpose of
+	 * convenience
+	 * 
+	 * @param i a numerical value as a {@code String} value with digits in the same
+	 *          radix as specified by the {@code int} argument.
+	 * @param r the radix of the given {@code String} value
+	 * @return the argument as a {@code BigInteger}.
+	 */
+	public static BigInteger i(String i, int r) {
+		return new BigInteger(i, r);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:57:57 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigDecimal#valueOf(long)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param d an {@code int} value
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(int d) {
+		return BigDecimal.valueOf(d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:58:39 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigDecimal#valueOf(long)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param d a {@code long} value
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(long d) {
+		return BigDecimal.valueOf(d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:00:13 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigDecimal#valueOf(double)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param d a {@code double} value
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(double d) {
+		return BigDecimal.valueOf(d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:00:36 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigDecimal(String)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param d a {@code String} value
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(String d) {
+		return new BigDecimal(d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:01:05 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigDecimal(String, MathContext)} for the purpose
+	 * of convenience.
+	 * 
+	 * @param d  a decimal {@code String} value
+	 * @param mc a {@code MathContext} object
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(String d, MathContext mc) {
+		return new BigDecimal(d, mc);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:02:42 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigDecimal(BigInteger)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param d a {@code BigInteger} value
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(BigInteger d) {
+		return new BigDecimal(d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:03:32 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigDecimal(BigInteger, MathContext)} for the
+	 * purpose of convenience.
+	 * 
+	 * @param d  a {@code BigInteger} value
+	 * @param mc a {@code MathContext} object
+	 * @return the argument as a {@code BigDecimal}.
+	 */
+	public static BigDecimal d(BigInteger d, MathContext mc) {
+		return new BigDecimal(d, mc);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:22:46 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigFraction#valueOf(Number)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param f an {@code int} value representing an integer number
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(int f) {
+		return BigFraction.valueOf(f);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:22:46 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for
+	 * {@code new BigFraction(BigInteger.valueOf(long), BigInteger.valueOf(long))}
+	 * for the purpose of convenience.
+	 * 
+	 * @param n an {@code int} value as the numerator
+	 * @param d an {@code int} value as the denominator
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(int n, int d) {
+		return new BigFraction(i(n), i(d));
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:22:46 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigFraction#valueOf(Number)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param f a {@code long} value representing an integer number
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(long f) {
+		return BigFraction.valueOf(f);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:22:46 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for
+	 * {@code new BigFraction(BigInteger.valueOf(long), BigInteger.valueOf(long))}
+	 * for the purpose of convenience.
+	 * 
+	 * @param n a {@code long} value as the numerator
+	 * @param d a {@code long} value as the denominator
+	 * @return the arguments as a {@code BigFraction}.
+	 */
+	public static BigFraction f(long n, long d) {
+		return new BigFraction(i(n), i(d));
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:28:14 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link BigFraction#valueOf(Number)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param f a {@code double} value.
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(double f) {
+		return BigFraction.valueOf(f);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:31:20 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@new BigFraction(String)} for the purpose of convenience.
+	 * 
+	 * @param f a {@code String} value in any format specified by
+	 *          {@link BigFraction#BigFraction(String)}
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(String f) {
+		return new BigFraction(f);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:32:32 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigFraction(String, String)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param n a {@code String} value (in the same format as described
+	 *          {@link BigInteger#BigInteger(String) here}) as the numerator
+	 * @param d a {@code String} value (in the same format as described
+	 *          {@link BigInteger#BigInteger(String) here}) as the denominator
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(String n, String d) {
+		return new BigFraction(n, d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:33:50 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigFraction(BigInteger, BigInteger.ONE)} for the
+	 * purpose of convenience.
+	 * 
+	 * @param n a {@code BigInteger} value
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(BigInteger n) {
+		return new BigFraction(n, i(1));
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:35:54 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new BigFraction(BigInteger, BigInteger)} for the
+	 * purpose of convenience.
+	 * 
+	 * @param n a {@code BigInteger} value as the numerator
+	 * @param d a {@code BigInteger} value as the denominator
+	 * @return the arguments as a {@code BigFraction}
+	 */
+	public static BigFraction f(BigInteger n, BigInteger d) {
+		return new BigFraction(n, d);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:38:08 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for
+	 * {@code new BigFraction(BigDecimal, null, null, new BigDecimal("1E-10"))} for
+	 * the purpose of convenience.
+	 * 
+	 * @param f a {@code BigDecimal} value
+	 * @return the argument as a {@code BigFraction}.
+	 */
+	public static BigFraction f(BigDecimal f) {
+		return new BigFraction(f, null, null, d("1E-10"));
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:05:42 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new MathContext(int, RoundingMode.HALF_EVEN)} for the
+	 * purpose of convenience.
+	 * 
+	 * @param s an {@code int} value representing the scale
+	 * @return the argument as a {@code MathContext}.
+	 */
+	public static MathContext mc(int s) {
+		return new MathContext(s, RoundingMode.HALF_EVEN);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:10:28 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@code new MathContext(int, RoundingMode)} for the purpose
+	 * of convenience.
+	 * 
+	 * @param s  an {@code int} value representing the scale
+	 * @param rm the rounding mode to use
+	 * @return the argument as a {@code MathContext}.
+	 */
+	public static MathContext mc(int s, RoundingMode rm) {
+		return new MathContext(s, rm);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:11:21 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link RoundingMode#valueOf(int)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param rm an {@code int} value representing the old usage of rounding in the
+	 *           {@code BigDecimal} class
+	 * @return the argument as a {@code RoundingMode}.
+	 */
+	public static RoundingMode rm(int rm) {
+		return RoundingMode.valueOf(rm);
+	}
+
+	/*
+	 * Date: Jan 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 4:14:13 PM ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for {@link RoundingMode#valueOf(String)} for the purpose of
+	 * convenience.
+	 * 
+	 * @param name a {@code String} value representing the exact {@code enum} field
+	 *             name of the {@code RoundingMode} object to be returned
+	 * @return the argument as a {@code RoundingMode}.
+	 */
+	public static RoundingMode rm(String name) {
+		return RoundingMode.valueOf(name);
 	}
 }

@@ -9,6 +9,7 @@ import static java.lang.System.out;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import java.util.Stack;
 
 import mathaid.calculator.base.util.Utility;
 import mathaid.calculator.base.value.BigFraction;
-import mathaid.calculator.base.value.UnitVector;
 
 /*
  * Date: 18 Mar 2020----------------------------------------------------
@@ -62,16 +62,19 @@ public class Main {
 	public static void main(String[] args) {
 		out.println(err + "\t" + in);
 		
-		UnitVector v = new UnitVector(UnitVector.CURRENCY, BigFraction.valueOf(1));
-		v = v.add(UnitVector.ANGLE, BigFraction.valueOf(2));
-		v = v.add(UnitVector.AREA, BigFraction.valueOf(3));
-		
-		UnitVector v2 = new UnitVector(UnitVector.CURRENCY, BigFraction.valueOf(-2));
-		v2 = v2.add(UnitVector.AREA, BigFraction.valueOf(4));
-		v2 = v2.add(UnitVector.ANGLE, BigFraction.valueOf(0));
+//		UnitVector v = new UnitVector(UnitVector.CURRENCY, BigFraction.valueOf(2));
+//		v = v.add(UnitVector.ANGLE, BigFraction.valueOf(3));
+//		v = v.add(UnitVector.AREA, BigFraction.valueOf(4));
+//		v = v.add(UnitVector.DATA, BigFraction.valueOf(3));
+//		
+//		UnitVector v2 = new UnitVector(UnitVector.CURRENCY, BigFraction.valueOf(5));
+//		v2 = v2.add(UnitVector.ANGLE, BigFraction.valueOf(6));
+//		v2 = v2.add(UnitVector.AREA, BigFraction.valueOf(7));
+//		v2 = v2.add(UnitVector.DATA, BigFraction.valueOf(4));
 //		out.println(v2);
 		
-		out.println(v.add(v2).unitVector());
+//		out.println(v.dotProduct(v2));
+		out.println(BigFraction.HALF.setMathContext(new MathContext(200)).exponentiate(BigFraction.HALF));
 		
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;

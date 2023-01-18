@@ -147,7 +147,7 @@ public class Constants {
 	 * The natural logarithm of 10 i.e ln(10), rounded to about 3,000 digits
 	 */
 //	static final BigDecimal LOG_10;
-	
+
 	static {
 	}
 
@@ -567,12 +567,12 @@ public class Constants {
 	static BigDecimal q4(int precision) {
 		return TWO.multiply(pi(precision));
 	}
-	
+
 	static BigDecimal sqrt3Div2(int precision) {
 		final MathContext c = new MathContext(precision, RoundingMode.HALF_EVEN);
 		return Arith.sqrt(THREE, c).divide(TWO, c);
 	}
-	
+
 	static BigDecimal sqrt2Div2(int precision) {
 		final MathContext c = new MathContext(precision, RoundingMode.HALF_EVEN);
 		return Arith.sqrt(TWO, c).divide(TWO, c);

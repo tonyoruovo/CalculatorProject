@@ -36,6 +36,9 @@ module CalculatorProject {
 	requires apfloat;
 	requires hipparchus.core;
 	requires org.jsoup;
+	requires log4j;
+	requires jdk.management;
+	requires java.xml;
 //	requires jas;
 	uses LangResourceProvider;
 

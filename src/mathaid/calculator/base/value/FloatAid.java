@@ -697,6 +697,40 @@ public final class FloatAid {
 		return mask.or(i).xor(mask);
 	}
 
+	/**
+	 * Gets the first <span style="font-style:italic">n</span> bits (or more technically, the
+	 * the first <span style="font-style:italic">n</span> high order or most significant bits)
+	 * in the given {@code BigInteger} and returns it as a {@code BigInteger}.
+	 * 
+	 * @param i a {@code BigInteger}
+	 * @param n the number of most significant bits to be extracted from the {@code BigInteger}
+	 * value
+	 * @throws ArithmeticException if {@code i.bitLength() < n}
+	 */
+	public static BigInteger getHigh(BigInteger i, int n) throws ArithmeticException {
+		if (i.bitLength() < n)
+			throw new ArithmeticException("bit length is lesser than is required");
+		return i.shiftRight(i.bitLength() - n);
+		// BigInteger mask = getAllOnes(n).shiftLeft(i.bitLength() - n);
+		// return mask.or(i).xor(mask);
+	}
+
+	/**
+	 * Gets the last <span style="font-style:italic">n</span> bits (or more technically, the
+	 * the first <span style="font-style:italic">n</span> low order or least significant bits)
+	 * in the given {@code BigInteger} and returns it as a {@code BigInteger}.
+	 * 
+	 * @param i a {@code BigInteger}
+	 * @param n the number of least significant bits to be extracted from the {@code BigInteger}
+	 * value
+	 * @throws ArithmeticException if {@code i.bitLength() < n}
+	 */
+	public static BigInteger getLow(BigInteger i, int n) throws ArithmeticException {
+		if (i.bitLength() < n)
+			throw new ArithmeticException("bit length is lesser than is required");
+		return clearMSB(i, i.bitLength() - n);
+	}
+
 	/*
 	 * Date: 7 Nov 2022-----------------------------------------------------------
 	 * Time created: 22:56:36--------------------------------------------

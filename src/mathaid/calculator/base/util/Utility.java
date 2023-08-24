@@ -64,6 +64,7 @@ import mathaid.calculator.base.value.BigFraction;
 import mathaid.calculator.base.value.BinaryRep;
 import mathaid.calculator.base.value.BitLength;
 import mathaid.calculator.base.value.Complex;
+import mathaid.calculator.base.value.FloatAid;
 import mathaid.calculator.base.value.Fraction;
 import mathaid.calculator.base.value.Precision;
 import mathaid.calculator.base.value.PrecisionException;
@@ -2218,7 +2219,7 @@ public final class Utility {
 
 		if (isInteger(nonRecur))
 			return r.add(defaultFractionalConstructor(nonRecur, mc, r.getAccuracy()).abs())
-					.multiply(nonRecur.signum() < 1 ? -1 : 1);
+					.multiply(nonRecur.signum() < 0 ? -1 : 1);
 
 		return r.divide(defaultFractionalConstructor((BigDecimal.TEN.pow(numOfFractionalDigits(nonRecur))), mc,
 				r.getAccuracy())).add(defaultFractionalConstructor(nonRecur, mc, r.getAccuracy()));
@@ -3208,5 +3209,82 @@ public final class Utility {
 	 */
 	public static RoundingMode rm(String name) {
 		return RoundingMode.valueOf(name);
+	}
+
+	/*
+	 * Date: Feb 14, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:41:13 PM ---------------------------------------------------
+	 */
+	/**
+	 * Returns the number of values between <code>n1</code> (inclusive)
+	 * and <code>n2</code> (exclusive).
+	 * <p>
+	 * For example:
+	 * <pre>
+	 * <code>
+	 * BigInteger num = getNumOfValuesBetween(new BigInteger("1"), new BigInteger("100"));
+	 * System.out.println(num);// prints 99
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param n1 a {@code BigInteger} representing the from value
+	 * @param n2 a {@code BigInteger} representing the to value
+	 * @return the number of values between {@code n1} (inclusive)
+	 * 		and {@code n2} (exclusive).
+	 */
+	public static BigInteger getNumOfValuesBetween(BigInteger n1, BigInteger n2) {
+		return n1.max(n2).subtract(n1.min(n2)).abs();
+	}
+
+	/*
+	 * Date: Feb 14, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 3:41:13 PM ---------------------------------------------------
+	 */
+	/**
+	 * Returns the sum of all the values between <code>n1</code> (inclusive)
+	 * and <code>n2</code> (exclusive).
+	 * <p>
+	 * For example:
+	 * <pre>
+	 * <code>
+	 * BigInteger num = getSeries(new BigInteger("1"), new BigInteger("101"));
+	 * System.out.println(num);// prints 98
+	 * </code>
+	 * </pre>
+	 * The order of the values is of no importance to the result.
+	 * 
+	 * @param n1 a {@code BigInteger} value
+	 * @param n2 a {@code BigInteger} value
+	 * @return the number of values between {@code n1} (exclusive)
+	 * 		and {@code n2} (exclusive).
+	 */
+	public static BigInteger getSeries(BigInteger n1, BigInteger n2) {
+		BigInteger num = getNumOfValuesBetween(n1, n2);
+		return num.add(i(1)).multiply(num).divide(i(2));
+	}
+
+	/**
+	 * Returns the computed hashCode of all the {@code Object}
+	 * argument(s) as an {@code int} value representing the
+	 * hash code of all of them combined. Returns {@code 0} if
+	 * no Object is passed as an argument.
+	 * 
+	 * @param msb determines whether or not to returns only the
+	 * most significant bits of the computed hash (if the final
+	 * value is too long for an integer). If set to {@code true}
+	 * then only the first 32 bits of the actual hash is returned
+	 * otherwise only the last 32 bits of the actual hash is
+	 * returned.
+	 * @return the first (or last) 32 bits of the generated hash
+	 * of the given Objects or 0 if no object was passed.
+	 */
+	public static int hash(boolean msb, Object...objects) {
+		BigInteger in = i(0);
+		final int len = 32;
+		for(int i = objects.length - 1; i >= 0; i--)
+			in = i(objects[i].hashCode()).shiftLeft(in.bitLength()).and(in);
+		return (in.bitLength() < len ? in : (msb ? FloatAid.getHigh(in, len) : FloatAid.getLow(in, len))).intValue();
 	}
 }

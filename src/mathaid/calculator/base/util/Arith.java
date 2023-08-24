@@ -9,6 +9,7 @@ import static mathaid.calculator.base.util.Constants.ONE;
 import static mathaid.calculator.base.util.Constants.TWO;
 import static mathaid.calculator.base.util.Constants.ZERO;
 import static mathaid.calculator.base.util.Constants.pi;
+import static mathaid.calculator.base.util.Utility.i;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -174,19 +175,147 @@ public final class Arith {
 	 * Time created: 13:13:49--------------------------------------------
 	 */
 	/**
-	 * Calculates and returns the factorial of a {@code BigInteger}.
+	 * Calculates and returns the factorial of a {@code BigInteger}
+	 * using the regular top-to-bottom recursive algorithm.
 	 * 
 	 * @param n a {@code BigInteger}.
 	 * @return the result of the factorial (<i>n</i>!) of the argument
-	 * @throws StackOverflowError If the argument is too big which in turn would
+	 * @throws StackOverflowError If the argument is too big or is negative which in turn would
 	 *                            cause the method to recurse too deeply.
 	 */
-	public static BigInteger factorial(BigInteger n) throws StackOverflowError {
+	static BigInteger regularFactorial(BigInteger n) throws StackOverflowError {
 		if (n.signum() == 0)
 			return BigInteger.ONE;
-		BigInteger recurse = factorial(n.abs().subtract(BigInteger.ONE));
+		BigInteger recurse = factorial(n.subtract(BigInteger.ONE));
 
 		return n.multiply(recurse);
+	}
+
+	/*
+	 * Date: Mar 17, 2023 -----------------------------------------------------------
+	 * Time created: 1:39:17 AM ---------------------------------------------------
+	 */
+	/**
+	 * Performs iterative multiplication on every value from {@code start} to {@code end}
+	 * returns the result. This is a factorial helper method.
+	 * @param start the starting value (inclusive)
+	 * @param end the ending value (inclusive)
+	 * @return a {@code BigInteger} that is the result of iterative multiplication from the first argument to the second.
+	 */
+	private static BigInteger unitFactorial(BigInteger start, BigInteger end) {
+		var val = i(1);
+		for (var i = start; i.compareTo(end) <= 0; i = i.add(i(1)))
+			val = val.multiply(i);
+		return val;
+	}
+
+	/*
+	 * Date: Mar 17, 2023 -----------------------------------------------------------
+	 * Time created: 1:45:27 AM ---------------------------------------------------
+	 */
+	/**
+	 * Performs <span style="font-style:italic">n</span>! by calling {@link #unitFactorial(BigInteger, BigInteger)} in chunks specified by the threshold argument,
+	 * then evaluates each chunk using parallelism.
+	 * @param n the value to on which the factorial is performed 
+	 * @param threshold the smallest unit of factorial computation a single chunk should undertake.
+	 * @return a value that is the factorial of the first argument
+	 */
+	private static BigInteger linearFactorial(BigInteger n, BigInteger threshold) {
+		if (n.compareTo(threshold) <= 0)
+			return regularFactorial(n);
+		final var max = n;
+		var index = 0;
+		var values = new java.util.LinkedList<java.util.function.Supplier<BigInteger>>();
+		while (n.compareTo(threshold) >= 0) {
+			n = n.subtract(threshold);
+			final var fIndex = index;
+			values.add(() -> unitFactorial(i(fIndex).multiply(threshold).add(i(1)), i(fIndex).add(i(1)).multiply(threshold)));
+			index++;
+		}
+		if (n.signum() != 0) {
+			final var fIndex = index;
+			values.add(() -> unitFactorial(i(fIndex).multiply(threshold).add(i(1)), max));
+		}
+		return values.parallelStream().reduce(i(1), (x, y) -> x.multiply(y.get()), (x, y) -> x.multiply(y));
+	}
+	
+	/*
+	 * Date: Mar 17, 2023 -----------------------------------------------------------
+	 * Time created: 1:52:18 AM ---------------------------------------------------
+	 */
+	/**
+	 * Performs multiplication on all the values from n to m and returns the result.
+	 * @param n the lower bound of the range to be multiplied
+	 * @param m the upper bound of the range to be multiplied
+	 * @return a {@code BigInteger} that is the result of the multiplication from the first argument to the second.
+	 * @throws StackOverflowError if the difference between n and m is too large for
+	 * the recursion to traverse
+	 */
+	private static BigInteger bottom2UpFactorial(BigInteger n, BigInteger m) throws StackOverflowError {
+		if (n.compareTo(m) == 0)
+			return m;
+		BigInteger recurse = bottom2UpFactorial(n.add(BigInteger.ONE), m);
+
+		return n.multiply(recurse);
+	}
+
+	/*
+	 * Date: Mar 17, 2023 -----------------------------------------------------------
+	 * Time created: 1:59:08 AM ---------------------------------------------------
+	 */
+	/**
+	 * Performs <span style="font-style:italic">n</span>! by calling {@link #bottom2UpFactorial(BigInteger, BigInteger)} in chunks specified by the threshold argument,
+	 * then evaluates each chunk using parallelism.
+	 * @param n the value to on which the factorial is performed 
+	 * @param threshold the smallest unit of factorial computation a single chunk should undertake.
+	 * @return a value that is the factorial of the {@code n}
+	 * @throws StackOverflowError if threshold is too large. A stable value would be {@code 5_000}
+	 */
+	private static BigInteger recursiveFactorial(BigInteger n, BigInteger threshold)throws StackOverflowError {
+		if (n.compareTo(threshold) <= 0)
+			return regularFactorial(n);
+		final var max = n;
+		var index = 0;
+		var values = new java.util.LinkedList<java.util.function.Supplier<BigInteger>>();
+		while (n.compareTo(threshold) >= 0) {
+			n = n.subtract(threshold);
+			final var fIndex = index;
+			values.add(() -> bottom2UpFactorial(i(fIndex).multiply(threshold).add(i(1)), i(fIndex).add(i(1)).multiply(threshold)));
+			index++;
+		}
+		if (n.signum() != 0) {
+			final var fIndex = index;
+			values.add(() -> bottom2UpFactorial(i(fIndex).multiply(threshold).add(i(1)), max));
+		}
+		return values.parallelStream().reduce(i(1), (x, y) -> x.multiply(y.get()), (x, y) -> x.multiply(y));
+	}
+	
+	/*
+	 * Date: Mar 17, 2023 -----------------------------------------------------------
+	 * Time created: 2:03:42 AM ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the factorial of the given <code>BigInteger</code> using either the recursive or iterative algorithm.
+	 * @param i the value on which factorial is to be performed
+	 * @param recursive {@code true} if using the recursive algorithm and false if otherwise
+	 * @return the factorial of the first argument
+	 */
+	public static BigInteger factorial(BigInteger i, boolean recursive) {
+		if(recursive) return recursiveFactorial(i, i(5_000));
+		return linearFactorial(i, i(5_000));
+	}
+	
+	/*
+	 * Date: Mar 17, 2023 -----------------------------------------------------------
+	 * Time created: 2:06:59 AM ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the factorial of the given number. This is equivalent to calling {@code factorial(i, false)}
+	 * @param i the operand of the factorial
+	 * @return a value that is the factorial of the input
+	 */
+	public static BigInteger factorial(BigInteger i) {
+		return factorial(i, false);
 	}
 
 	/////////////////////////////////////////////////////////////////////

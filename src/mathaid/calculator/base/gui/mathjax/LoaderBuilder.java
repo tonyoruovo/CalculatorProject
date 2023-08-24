@@ -464,10 +464,10 @@ public class LoaderBuilder extends AbstractOptionsBuilder {
 	 * This is a function to use for loading components. It should accept a string
 	 * that is the location of the component to load, and should do whatever is
 	 * needed to load that component. If the loading is asynchronous, it should
-	 * return a promise that is resolved when the component is loaded, ortherwise it
+	 * return a promise that is resolved when the component is loaded, or therwise it
 	 * should return nothing. If there is an error loading the component, it should
 	 * throw an error. <br>
-	 * If set null, the default is to insert a <script> tag into the document that
+	 * If set null, the default is to insert a &lt;script&gt; tag into the document that
 	 * loads the component.
 	 * <p>
 	 * For use in node applications, set this value to require, which will use

@@ -106,8 +106,8 @@ public final class Currencies {
 		CURRENCIES.add(new MediumOfExchange("Albania", "ALL", 8, 2, "Albanian Lek", "\u004C\u0065\u006B", get(16, 2, 1926)));
 		CURRENCIES.add(new MediumOfExchange("Algeria", "DZD", 12, 2, "Algerian Dinar", "DA", get(1, 4, 1964)));
 		/*The actual date created might be 13-march-1979?*/
-		CURRENCIES.add(new MediumOfExchange("Andorra", "ADF", -1, 2, "Andorran Franc", "F", get(1, 1, 1960), null, "FRF", null, get(17, 2, 2002), "EUR"));//Values other than iso, country name and display name uses french franc values
-		CURRENCIES.add(new MediumOfExchange("Andorra", "ADP", -1, 2, "Andorran Peseta", "Pts", get(1, 1, 1868), null, "ESP", null, get(17, 2, 2002), "EUR"));//Values other than iso, country name and display name uses spanish peseta values
+		//CURRENCIES.add(new MediumOfExchange("Andorra", "ADF", -1, 2, "Andorran Franc", "F", get(1, 1, 1960), null, "FRF", null, get(17, 2, 2002), "EUR"));//Values other than iso, country name and display name uses french franc values
+		// CURRENCIES.add(new MediumOfExchange("Andorra", "ADP", -1, 2, "Andorran Peseta", "Pts", get(1, 1, 1868), null, "ESP", null, get(17, 2, 2002), "EUR"));//Values other than iso, country name and display name uses spanish peseta values
 		CURRENCIES.add(new MediumOfExchange("Angola", "AOA", 973, 2, "Angolan Kwanza", "Kz", get(1, 12, 1999)));
 		CURRENCIES.add(new MediumOfExchange("Angola", "AOK", 24, 2, "Angolan Kwanza", "Kz", get(8, 1, 1977), get(24, 9, 1990), "AON"));//values is according to https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list_three.xml
 		CURRENCIES.add(new MediumOfExchange("Angola", "AON", 24, 2, "Angolan Novo kwanza", "Kz", get(25, 9, 1990), get(30, 6, 1995), "AOR"));//values is according to https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list_three.xml

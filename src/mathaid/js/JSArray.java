@@ -103,7 +103,7 @@ public class JSArray<T extends JSValue<?>> extends JSValue<JSArray<T>> {
 //			parser.append(LS);
 
 			for (int i = 0; i < elements.size(); i++) {
-				elements.get(i).parseToScript(parser, 0);
+				elements.get(i).parseToScript(parser, tabs);
 				if (i < elements.size() - 1)
 					parser.append(", ");
 //				parser.append(LS);

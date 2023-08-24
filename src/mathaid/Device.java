@@ -5,9 +5,16 @@ package mathaid;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Runtime.getRuntime;
+import static java.lang.System.err;
 import static java.lang.System.getProperty;
 import static java.lang.System.getenv;
+import static java.lang.System.in;
+import static java.lang.System.out;
 import static java.nio.file.Paths.get;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /*
  * Date: 8 May 2020----------------------------------------------------------- 
@@ -25,6 +32,50 @@ import static java.nio.file.Paths.get;
  * 
  */
 public final class Device {
+	public static class SimplePty {
+		public SimplePty(Process process, OutputStream out, InputStream in, OutputStream err) throws IOException {
+			while (process.isAlive()) {
+				sync(process.getErrorStream(), err);
+				sync(process.getInputStream(), out);
+				sync(in, process.getOutputStream());
+			}
+		}
+
+		private void sync(InputStream in, OutputStream out) throws IOException {
+			while (in.available() > 0) {
+				out.write(in.read());
+				out.flush();
+			}
+		}
+
+		public static void start(OutputStream out, InputStream in, OutputStream err) throws IOException {
+			String os = System.getProperty("os.name").toLowerCase();
+			String shell = os.contains("win") ? "cmd" : "bash";
+			Process process = new ProcessBuilder(shell).start();
+			new SimplePty(process, out, in, err);
+		}
+
+		public static void start(OutputStream out, OutputStream err) throws IOException {
+			String os = System.getProperty("os.name").toLowerCase();
+			String shell = os.contains("win") ? "cmd" : "bash";
+			Process process = new ProcessBuilder(shell).start();
+			new SimplePty(process, out, in, err);
+		}
+
+		public static void start(OutputStream out) throws IOException {
+			String os = System.getProperty("os.name").toLowerCase();
+			String shell = os.contains("win") ? "cmd" : "bash";
+			Process process = new ProcessBuilder(shell).start();
+			new SimplePty(process, out, in, err);
+		}
+
+		public static void start() throws IOException {
+			String os = System.getProperty("os.name").toLowerCase();
+			String shell = os.contains("win") ? "cmd" : "bash";
+			Process process = new ProcessBuilder(shell).start();
+			new SimplePty(process, out, in, err);
+		}
+	}
 
 	/*
 	 * Date: 8 May 2020-----------------------------------------------------------
@@ -34,6 +85,18 @@ public final class Device {
 	 * Should prevent a new instance
 	 */
 	private Device() {
+	}
+
+	
+	@SuppressWarnings("deprecation")
+	public static final long sysMem() {
+		com.sun.management.OperatingSystemMXBean os = (com.sun.management.OperatingSystemMXBean)
+			     java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+		return os.getTotalPhysicalMemorySize();
+	}
+	
+	public static final long jvmMem() {
+		return getRuntime().totalMemory();
 	}
 
 	/*

@@ -42,8 +42,9 @@ import mathaid.calculator.base.converter.Currencies.Website;
  * <a href="https://cdn.jsdelivr.net/gh/fawazahmed0">CDN repo</a> using
  * GET method. The URI has a few parameters it requires, and it's
  * structure includes:
- * <pre>
+ * <pre><code>
  * https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@{apiVersion}/{date}/{endpoint}.json
+ * </code>
  * </pre>
  * <h2>apiVersion</h2>
  * <p>
@@ -66,11 +67,11 @@ import mathaid.calculator.base.converter.Currencies.Website;
  * <ul>
  * <li>{@code /currencies}<br> will return a list of all supported currencies.
  * The format is:
- * <pre>
+ * <pre><code>
  * {
  * 	"currency code": "currency name"
  * }
- * </pre>
+ * </code></pre>
  * </li>
  * <li><code>/currencies/&#123;currencyCode&#125;</code><br> will return a list
  * of all supported currencies and their converted values (using a unit of 1)

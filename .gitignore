@@ -2,6 +2,7 @@
 /.settings
 /test
 /META-INF
+/lib
 # Compiled class file
 *.class
 

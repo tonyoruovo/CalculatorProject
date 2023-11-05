@@ -1955,7 +1955,7 @@ public final class Utility {
 	 * length is equal to the varargs length or an {@code RuntimeException} will be
 	 * thrown.
 	 * 
-	 * @param <T>     the type of the array which is also the type of var arguments
+	 * @param <E>     the type of the array which is also the type of var arguments
 	 * @param array   an array of type {@code &lt;T&gt;}
 	 * @param indexes array of {@code int} that specifies the index of each vararg
 	 *                within the returned array. The index of each element is
@@ -1990,17 +1990,17 @@ public final class Utility {
 	 *                          &gt; array.length</code>
 	 */
 	@SafeVarargs
-	public static <T> T[] add(T[] array, int[] indexes, T... args) {
+	public static <E> E[] add(E[] array, int[] indexes, E... args) {
 		if (indexes.length != args.length)
 			new ArraySizeException(ARRAY_SIZE_OUTSIDE_LIMIT, Math.max(indexes.length, args.length));
 
-		List<T> l = new ArrayList<>(Arrays.asList(array));
+		List<E> l = new ArrayList<>(Arrays.asList(array));
 		int i = 0;
-		for (T t : args) {
+		for (E e : args) {
 			int index = indexes[i];
 			if (index < 0 || index > l.size())
 				new IndexBeyondLimitException(index, l.size());
-			l.add(index, t);
+			l.add(index, e);
 			i++;
 		}
 		return l.toArray(array);

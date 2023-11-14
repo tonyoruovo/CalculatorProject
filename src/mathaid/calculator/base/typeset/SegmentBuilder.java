@@ -8,6 +8,70 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import mathaid.calculator.base.util.Utility;
+
+/*
+ * Date: 13 Aug 2022-----------------------------------------------------------
+ * Time created: 16:16:18--------------------------------------------
+ * Package: mathaid.calculator.base.typeset ------------------------------------------------
+ * Project: CalculatorProject ------------------------------------------------
+ * File: SegmentBuilder.java ------------------------------------------------------
+ * Class name: SegmentBuilder ------------------------------------------------
+ * 
+ * Some methods are implemented 3 or more times in this class namely:
+ * 1. segmentAt - 4 overloads
+ * 2. setError - 3 overloads
+ * 3. setFocus - 3 overloads
+ * 4. delete - 4 overloads
+ * 5. insert - 8 overloads
+ * 6. replace - 8 overloads
+ * They usually follow this pattern: a static implementation, a public one with an int varargs and another public one with a List parameter.
+ * These are primarily implemented in the static implementation which properly traverses the segment tree.
+ */
+/**
+ * Acts as a mutable semi-wrapper for {@code LinkedSegment} objects and
+ * retrofits them with additional capabilities while enhancing ease-of-use. For
+ * example, this class supports mutative deletion, mutative insertion, mutative
+ * appendage, mutative replacement and other mutative operations that take the
+ * form of {@code setXxx} (such as {@link #setError(boolean, List)}), proper
+ * traversal of top-level {@code LinkedSegment}s and their children whereby the
+ * children can be the target of a set operation (this is not possible using the
+ * vanilla {@code LinkedSegment} interface). This class is to
+ * {@link LinkedSegment} as {@link StringBuilder} is to {@link String}.
+ * <p>
+ * An example of this class in action is when the quadratic formula is built
+ * using this class:
+ *<pre>
+ *	<code>
+ *		DigitPunc dp = new DigitPunc();
+ *		SegmentBuilder formula = new SegmentBuilder()
+ *				.append(Segments.freeVariable("x", "x"))
+ *				.append(Segments.operator("=", "="));
+ *		SegmentBuilder numerator = new SegmentBuilder(Digits.prefixMinus())
+ *				.append(Segments.freeVariable("b", "b"))
+ *				.append(Segments.operator("\\pm", "-"));// To prevent errors during toString
+ *		SegmentBuilder radicand = new SegmentBuilder(
+ *				Segments.pow(Segments.freeVariable("b", "b"), Digits.integer('2', dp)))
+ *				.append(Segments.operator("-", "-")).append(Digits.integer('4', dp))
+ *				.append(Segments.freeVariable("a", "a")).append(Segments.freeVariable("c", "c"));
+ *		numerator.append(Segments.sqrt(radicand.toSegment()));
+ *		formula.append(Segments.fraction(numerator.toSegment(), Digits.integer('2', dp)
+ *				.concat(Segments.freeVariable("a", "a"))));
+ *		
+ *		List<Integer> l = new ArrayList<>(Arrays.asList(-1));
+ *		formula.toSegment().toString(out, null, l);//prints: x= Rational[-b- Sqrt[b ^(2 )-4*ac ] ,2*a ]
+ *		out.println();
+ *		l.clear();
+ *		l.add(-1);
+ *		formula.toSegment().format(out, Formatter.empty(), l);//prints: x= \frac{\textrm{-}b\pm \sqrt{b ^{2 }-4ac } }{2a}
+ *	</code>
+ *</pre>
+ * Which when displayed in a TeX capable program will render
+ * as:
+ * 
+ * @author Oruovo Anthony Etineakpopha
+ * @email tonyoruovo@gmail.com
+ */
 public class SegmentBuilder implements Iterable<LinkedSegment> {
 
 	public SegmentBuilder(Segment segment) {
@@ -283,6 +347,20 @@ public class SegmentBuilder implements Iterable<LinkedSegment> {
 		for (int i : index)
 			l.add(i);
 		head = insert(head, l, Objects.requireNonNull(seg, "Cannot insert a null value"));
+//		System.out.println(Utility.toCSV(l));
+//		Integer[] il = new Integer[l.size()];
+//		il = l.toArray(il);
+//		try {
+//			head = insert(head, l, Objects.requireNonNull(seg, "Cannot insert a null value"));
+//		} catch (NullPointerException e) {
+//			IndexOutOfBoundsException iob = new IndexOutOfBoundsException(
+//					new StringBuilder(e.getMessage())
+//					.append(Utility.toCSV(Arrays.asList(il)))
+//					.toString()
+//			);
+//			iob.initCause(e);
+//			throw iob;
+//		}
 		return this;
 	}
 

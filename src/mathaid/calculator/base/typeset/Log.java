@@ -4,6 +4,7 @@
 package mathaid.calculator.base.typeset;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,9 @@ public class Log {
 	 */
 	public Log() {
 		messages = new HashMap<>();
+		messages.put(ERROR, new ArrayDeque<>());
+		messages.put(WARNING, new ArrayDeque<>());
+		messages.put(INFO, new ArrayDeque<>());
 	}
 	
 	public String removeLatestError() {
@@ -83,6 +87,6 @@ public class Log {
 		return messages.get(INFO).size();
 	}
 	
-	private final Map<Byte, ArrayDeque<String>> messages;
+	private final Map<Byte, Deque<String>> messages;
 
 }

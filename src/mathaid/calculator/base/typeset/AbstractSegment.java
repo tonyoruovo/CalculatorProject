@@ -21,7 +21,6 @@ public abstract class AbstractSegment implements LinkedSegment {
 		this.spIndex = superIndex;
 		this.sbIndex = subIndex;
 	}
-
 	@Override
 	public int getType() {
 		return type;
@@ -57,7 +56,7 @@ public abstract class AbstractSegment implements LinkedSegment {
 		try {
 			children[childIndex] = child; // TODO: not ideal, too mutative
 		} catch (IndexOutOfBoundsException e) {
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException(childIndex);
 		}
 		return this;
 	}

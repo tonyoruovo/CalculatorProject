@@ -31,6 +31,17 @@ public interface Marker {
 	 */
 	String mark(Segment segment, String format, int type, List<Integer> position);
 
+	/*
+	 * Date: 13 Nov 2023 -----------------------------------------------------------
+	 * Time created: 09:26:40 ---------------------------------------------------
+	 */
+	/**
+	 * An implementation of {@link Object#equals} which enables this {@code Marker} to be used inside a {@link Collection}
+	 * without the possibility of collision due to similarities between properties.
+	 * @param obj {@inheritDoc}
+	 * @return {@inheritDoc}
+	 * @see java.lang.Object
+	 */
 	@Override
-	boolean equals(Object o);
+	boolean equals(Object obj);
 }

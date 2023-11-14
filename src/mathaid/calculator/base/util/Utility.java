@@ -2316,7 +2316,7 @@ public final class Utility {
 	 */
 	public static BigDecimal nextBigDecimal(Random r, int mantissaDigits) {
 		int length = r.nextInt(Math.abs(mantissaDigits)) + 1;
-		StringBuilder sb = new StringBuilder(Math.abs(length) + 2);// the zero and the decimal point
+		StringBuilder sb = new StringBuilder(Math.abs(length) + 3);// the sign, zero and decimal point
 		sb.append(r.nextBoolean() ? '-' : '+');
 		sb.append("0.");
 		int i = 0;
@@ -3287,4 +3287,26 @@ public final class Utility {
 			in = i(objects[i].hashCode()).shiftLeft(in.bitLength()).and(in);
 		return (in.bitLength() < len ? in : (msb ? FloatAid.getHigh(in, len) : FloatAid.getLow(in, len))).intValue();
 	}
+
+	/*
+	 * Date: 14 Nov 2023 -----------------------------------------------------------
+	 * Time created: 16:32:23 ---------------------------------------------------
+	 */
+	/**
+	 * Formats a list into a comma separated string (CSV).
+	 * Returns an empty string if the list is empty. Will
+	 * throw a {@code NullPointerException} if the argument
+	 * is {@code null}.
+	 * @param <T> the type of list to be formatted.
+	 * @param l the list to be formatted.
+	 * @return a string where each subsequent value is preceded by a comma.
+	 */
+	public static <T> String toCSV(List<T> l) {
+		StringBuilder sb = new StringBuilder(l.size() * 2);
+		for(int i = 0; i < l.size(); i++, sb.append(",")) {
+			sb.append(l.get(i));
+		}
+		return sb.toString();
+	}
+	
 }

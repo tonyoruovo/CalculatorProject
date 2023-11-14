@@ -106,6 +106,7 @@ public class Segments {
 				new String[] { " Product[", String.format(" ,{%s,", index), " ,", " }]" }, new int[] { 1, 0, 2 },
 				new int[] { 2, 1, 0 }, Segment.Type.OBJECT, new LinkedSegment[] { upper, lower, function }, 0, 1);
 	}
+	
 	public static LinkedSegment product(LinkedSegment index, LinkedSegment lower, LinkedSegment upper,
 			LinkedSegment function) {
 		return new CompositeSegment(new String[] { " \\prod\\limits_{", " =", " }^{", " }\\,", "" },

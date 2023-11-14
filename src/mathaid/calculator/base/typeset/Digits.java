@@ -32,24 +32,81 @@ import mathaid.calculator.base.value.BigFraction;
 import mathaid.calculator.base.value.BinaryFPPrecision.BinaryFP;
 import mathaid.calculator.base.value.FloatAid;
 
+/*
+ * Date: 13 Nov 2023 -----------------------------------------------------------
+ * Time created: 10:39:35 ---------------------------------------------------
+ * Package: mathaid.calculator.base.typeset ------------------------------------------------
+ * Project: CalculatorProject ------------------------------------------------
+ * File: Digits.java ------------------------------------------------------
+ * Class name: Digits ------------------------------------------------
+ */
+/**
+ * Set of static methods that help construct proper {@link Digit} objects which are easily found in TeX and MathJax.
+ * @author Oruovo Anthony Etineakpopha
+ * @email tonyoruovo@gmail.com
+ */
 public final class Digits {
 
+	/*
+	 * Date: 13 Nov 2023 -----------------------------------------------------------
+	 * Time created: 10:41:03 ---------------------------------------------------
+	 */
+	/**
+	 * Constructs a {@code LinkedSegment} for the unary operator '+'
+	 * @return a {@code LinkedSegment} for the unary operator {@code +}.
+	 */
 	public static LinkedSegment prefixPlus() {
 		return new BasicSegment("\\textrm{+}", "+", PREFIX_PLUS);
 	}
 
+	/*
+	 * Date: 13 Nov 2023 -----------------------------------------------------------
+	 * Time created: 10:41:03 ---------------------------------------------------
+	 */
+	/**
+	 * Constructs a {@code LinkedSegment} for the unary operator '-', which usually precedes a number.
+	 * @return a {@code LinkedSegment} for the unary operator {@code -}.
+	 */
 	public static LinkedSegment prefixMinus() {
 		return new BasicSegment("\\textrm{-}", "-", PREFIX_MINUS);
 	}
 
+	/*
+	 * Date: 13 Nov 2023 -----------------------------------------------------------
+	 * Time created: 10:44:09 ---------------------------------------------------
+	 */
+	/**
+	 * Creates an integer {@code Digit} from the character {@code d} which is assumed to be the digit of a radix-based number, using the second argument for adding relevant punctuation such as the separator.
+	 * Note that this method does not check for the radix of the character.
+	 * @param d the character from which the {@code Digit} will be created.
+	 * @param dp the {@code DigitPunc} object which provides adequate punctuation options for the {@code LinkedSegment} created.
+	 * @return a {@code Digit} that was created from the arguments.
+	 */
 	public static Digit integer(char d, DigitPunc dp) {
 		return new Digit(d, dp);
 	}
 
+	/*
+	 * Date: 13 Nov 2023 -----------------------------------------------------------
+	 * Time created: 10:44:09 ---------------------------------------------------
+	 */
+	/**
+	 * Creates a mantissa {@code Digit} from the character {@code d} which is assumed to be the digit of a radix-based number, using the second argument for adding relevant punctuation such as the separator.
+	 * Note that this method does not check for the radix of the character.
+	 * The digit created is one that will reside at the mantissa portion of a number. This digit can have recurring characters.
+	 * @param d the character from which the {@code Digit} will be created.
+	 * @param dp the {@code DigitPunc} object which provides adequate punctuation options for the {@code LinkedSegment} created.
+	 * @return a {@code Digit} that was created from the arguments.
+	 */
 	public static Digit mantissa(char d, DigitPunc dp) {
 		return new Digit(d, MANTISSA, dp);
 	}
 
+	/**
+	 * Creates a radix point that separates the integer from the mantissa.
+	 * @param d the character from which the {@code LinkedSegment} will be created.
+	 * @returns the argument as a {@code LinkedSegment}.
+	 */
 	public static LinkedSegment point(char p) {
 		return new BasicSegment(String.valueOf(p), POINT);
 	}

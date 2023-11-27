@@ -3,6 +3,11 @@
 /test
 /META-INF
 /lib
+/res/*.html
+/res/npm
+
+*.vscode
+
 # Compiled class file
 *.class
 

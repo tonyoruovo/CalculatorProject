@@ -6,7 +6,7 @@ package mathaid.calculator.base.value;
 import static mathaid.calculator.base.value.FloatAid.clearMSB;
 import static mathaid.calculator.base.value.FloatAid.getAllOnes;
 import static mathaid.calculator.base.value.FloatAid.getTrailingZeros;
-import static mathaid.calculator.base.value.FloatAid.i;
+import static mathaid.calculator.base.util.Utility.i;
 import static mathaid.calculator.base.value.TC.multiplicationHasOverflown;
 
 import java.math.BigInteger;

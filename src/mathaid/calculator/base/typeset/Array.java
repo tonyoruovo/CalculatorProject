@@ -8,6 +8,7 @@
 package mathaid.calculator.base.typeset;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import mathaid.calculator.FatalReadException;
@@ -21,6 +22,8 @@ import mathaid.calculator.FatalReadException;
  * Class name: Array ------------------------------------------------
  */
 /**
+ * A Segment that represents an array.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -32,18 +35,28 @@ class Array extends AbstractSegment {
 	 * 8:38:16 PM ---------------------------------------------------
 	 */
 	/**
-	 * @param type
-	 * @param focus
-	 * @param error
-	 * @param sibling
-	 * @param children
-	 * @param superIndex
-	 * @param subIndex
+	 * Private constructor to enforce the immutability of this object.
+	 * 
+	 * @param focus    the focus of this node to be set.
+	 * @param error    the error of this node to be set.
+	 * @param sibling  the sibling of this node.
+	 * @param elements array representing the elements of this array segment. This
+	 *                 is also the children of {@code this}.
 	 */
 	private Array(boolean focus, boolean error, LinkedSegment sibling, LinkedSegment[] elements) {
 		super(Segment.Type.OBJECT, focus, error, sibling, elements, -1, -1);
 	}
 
+	/*
+	 * Date: 18 Nov 2023 -----------------------------------------------------------
+	 * Time created: 14:16:20 ---------------------------------------------------
+	 */
+	/**
+	 * Constructs this segment by specifying the elements.
+	 * 
+	 * @param elements an array of the elements in this array! Note that this also
+	 *                 represents the children.
+	 */
 	public Array(LinkedSegment[] elements) {
 		this(false, false, null, elements);
 	}
@@ -56,9 +69,10 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param a
-	 * @param f
-	 * @param position
+	 * @param a        {@inheritDoc}
+	 * @param f        {@inheritDoc}
+	 * @param position {@inheritDoc}
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	public void format(Appendable a, Formatter f, List<Integer> position) {
@@ -93,9 +107,10 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param a
-	 * @param l
-	 * @param position
+	 * @param a        {@inheritDoc}
+	 * @param l        {@inheritDoc}
+	 * @param position {@inheritDoc}
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	public void toString(Appendable a, Log l, List<Integer> position) {
@@ -131,10 +146,10 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param index
-	 * @param focus
-	 * @return
-	 * @throws IndexOutOfBoundsException
+	 * @param index {@inheritDoc}
+	 * @param focus {@inheritDoc}
+	 * @return {@inheritDoc}
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	public LinkedSegment setFocus(int index, boolean focus) throws IndexOutOfBoundsException {
@@ -153,10 +168,10 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param index
-	 * @param error
-	 * @return
-	 * @throws IndexOutOfBoundsException
+	 * @param index {@inheritDoc}
+	 * @param error {@inheritDoc}
+	 * @return {@inheritDoc}
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	public LinkedSegment setError(int index, boolean error) throws IndexOutOfBoundsException {
@@ -175,10 +190,10 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param index
-	 * @param sibling
-	 * @return
-	 * @throws IndexOutOfBoundsException
+	 * @param index   {@inheritDoc}
+	 * @param sibling {@inheritDoc}
+	 * @return {@inheritDoc}
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	public LinkedSegment setSibling(int index, LinkedSegment sibling) throws IndexOutOfBoundsException {
@@ -197,9 +212,9 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param s
-	 * @return
-	 * @throws IndexOutOfBoundsException
+	 * @param s {@inheritDoc}
+	 * @return {@inheritDoc}
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	public LinkedSegment concat(LinkedSegment ls) {
@@ -221,12 +236,16 @@ class Array extends AbstractSegment {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param obj
-	 * @return
+	 * @param obj {@inheritDoc}
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
+		if (obj instanceof Array) {
+			final Array o = (Array) obj;
+			return getType() == o.getType() && getChildren().length == o.getChildren().length
+					&& Arrays.equals(getChildren(), o.getChildren());
+		}
 		return false;
 	}
 
@@ -242,8 +261,15 @@ class Array extends AbstractSegment {
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+//		try {
+//			return Segment.Type.class.getField("OBJECT").getName();
+//		} catch (NoSuchFieldException | SecurityException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return Integer.toHexString(getType()).concat(
+//				Arrays.stream(getChildren()).reduce("", (x, y) -> x.toString().concat(y.toString()), (x, y) -> x + y));
+		return "OBJECT";
 	}
 
 }

@@ -3,20 +3,25 @@
  */
 package mathaid.calculator.base.value;
 
+import static java.util.Arrays.compare;
+import static java.util.Arrays.fill;
+import static mathaid.calculator.base.util.Arith.log;
+import static mathaid.calculator.base.util.Utility.d;
+import static mathaid.calculator.base.util.Utility.i;
+import static mathaid.calculator.base.util.Utility.numOfFractionalDigits;
+import static mathaid.calculator.base.util.Utility.mc;
+import static mathaid.calculator.base.util.Utility.rm;
 import static mathaid.calculator.base.util.Utility.string;
+import static org.hipparchus.util.FastMath.log;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Arrays;
 
 import org.apfloat.Apfloat;
-import org.hipparchus.util.FastMath;
 
-import mathaid.calculator.base.util.Arith;
-import mathaid.calculator.base.util.Tuple;
-import mathaid.calculator.base.util.Utility;
+import mathaid.calculator.base.util.Tuple.Quadruple;
 
 /*
  * Date: 26 Jun 2021----------------------------------------------------------- 
@@ -56,7 +61,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 4 bits for
 	 * the exponent field and 4 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}.
+	 * bit) and a of {@link RoundingMode#HALF_UP}.
 	 * <p>
 	 * Note that this is not standard in IEEE754, but the method is given this name
 	 * for ease of reference and grouping with other methods that return a
@@ -66,7 +71,7 @@ public final class FloatAid {
 	 *         bits for the significand (including the implicit bit)
 	 */
 	public static BinaryFPPrecision IEEE754Bit8() {
-		return IEEE754Bit8(RoundingMode.HALF_UP);
+		return IEEE754Bit8(rm("HALF_UP"));
 	}
 
 	/*
@@ -99,7 +104,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 5 bits for
 	 * the exponent field and 11 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}. This is the same as the standard
+	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
 	 * half precision in IEEE754 (hence the name).
 	 * 
 	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's half
@@ -107,7 +112,7 @@ public final class FloatAid {
 	 * @see Precision#HALF
 	 */
 	public static BinaryFPPrecision IEEE754Half() {
-		return IEEE754Half(RoundingMode.HALF_UP);
+		return IEEE754Half(rm("HALF_UP"));
 	}
 
 	/*
@@ -138,7 +143,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 8 bits for
 	 * the exponent field and 24 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}. This is the same as the standard
+	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
 	 * single (or 32 bit) precision in IEEE754 (hence the name).
 	 * 
 	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's single (32
@@ -146,7 +151,7 @@ public final class FloatAid {
 	 * @see Precision#SINGLE
 	 */
 	public static BinaryFPPrecision IEEE754Single() {
-		return IEEE754Single(RoundingMode.HALF_UP);
+		return IEEE754Single(rm("HALF_UP"));
 	}
 
 	/*
@@ -177,7 +182,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 11 bits for
 	 * the exponent field and 53 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}. This is the same as the standard
+	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
 	 * double (or 64 bit) precision in IEEE754 (hence the name).
 	 * 
 	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double (64
@@ -185,7 +190,7 @@ public final class FloatAid {
 	 * @see Precision#DOUBLE
 	 */
 	public static BinaryFPPrecision IEEE754Double() {
-		return IEEE754Double(RoundingMode.HALF_UP);
+		return IEEE754Double(rm("HALF_UP"));
 	}
 
 	/*
@@ -216,7 +221,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 15 bits for
 	 * the exponent field and 65 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}. This is the same as the standard
+	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
 	 * double extended (a.k.a long double or 80 bit extended) precision in IEEE754
 	 * (hence the name).
 	 * 
@@ -225,7 +230,7 @@ public final class FloatAid {
 	 * @see Precision#EXTENDED
 	 */
 	public static BinaryFPPrecision IEEE754x86Extended() {
-		return IEEE754x86Extended(RoundingMode.HALF_UP);
+		return IEEE754x86Extended(rm("HALF_UP"));
 	}
 
 	/*
@@ -257,7 +262,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 15 bits for
 	 * the exponent field and 113 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}. This is the same as the standard
+	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
 	 * quadruple (or 128 bit) precision in IEEE754 (hence the name).
 	 * 
 	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's quadruple
@@ -265,7 +270,7 @@ public final class FloatAid {
 	 * @see Precision#QUADRUPLE
 	 */
 	public static BinaryFPPrecision IEEE754Quadruple() {
-		return IEEE754Quadruple(RoundingMode.HALF_UP);
+		return IEEE754Quadruple(rm("HALF_UP"));
 	}
 
 	/*
@@ -296,7 +301,7 @@ public final class FloatAid {
 	 * Method for constructing a {@link BinaryFPPrecision} object which is
 	 * equivalent to creating a {@code BinaryFPPrecision} object using 19 bits for
 	 * the exponent field and 237 bits for the significand (including the implicit
-	 * bit) and a of {@code RoundingMode#HALF_UP}. This is the same as the standard
+	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
 	 * octuple (or 256 bit) precision in IEEE754 (hence the name).
 	 * 
 	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's octuple
@@ -304,7 +309,7 @@ public final class FloatAid {
 	 * @see Precision#OCTUPLE
 	 */
 	public static BinaryFPPrecision IEEE754Octuple() {
-		return IEEE754Octuple(RoundingMode.HALF_UP);
+		return IEEE754Octuple(rm("HALF_UP"));
 	}
 
 	/*
@@ -550,7 +555,7 @@ public final class FloatAid {
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
-	public static BinaryFPPrecision.BinaryFP fromBits(Tuple.Quadruple<Long, Long, Long, Long> layout) {
+	public static BinaryFPPrecision.BinaryFP fromBits(Quadruple<Long, Long, Long, Long> layout) {
 		return IEEE754Octuple().fromBitLayout(i(layout.get4th()).or(i(layout.get3rd()).shiftLeft(Long.SIZE)
 				.or(i(layout.get2nd()).shiftLeft(Long.SIZE * 2).or(i(layout.get()).shiftLeft(Long.SIZE * 3)))));
 	}
@@ -630,7 +635,7 @@ public final class FloatAid {
 		if (places >= s.length())
 			return BigInteger.ZERO;
 		s = s.substring(0, s.length() - places);
-		return s.equals("-") || s.equals("+") ? BigInteger.ZERO : new BigInteger(s, radix);
+		return s.equals("-") || s.equals("+") ? BigInteger.ZERO : i(s, radix);
 	}
 
 	/*
@@ -769,7 +774,7 @@ public final class FloatAid {
 	 */
 	public static int calculateSignificandDigits(int fromRadix, int numOfDigits, int toRadix)
 			throws ArithmeticException {
-		return (int) Math.ceil(numOfDigits * FastMath.log(toRadix, fromRadix));
+		return (int) Math.ceil(numOfDigits * log(toRadix, fromRadix));
 	}
 
 	/*
@@ -811,7 +816,7 @@ public final class FloatAid {
 	static BigInteger calculateSignificandDigits(int fromRadix, BigInteger numOfDigits, int toRadix)
 			throws ArithmeticException {
 //		return (int) Math.ceil(numOfDigits * FastMath.log(toRadix, fromRadix));
-		return d(numOfDigits).multiply(Arith.log(d(toRadix), d(fromRadix), new MathContext(Integer.MAX_VALUE)))
+		return d(numOfDigits).multiply(log(d(toRadix), d(fromRadix), mc(Integer.MAX_VALUE)))
 				.toBigInteger();
 	}
 
@@ -837,12 +842,12 @@ public final class FloatAid {
 	 * Time created: 23:19:11--------------------------------------------
 	 */
 	/**
-	 * Calculates and returns a {@code BigInteger} whose bit length is exactly
+	 * Calculates and returns an unsigned {@code BigInteger} whose bit length is exactly
 	 * {@code numOfBits} with all bits set to 1. Will return -1 if the argument is
 	 * negative and 0 if the argument is 0.
 	 * 
 	 * @param numOfBits the bit length of the returned value
-	 * @return a {@code BigInteger} that has a bit length and bit count is specified
+	 * @return an unsigned {@code BigInteger} that has a bit length and bit count is specified
 	 *         by the argument
 	 */
 	public static BigInteger getAllOnes(int numOfBits) {
@@ -969,9 +974,9 @@ public final class FloatAid {
 		n = n.abs();
 		rv[1] = n.toBigInteger();
 		rv[2] = i(0);
-		n = n.subtract(new BigDecimal(rv[1]));
+		n = n.subtract(d(rv[1]));
 		if (n.signum() != 0) {
-			rv[2] = n.multiply(new BigDecimal(powerOfRadix(radix, mantissaDigits))).toBigInteger();
+			rv[2] = n.multiply(d(powerOfRadix(radix, mantissaDigits))).toBigInteger();
 			rv[3] = i(-mantissaDigits);
 		} else {
 			rv[3] = i(0);
@@ -1223,7 +1228,7 @@ public final class FloatAid {
 	 */
 	public static BigDecimal toDecimal(String n, int radix, MathContext mc) throws NumberFormatException {
 		if (radix == 10 && !n.contains("p"))
-			return new BigDecimal(n, mc);
+			return d(n, mc);
 		// decompose the number to it's sign, integer, point, mantissa, exponent char,
 		// exponent sign ane exponent
 		String[] c = getComponents(n, radix);
@@ -1244,8 +1249,8 @@ public final class FloatAid {
 			// assign a valid MathContext. if the argument is null then compute the number
 			// of digits needed for a direct decimal equivalent
 			mc = (mc != null ? mc
-					: new MathContext((calculateSignificandDigits(radix, ensureNotNull(c[3], "0").length(), 10)
-							+ calculateSignificandDigits(radix, c[1].length(), 10)), RoundingMode.HALF_EVEN));
+					: mc((calculateSignificandDigits(radix, ensureNotNull(c[3], "0").length(), 10)
+							+ calculateSignificandDigits(radix, c[1].length(), 10)), rm("HALF_EVEN")));
 			if (isInteger) {// Only execute this block if the input is integer
 				if (isNormalised) {// Only execute this block if the input has binary exponent
 					// calculate the current position of the radix point to the normalised position
@@ -1263,8 +1268,8 @@ public final class FloatAid {
 					// save the implicit bit
 					integer = i(1);
 					BigDecimal val = mantissa.signum() != 0 ? toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa,
-							lz, 2, new MathContext(mc.getPrecision() + 10)) : d(integer);
-					return val.multiply(d(2).pow(exp, new MathContext(mc.getPrecision() + 20)), mc);
+							lz, 2, mc(mc.getPrecision() + 10)) : d(integer);
+					return val.multiply(d(2).pow(exp, mc(mc.getPrecision() + 20)), mc);
 				} else if (radix != 10 && c[4] != null && c[4].equalsIgnoreCase("e")) {
 					return d(integer.multiply(powerOfRadix(radix, Integer.parseInt(exponent, radix))));
 				}
@@ -1273,7 +1278,7 @@ public final class FloatAid {
 			} else if (isNormalised) {
 				if (radix == 10 && integer.compareTo(i(1)) == 0)
 					return d(integer.multiply(i(c[0].equals("-") ? -1 : 1))).multiply(
-							d(2).pow(Integer.parseInt(exponent, radix), new MathContext(mc.getPrecision() + 10)), mc);
+							d(2).pow(Integer.parseInt(exponent, radix), mc(mc.getPrecision() + 10)), mc);
 				// leading zeros
 				int lz = Math.max(0, c[3].length() - calculateSignificandDigits(2, mantissa.bitLength(), radix));
 				BigDecimal val;
@@ -1284,7 +1289,7 @@ public final class FloatAid {
 					// convert to decimal format
 					val = toDecimal(mantissa, lz, radix, mc);
 					// then convert to binary fraction
-					b = fromDecimal(val, 2, calculateSignificandDigits(10, Utility.numOfFractionalDigits(val), 2));
+					b = fromDecimal(val, 2, calculateSignificandDigits(10, numOfFractionalDigits(val), 2));
 				}
 				// grab the number of indexes the point needs to move to normalise to 1.xxxxx
 				lz = b[3].abs().intValue() - b[2].bitLength();
@@ -1302,9 +1307,9 @@ public final class FloatAid {
 					lz = Math.max(0, (b[2].bitLength() - 1) - mantissa.bitLength());
 					// calculate the actual decimal fraction of the binary significand
 					val = toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa, lz, 2,
-							new MathContext(mc.getPrecision() + 10));
+							mc(mc.getPrecision() + 10));
 					// normalise the answer by multiplying the exponent
-					return val.multiply(d(2).pow(exp, new MathContext(mc.getPrecision() + 20)), mc);
+					return val.multiply(d(2).pow(exp, mc(mc.getPrecision() + 20)), mc);
 				}
 				final int exp;
 				if (integer.compareTo(i(1)) != 0) {// integer and mantissa are not already normalised!
@@ -1321,7 +1326,7 @@ public final class FloatAid {
 				// calculate the actual decimal fraction of the binary significand
 				val = toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa, lz, 2, mc);
 				// normalise the answer by multiplying the exponent
-				return val.multiply(d(2).pow(exp, new MathContext(mc.getPrecision() + 20)), mc);
+				return val.multiply(d(2).pow(exp, mc(mc.getPrecision() + 20)), mc);
 
 			} else if (radix != 10 && c[4] != null && c[4].equalsIgnoreCase("e")) {
 				int exp = Integer.parseInt(exponent, radix);
@@ -1394,12 +1399,12 @@ public final class FloatAid {
 			return n;
 		}
 		int digits = mc == null ? n.length() : mc.getPrecision();
-		mc = mc == null ? new MathContext(calculateSignificandDigits(toRadix, digits, 10), RoundingMode.HALF_EVEN) : mc;
+		mc = mc == null ? mc(calculateSignificandDigits(toRadix, digits, 10), rm("HALF_EVEN")) : mc;
 		BigDecimal d = toDecimal(n, fromRadix, digits < 2 ? null : mc);
 		if (toRadix == 10)
 			return d.toPlainString();
 		BigInteger[] b = fromDecimal(d, toRadix,
-				digits > 0 ? digits : calculateSignificandDigits(10, Utility.numOfFractionalDigits(d), toRadix));
+				digits > 0 ? digits : calculateSignificandDigits(10, numOfFractionalDigits(d), toRadix));
 //		int numOfTrailingZeroes = Math.max(0, b[2].getLowestSetBit());
 //		int mantLen = calculateSignificandDigits(2, b[2].bitLength(), toRadix);
 //		BigInteger mantissa = b[2].shiftRight(numOfTrailingZeroes);
@@ -1449,14 +1454,15 @@ public final class FloatAid {
 			return n;
 		}
 		int digits = mc == null ? n.length() : mc.getPrecision();
-		mc = mc == null ? new MathContext(calculateSignificandDigits(toRadix, digits, 10), RoundingMode.HALF_EVEN) : mc;
+		mc = mc == null ? mc(calculateSignificandDigits(toRadix, digits, 10), rm("HALF_EVEN")) : mc;
 		BigDecimal d = toDecimal(n, fromRadix, digits < 2 ? null : mc);
 		if (toRadix == 10)
-			return Utility.toScientificString(d);
+			return mathaid.calculator.base.util.Utility.toScientificString(d);
 		else if (d.signum() == 0)
 			return d.toString();
-		else if (Utility.isInteger(d)) {
+		else if (mathaid.calculator.base.util.Utility.isInteger(d)) {
 			StringBuilder val = new StringBuilder(d.toBigInteger().toString(toRadix));
+			if(val.length() > mc.getPrecision()) val = val.delete(mc.getPrecision(), val.length());
 			int exp = val.length() - 1;
 			assert exp >= 0;
 			if (val.length() > 1)
@@ -1464,7 +1470,7 @@ public final class FloatAid {
 			return val.append(String.format("e+%s", Integer.toString(exp, toRadix))).toString();
 		}
 		BigInteger[] b = fromDecimal(d, toRadix,
-				digits > 0 ? digits : calculateSignificandDigits(10, Utility.numOfFractionalDigits(d), toRadix));
+				digits > 0 ? digits : calculateSignificandDigits(10, numOfFractionalDigits(d), toRadix));
 		String mantissa = b[2].toString(toRadix);
 		String lz = string('0', Math.max(0, b[3].abs().intValue() - (b[2].bitCount() == 0 ? 0 : mantissa.length())));
 		// Remove trailing zeroes
@@ -1479,7 +1485,7 @@ public final class FloatAid {
 		if (b[1].signum() == 0) {
 			exp = -(lz.length() + 1);
 			assert exp < 0;
-			sb.append(String.format("%1$se%2$s", mantissa, Integer.toString(exp, toRadix)));
+			sb.append(String.format("%1$se%2$s", mantissa.length() <= mc.getPrecision() ? mantissa : mantissa.substring(0, mc.getPrecision()), Integer.toString(exp, toRadix)));
 			if (mantissa.length() > 1)
 				sb.insert(1, '.');
 			return sb.toString();
@@ -1487,7 +1493,7 @@ public final class FloatAid {
 		exp = integer.length() - 1;
 		assert exp >= 0;
 		String welded = String.format("%1$s%2$s%3$s", integer, lz, mantissa);
-		sb.append(String.format("%1$se+%2$s", welded, Integer.toString(exp, toRadix)));
+		sb.append(String.format("%1$se+%2$s", welded.length() <= mc.getPrecision() ? welded : welded.substring(0, mc.getPrecision()), Integer.toString(exp, toRadix)));
 		if (welded.length() > 1)
 			sb.insert(1, '.');
 		return sb.toString();
@@ -1584,7 +1590,7 @@ public final class FloatAid {
 					cpt[5] = String.valueOf(c);
 				else {
 //					err.printf("failed due to an illegal sign --> %1$s, previous >> %2$s\r\n", Arrays.toString(cpt), prev);
-					Arrays.fill(cpt, null);
+					fill(cpt, null);
 					return cpt;
 				}
 			} else if (c == '.' && cpt[2] == null) {
@@ -1596,7 +1602,7 @@ public final class FloatAid {
 					cpt[2] = String.valueOf(c);
 				else {
 //					err.printf("failed due to an illegal point --> %s\r\n", Arrays.toString(cpt));
-					Arrays.fill(cpt, null);
+					fill(cpt, null);
 					return cpt;
 				}
 			}
@@ -1623,7 +1629,7 @@ public final class FloatAid {
 					cpt[4] = String.valueOf(c);
 				else {
 //					System.err.printf("failed due to an illegal exponent char --> %s\r\n", Arrays.toString(cpt));
-					Arrays.fill(cpt, null);
+					fill(cpt, null);
 					return cpt;
 				}
 			} else if (isNumber(c, radix)) { // 1.23456
@@ -1662,15 +1668,15 @@ public final class FloatAid {
 					continue;
 				} else {
 //					err.println(Arrays.toString(cpt));
-					System.err.printf("failed due to an illegal digit (%2$s) --> %1$s\r\n", Arrays.toString(cpt),
-							n.charAt(i - 1));
-					Arrays.fill(cpt, null);
+//					System.err.printf("failed due to an illegal digit (%2$s) --> %1$s\r\n", Arrays.toString(cpt),
+//							n.charAt(i - 1));
+					fill(cpt, null);
 					break;
 				}
 			} else {
 //				err.println(Arrays.toString(cpt));
 //				err.printf("failed due to an illegal character --> %s\r\n", Arrays.toString(cpt));
-				Arrays.fill(cpt, null);
+				fill(cpt, null);
 				break;
 			}
 			prev = c;
@@ -1727,128 +1733,6 @@ public final class FloatAid {
 
 	/*
 	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:44:48--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigDecimal} using
-	 * {@link BigDecimal#BigDecimal(String)}.
-	 * 
-	 * @param i a decimal string
-	 * @return a {@code BigDecimal} equivalent of the argument
-	 */
-	static BigDecimal d(String i) {
-		return new BigDecimal(i);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:46:10--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigDecimal} using
-	 * {@link BigDecimal#BigDecimal(BigInteger)}.
-	 * 
-	 * @param i a {@code BigInteger}
-	 * @return a {@code BigDecimal} equivalent of the argument
-	 */
-	static BigDecimal d(BigInteger i) {
-		return new BigDecimal(i);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:47:02--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigDecimal} using
-	 * {@link BigDecimal#BigDecimal(BigInteger, MathContext)}.
-	 * 
-	 * @param i  a {@code BigInteger}
-	 * @param mc a {@code MathContext} object
-	 * @return a {@code BigDecimal} equivalent of the argument
-	 */
-	static BigDecimal d(BigInteger i, MathContext mc) {
-		return new BigDecimal(i, mc);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:47:57--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigDecimal} using
-	 * {@link BigDecimal#valueOf(long)}.
-	 * 
-	 * @param i a {@code long}
-	 * @return a {@code BigDecimal} equivalent of the argument
-	 */
-	static BigDecimal d(long i) {
-		return BigDecimal.valueOf(i);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:48:40--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigInteger} using
-	 * {@link BigInteger#valueOf(long)}.
-	 * 
-	 * @param i an {@code int}
-	 * @return a {@code BigInteger} equivalent of the argument
-	 */
-	static BigInteger i(int i) {
-		return BigInteger.valueOf(i);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:50:00--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigInteger} using
-	 * {@link BigInteger#valueOf(long)}.
-	 * 
-	 * @param i a {@code long}
-	 * @return a {@code BigInteger} equivalent of the argument
-	 */
-	static BigInteger i(long l) {
-		return BigInteger.valueOf(l);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:50:35--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigInteger} using
-	 * {@link BigInteger#BigInteger(String, int)}.
-	 * 
-	 * @param i     a {@code String}
-	 * @param radix the radix of the argument
-	 * @return a {@code BigInteger} equivalent of the argument
-	 */
-	static BigInteger i(String i, int radix) {
-		return new BigInteger(i, radix);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
-	 * Time created: 06:52:08--------------------------------------------
-	 */
-	/**
-	 * Quick and handy method to initialise a {@code BigInteger} using a binary
-	 * string.
-	 * 
-	 * @param i a binary {@code String}
-	 * @return a {@code BigInteger} equivalent of the argument
-	 */
-	static BigInteger i(String i) {
-		return new BigInteger(i, 2);
-	}
-
-	/*
-	 * Date: 10 Nov 2022-----------------------------------------------------------
 	 * Time created: 07:20:26--------------------------------------------
 	 */
 	/**
@@ -1898,7 +1782,7 @@ public final class FloatAid {
 			normalisedComponents[6] = "0";
 		} else if (!isNormalised(normalisedComponents))
 			throw new ArithmeticException("irregular normalised form");
-		BigInteger binExp = new BigInteger(String.format("%1$s%2$s", normalisedComponents[5], normalisedComponents[6]),
+		BigInteger binExp = i(String.format("%1$s%2$s", normalisedComponents[5], normalisedComponents[6]),
 				radix);
 		if (normalisedComponents[2] == null)
 			normalisedComponents[2] = ".";
@@ -1931,7 +1815,7 @@ public final class FloatAid {
 //		} while (isNull == true);
 //		return !isNull;
 		String[] s = new String[c.length];
-		return Arrays.compare(c, s) != 0;
+		return compare(c, s) != 0;
 	}
 
 }

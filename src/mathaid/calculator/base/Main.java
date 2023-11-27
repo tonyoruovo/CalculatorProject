@@ -7,18 +7,9 @@ import static java.lang.System.err;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.IntStream;
-
-import mathaid.calculator.base.typeset.DigitPunc;
-import mathaid.calculator.base.typeset.Digits;
-import mathaid.calculator.base.typeset.Empty;
-import mathaid.calculator.base.typeset.Formatter;
-import mathaid.calculator.base.typeset.LinkedSegment;
-import mathaid.calculator.base.typeset.SegmentBuilder;
-import mathaid.calculator.base.typeset.Segments;
-import mathaid.calculator.base.util.Utility;
+import static mathaid.calculator.base.util.Arith.*;
+import java.util.*;
+import static mathaid.calculator.base.util.Utility.*;
 
 /*
  * Date: 18 Mar 2020----------------------------------------------------
@@ -35,60 +26,19 @@ import mathaid.calculator.base.util.Utility;
 //@SuppressWarnings("deprecation")
 public class Main {
 
-	public static String bin(String s, int div, int len) {
-		out.println(err);
-		out.println(in);
-		if (len < 1)
-			len = s.length();
-		StringBuilder sb = new StringBuilder(len + (len / div));
-		s = String.format("%1$s%2$s", Utility.string('0', Math.max(len - s.length(), 0)), s);
-		int j = 0;
-		for (int i = s.length() - 1; i >= 0; i--) {
-			sb.insert(0, s.charAt(i));
-			if (j != 0 && (j + 1) % div == 0 && j != len - 1)
-				sb.insert(0, ' ');
-			j += 1;
-			if (j + 1 > len)
-				break;
-		}
-		return sb.toString();
-	}
+	// Please show in the segment-builder documentation the difference between
+	// setting the focus on an inner child using vanilla linked-segment and doing
+	// the same using segment-builder.
 
 	public static void main(String[] args) {
 		out.println(new Object[] { err, in });
-		DigitPunc dp = new DigitPunc();
-		// Notice that the order of the insert calls (for child segments) do not matter
-		SegmentBuilder formula = new SegmentBuilder()
-				.insert(Segments.freeVariable("x", "x"), 0)
-				.insert(Segments.operator("=", "="), 1)
-				.insert(Segments.fraction(null, null), 2)// null not ideal. Should use the Empty segment object instead
-				// numerator
-				.insert(Digits.prefixMinus(), 2, 0, 0)
-				.insert(Segments.freeVariable("b", "b"), 2, 0, 1)
-				.insert(Segments.operator("\\pm", "-"), 2, 0, 2)
-				// inside the sqrt symbol
-				.insert(Segments.sqrt(null), 2, 0, 3)
-				//inside b squared
-				.insert(Segments.pow(null, null), 2, 0, 3, 0, 0)
-				.insert(Segments.freeVariable("b", "b"), 2, 0, 3, 0, 0, 0, 0)
-				.insert(Digits.integer('2', dp), 2, 0, 3, 0, 0, 1, 0)// end b squared
-				.insert(Segments.operator("-", "-"), 2, 0, 3, 0, 1)
-				.insert(Digits.integer('4', dp), 2, 0, 3, 0, 2)
-				.insert(Segments.freeVariable("a", "a"), 2, 0, 3, 0, 3)
-				.insert(Segments.freeVariable("c", "c"), 2, 0, 3, 0, 4)// end numerator
-				// denominator
-				.insert(Digits.integer('2', dp), 2, 1, 0)
-				.insert(Segments.freeVariable("a", "a"), 2, 1, 1);// end denominator
-
-		var l = new ArrayList<Integer>(Arrays.asList(-1));
-		formula.toSegment().toString(out, null, l);
-		out.println();
-		l.clear();
-		l.add(-1);
-		formula.toSegment().format(out, Formatter.empty(), l);
-		out.println();
+		int a = 150;
+		int b = 2;
+		var x = rootAndRemainder(i(a), b);
+		out.println(Arrays.toString(x));
+		x = rootAndFactor(i(a), b);
+		out.println(Arrays.toString(x));
 		
-		out.println(Utility.toCSV(IntStream.range(4, 25).boxed().toList()));
 
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;
@@ -221,3 +171,4 @@ public class Main {
 
 	}
 }
+

@@ -5,10 +5,10 @@
 package mathaid.calculator.base.typeset;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.NavigableMap;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 /*
  * Date: 13 Nov 2023 -----------------------------------------------------------
@@ -23,15 +23,16 @@ import java.util.NoSuchElementException;
  * {@link Segment#format}.
  * <p>
  * An object used by {@code Segment.format} to add further beautification to a
- * given math code meant for display. They are used to modify parts of the format
- * given to them, they do this to enable certain features in the the formatted code.
- * For example, the formatters are responsible for adding blinking caret so
- * that user can see where to edit on the formula.
+ * given math code meant for display. They are used to modify parts of the
+ * format given to them, they do this to enable certain features in the the
+ * formatted code. For example, the formatters are responsible for adding
+ * blinking caret so that user can see where to edit on the formula.
  * <p>
  * Each layer of styling is created by a {@link Marker}. There are 5 default
  * markers inside a {@code Formatter}. User defined markers can also be created
  * by implementing the {@code Marker} interface, then adding them using
- * {@link Formatter#addMarker}.
+ * {@link Formatter#addMarker}. Each marker has a specificity which specifies
+ * the order in which it will be called.
  * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
@@ -65,13 +66,15 @@ public interface Formatter {
 	 * Time created: 10:33:27 ---------------------------------------------------
 	 */
 	/**
-	 * A {@code Formatter} that does not style math code given to it, opting instead to return it as is.
+	 * A {@code Formatter} that does not style math code given to it, opting instead
+	 * to return it as is.
+	 * 
 	 * @return the empty formatter.
 	 */
 	static Formatter empty() {
-		Map<Integer, Marker> m = new HashMap<>();
+		NavigableMap<Integer, Marker> m = new TreeMap<>();
 		m.put(0, new EmptyMarker());
-		return new BasicFormatter(Collections.unmodifiableMap(m));
+		return new BasicFormatter(Collections.unmodifiableNavigableMap(m));
 	}
 
 	/*
@@ -179,8 +182,9 @@ public interface Formatter {
 	 * Time created: 10:11:09 ---------------------------------------------------
 	 */
 	/**
-	 * Registers the given {@code Marker} using the provided key code, and returns
-	 * {@code true} for a successful registration.
+	 * Registers the given {@code Marker} at the end of the {@code Marker}s stack
+	 * using the provided key code, and returns {@code true} for a successful
+	 * registration.
 	 * 
 	 * @param code    the key code with which the argument {@code Marker} will be
 	 *                registered.
@@ -195,14 +199,36 @@ public interface Formatter {
 	boolean addMarker(int code, Marker element);
 
 	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:44:21 ---------------------------------------------------
+	 */
+	/**
+	 * Adds a {@code Marker} at the given index using the provided key code, and
+	 * returns {@code true} for a successful registration.
+	 * 
+	 * @param code    the key code with which the argument {@code Marker} will be
+	 *                registered.
+	 * @param element the {@code Marker} to be registered.
+	 * @param index   the order in which the given marker will be called.
+	 * @return {@code true} if the operation was successful. Returns {@code false}
+	 *         otherwise.
+	 * @implNote Most implementation should prevent an overwrite on scenarios where
+	 *           the key code was already used to register a {@code Marker}. They
+	 *           may opt to throw an exception but ideally, they should return
+	 *           simply {@code false}.
+	 */
+	boolean addMarker(int code, Marker element, int index);
+
+	/*
 	 * Date: 13 Nov 2023 -----------------------------------------------------------
 	 * Time created: 10:16:13 ---------------------------------------------------
 	 */
 	/**
 	 * Unregisters the given {@code Marker} using the provided key code, and returns
-	 * {@code true} for a successful removal. If this method returns {@code true}, then
-	 * calling {@link #get} with this code will throw a {@code NoSuchElementException} and
-	 * this {@code Formatter} will no longer support any {@code Marker} using the given code.
+	 * {@code true} for a successful removal. If this method returns {@code true},
+	 * then calling {@link #get} with this code will throw a
+	 * {@code NoSuchElementException} and this {@code Formatter} will no longer
+	 * support any {@code Marker} using the given code.
 	 * 
 	 * @param code    the key code with which the argument {@code Marker} was
 	 *                registered.
@@ -218,10 +244,12 @@ public interface Formatter {
 	 */
 	/**
 	 * Disables (but does not remove) the {@code Marker} whose key is the argument.
+	 * 
 	 * @param code the key of the {@code Marker} to be disabled.
-	 * @return {@code true} if an active {@code Marker} was deactivated with this method else returns {@code false}.
+	 * @return {@code true} if an active {@code Marker} was deactivated with this
+	 *         method else returns {@code false}.
 	 */
-	boolean disableMarker(int code);
+//	boolean disableMarker(int code);
 
 	/*
 	 * Date: 13 Nov 2023 -----------------------------------------------------------
@@ -229,8 +257,42 @@ public interface Formatter {
 	 */
 	/**
 	 * Enables a previously disabled {@code Marker} whose key is the argument.
+	 * 
 	 * @param code the key of the {@code Marker} to be enabled.
-	 * @return {@code true} if an inactive {@code Marker} was activated with this method else returns {@code false}.
+	 * @return {@code true} if an inactive {@code Marker} was activated with this
+	 *         method else returns {@code false}.
 	 */
-	boolean enableMarker(int code);
+//	boolean enableMarker(int code);
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:34:30 ---------------------------------------------------
+	 */
+	/**
+	 * Sets the mark order of {@code Marker} whose code is the same as the first
+	 * argument. The mark order of a {@code Marker} is the order in which the marker
+	 * will be called. Hence the first to be called is that at 0, followed by 1 and
+	 * so on.
+	 * <p>
+	 * If there is already a marker at the specified order and this marker does not
+	 * use the same code as specified, then their orders are swapped.
+	 * 
+	 * @param code  the code of the marker to be moved.
+	 * @param order the index within the markers from which this will be called.
+	 * @return {@code true} if the setting was successful or else {@code false}.
+	 */
+	boolean setMarkOrder(int code, int order);
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:55:31 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the order of the marker using the given code.
+	 * 
+	 * @param code the code of the marker whose order is being retrieved.
+	 * @return retrieves the order for the corresponding code. Returns {@code -1} if
+	 *         there is no order with the given code.
+	 */
+	int getMarkOrder(int code);
 }

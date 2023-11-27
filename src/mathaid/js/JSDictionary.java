@@ -113,7 +113,7 @@ public class JSDictionary<K extends JSValue<?>, V extends JSValue<?>> extends JS
 	@Override
 	public void parseToScript(Appendable parser, int tabs) {
 		try {
-			parser.append('[');
+			parser.append('{');
 			parser.append(LS);
 
 			int iteration = -1;
@@ -129,7 +129,7 @@ public class JSDictionary<K extends JSValue<?>, V extends JSValue<?>> extends JS
 			}
 
 			JSSnippet.appendTabs(parser, tabs - 1);
-			parser.append(']');
+			parser.append('}');
 		} catch (@SuppressWarnings("unused") IOException e) {
 		}
 	}

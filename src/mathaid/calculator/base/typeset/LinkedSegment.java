@@ -14,11 +14,25 @@ import java.util.List;
  * Class name: LinkedSegment ------------------------------------------------
  */
 /**
- * A {@code Segment} implemented as a forward linking tree. Each {@code LinkedSegment} is a
- * node, where {@link LinkedSegment#getSibling} is used to get the sibling of
- * the node from which it was called and {@link LinkedSegment#getChildren} gets
- * the children.
- * <p>A {@code LinkedSegment} is a tree (represented like an abstract syntax tree) which can exist
+ * A {@code Segment} implemented as a forward linking tree. It consists of a head
+ * (first node/element specified by {@code segmentAt(0)}), a tail (last node/element
+ * specified by {@code segmentAt(length() - 1)}) and an arbitrary number of nodes in
+ * between. Each node can only access the sibling that is to the right (forward, ahead)
+ * of it's position hence the term <q>forward linking tree</q>. This means that
+ * all nodes have a reference to their sibling that is to their right but not to
+ * the sibling that is to their left. Therefore the head is a
+ * sibling of none and the tail has no sibling. When the tree is traversed from the
+ * head towards the tail, the traversal is known as <strong><em>Horizontal traversal</em></strong>.
+ * The index of a node is the position which it occupies in the tree. The head is at
+ * index {@code 0}, it's sibling (if any) is at index {@code 1} and the tail is at
+ * {@code length() - 1} index. Each {@code LinkedSegment} may have 0 or more children,
+ * and each child is itself a tree because it is an instance of the {@code LinkedSegment}
+ * interface and may also have a head, tail, intermediary nodes and children of it's own.
+ * Each node is a {@code LinkedSegment}, where {@link LinkedSegment#getSibling} is
+ * used to get the sibling of the node from which it was called and
+ * {@link LinkedSegment#getChildren} gets the children.
+ * <p>A {@code LinkedSegment} is a tree (represented like an abstract syntax tree)
+ * which can exist
  * independent of it's siblings. It may have an image (which is the face value of the
  * {@code LinkedSegment}) and also children (which are themselves {@code LinkedSegment}s). A {@code LinkedSegment} may or
  * may not be independent of it's children, this is entirely dependent on the
@@ -80,41 +94,48 @@ import java.util.List;
  * The above visuals can be achieved by doing:
  * <pre>
  * 	<code>
- * 		DigitPunc def = new DigitPunc();
- * 		LinkedSegment upper = Segments.freeVariable("n", "n");
- * 		LinkedSegment lower = Segments.freeVariable("i", "i");
- * 		LinkedSegment index = Digits.integer('3', def);
- * 		LinkedSegment function = Segments.pow(lower, upper);
- * 		SegmentBuilder formula = new SegmentBuilder(Segments.sum(index, lower, upper, function))//instantiates the first index
- * 										.append(Segments.operator("+", "+"))//appends the second index
- * 										.append(
- * 											Segments.fraction(
- * 												new SegmentBuilder(Segments.operator("±", "±"))
- * 													.append(Digits.integer('3', def))
- * 													.append(Segments.pow(
- * 														Segments.freeVariable("x", "x"),
- * 														Digits.integer('2', def))
- * 													).toSegment(),
- * 												Segments.sqrt(
- * 														Segments.logxy(Segments.freeVariable("y", "y"),
- * 														Segments.freeVariable("n", "n"))
- * 												)
- * 											)
- * 										);//the third index
+ *		DigitPunc dp = new DigitPunc();
+ * 		LinkedSegment formula = Segments
+ * 				.sum(
+ *	 				Segments.freeVariable("i", "i"),
+ *	 				Digits.integer('3', dp),
+ *	 				Segments.freeVariable("n", "n"),
+ *	 				Segments.pow(
+ * 						Segments.freeVariable("i", "i"),
+ * 						Segments.freeVariable("n", "n")
+ *	 				)
+ *	 			)
+ * 				.concat(Segments.operator("+", "+"))
+ * 				.concat(
+ *					Segments.fraction(
+ *						Segments.operator("\\pm", "-")// to prevent exception thrown by the toString(Appendable, Log, List) method
+ *						.concat(Digits.integer('3', dp))
+ *						.concat(
+ *							Segments.pow(
+ *									Segments.freeVariable("x", "x"),
+ *									Digits.integer('3', dp)
+ *							)
+ *						),
+ *						Segments.sqrt(
+ *							Segments.logxy(Segments.freeVariable("y", "y"),
+ *							Segments.freeVariable("n", "n"))
+ *						)
+ *					)
+ * 				);
  * 		Appendable out = System.out;
- * 		List<Integer> caret = new ArrayList<>();
+ * 		List&lt;Integer&gt; caret = new ArrayList&lt;&gt;();
  * 		caret.add(-1);
  *		/** Convert to a TeX string that can be displayed using MathJax or any other display engines *&sol;
- * 		formula.toSegment().format(out, Formatter.empty(), caret);// \sum\limits_{3 =i }^{n }\,i ^{n }+ \frac{±3x ^{2 } }{ \sqrt{ \log_{y } \left(n \right) }}
+ * 		formula.format(out, Formatter.empty(), caret);//\sum\limits_{i =3 }^{n }\,i ^{n }+ \frac{\pm3x ^{3 } }{ \sqrt{ \log_{y } \left(n \right) }}
  * 		out.println();
  * 		caret.clear();
  * 		caret.add(-1);
  *		/** Convert to a string that can be evaluated by the Symja evaluator *&sol;
- * 		formula.toSegment().toString(out, null, caret);// Sum[i ^(n ) ,{3 ,i ,n }]+ Rational[�3*x ^(2 ) , Sqrt[ Log[n ,y ] ] ]
+ * 		formula.toString(out, null, caret);// Sum[i ^(n ) ,{i ,3 ,n }]+ Rational[-3*x ^(3 ) , Sqrt[ Log[n ,y ] ] ]
  * 	</code>
  * </pre>
  * 
- * The first index can be retrieved by: <code>LinkedSegment head = formula.toSegment();</code>. This is possible because the first index is always
+ * The first index can be retrieved by: <code>LinkedSegment head = formula;</code>. This is possible because the first index is always
  * the head. Subsequent indexes can also be retrieved by calling {@link #getSibling} e.g:
  * <pre>
  * 	<code>
@@ -123,8 +144,80 @@ import java.util.List;
  * 		LinkedSegment index3 = index2.getSibling();//null, there is no 4th index
  * 	</code>
  * </pre>
- * <p>A special implementation of this interface is the {@linkplain mathaid.calculator.base.typeset.Empty empty {@code LinkedSegment}}, which runs parallel
+ * For better node traversals use the {@link SegmentBuilder} class.
+ * 
+ * <p>A special implementation of this interface is the {@linkplain mathaid.calculator.base.typeset.Empty empty} {@code LinkedSegment}, which runs parallel
  * the concept of the empty string {@code ""}.
+ * <h3>Tree nature of {@code LinkedSegment}</h3>
+ * A {@code LinkedSegment} is a tree. All {@link LinkedSegment} inside a tree are nodes of that tree. A single node may consists of an image, any number of children
+ * (which are themselves {@code LinkedSegment}, making them individual trees) and a sibling. Certain
+ * standalone {@code LinkedSegment} may not have sibling (Such as those returned by
+ * {@link LinkedSegment#segmentAt(int)}), certain {@code LinkedSegment}s do not have an image (such as
+ * those returned by {@link Segments#pow(LinkedSegment, LinkedSegment)}) and certain {@code LinkedSegment}s
+ * do not have children such as {@linkplain Digit digit}, {@linkplain Segments#freeVariable(String, String) variables}
+ * etc, and some {@code LinkedSegment}s may have all 3 (such as {@linkplain Segments#sum(String, LinkedSegment, LinkedSegment, LinkedSegment)}).
+ * <p>
+ * The image of a node is a string that represents the node without the context of it's sibling or children. For example,
+ * the image of the {@linkplain Segments#sum(LinkedSegment, LinkedSegment, LinkedSegment, LinkedSegment) summation} segment:
+ * <div>
+ *	  <svg viewbox="0 0 200 40">
+ * 	  	<text x="5" y="5" fill="black" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ * 	  	<text x="0" y="28" fill="orange" style="font-size:30px;font-family:serif;font-weight:400;">&#x03A3;</text>
+ * 	  	<text x="0" y="38" fill="black" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">i=</text>
+ * 	  	<text x="10" y="38" fill="black" style="font-size:10px;font-family:serif;font-weight:400;">3</text>
+ * 	  	<text x="20" y="21" fill="black" style="font-size:15px;font-family:serif;font-weight:400;font-style:oblique;">i</text>
+ * 	  	<text x="25" y="13" fill="black" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ *	  </svg>
+ * </div>
+ * is the &#x03A3; (coloured orange on the display). It is not accessible from its sibling or children. Most implementation
+ * have this as a private member within the class, however, the image of the {@linkplain Empty empty} {@code Segment} can be
+ * accessed using {@link Empty#getPlaceHolderText()}, the image of the {@linkplain Digit digit} {@code Segment} can also be
+ * accessed using {@link Digit#getDigit()}.
+ * <p>The children of a node are parts of the node made up by other {@code LinkedSegment}(s). Some {@code LinkedSegment} may
+ * not be independent of their children, which means that attempting to represent them with any of it's child as {@code null}
+ * will throw a {@code NullPointerException}. Children can only be accessed from within the parent node using {@code LinkedSegment.getChildren}.
+ * No sibling has access to the child of any sibling. From our summation example:
+ * <div>
+ *	  <svg viewbox="0 0 200 40">
+ * 	  	<text x="5" y="5" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ * 	  	<text x="0" y="28" fill="black" style="font-size:30px;font-family:serif;font-weight:400;">&#x03A3;</text>
+ * 	  	<text x="0" y="38" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">i=</text>
+ * 	  	<text x="10" y="38" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;">3</text>
+ * 	  	<text x="20" y="21" fill="orange" style="font-size:15px;font-family:serif;font-weight:400;font-style:oblique;">i</text>
+ * 	  	<text x="25" y="13" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ *	  </svg>
+ * </div>
+ * All the children are shown in orange color. Child nodes are themselves trees, this means that they have their own siblings
+ * ({@code LinkedSegment.getChildren()[index].getSibling()}) and children. Note that to access children of a child node, one must first have a
+ * reference to the child in question.
+ * <p>The sibling of a node lies directly adjacent to the node and can be accessed with {@code LinkedSegment.getSibling()},
+ * however because {@code LinkedSegment} has <em>forward-only</em> links, the method only returns the sibling ahead of the
+ * one from which it was called. The following visuals display siblings (blue) in a red box and children (orange):
+ * <div>
+ *	 <svg viewbox="0 0 200 50">
+ *		 	<rect x="13" rx="2" y="0" ry="2" width="40" stroke-width=".5" stroke="blue" fill="none" height="50" />
+ *		 	<rect x="72" rx="1" y="15" ry="1" width="15" stroke-width=".5" stroke="blue" fill="none" height="15" />
+ *		 	<rect x="110" rx="1" y="0" ry="1" width="55" stroke-width=".5" stroke="blue" fill="none" height="50" />
+ *		 	<text x="25" y="12" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ *		 	<text x="20" y="35" fill="black" style="font-size:30px;font-family:serif;font-weight:400;">&#x03A3;</text>
+ *		 	<text x="20" y="45" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">i=</text>
+ *		 	<text x="30" y="45" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;">3</text>
+ *		 	<text x="40" y="28" fill="orange" style="font-size:15px;font-family:serif;font-weight:400;font-style:oblique;">i</text>
+ *		 	<text x="45" y="20" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ *		 	<text x="75" y="28" fill="black" style="font-size:15px;font-family:serif;font-weight:400;">+</text>
+ *		 	<text x="120" y="20" fill="orange" style="font-size:15px;font-family:serif;font-weight:400;">&pm;</text>
+ *		 	<text x="130" y="20" fill="orange" style="font-size:15px;font-family:serif;font-weight:400;">3</text>
+ *		 	<text x="137" y="20" fill="orange" style="font-size:15px;font-family:serif;font-weight:400;font-style:oblique;">x</text>
+ *		 	<text x="145" y="14" fill="orange" style="font-size:10px;font-family:serif;font-weight:400;">2</text>
+ *		 	<line x1="117" y1="23" x2="157" y2="23" style="stroke:black;stroke-width:1"/>
+ *		 	<text x="115" y="37" fill="orange" style="font-size:13px;font-family:serif;font-weight:400;">&#x221A;</text>
+ *		 	<line x1="121.595" y1="25" x2="155" y2="25" style="stroke:orange;stroke-width:.5"/>
+ *		 	<text x="123" y="35" fill="orange" style="font-size:13px;font-family:serif;font-weight:400;">log</text>
+ *		 	<text x="140" y="38" fill="orange" style="font-size:9px;font-family:serif;font-weight:400;font-style:oblique;">y</text>
+ *		 	<text x="145" y="35" fill="orange" style="font-size:13px;font-family:serif;font-weight:400;font-style:oblique;">n</text>
+ *	 </svg>
+ * </div>
+ * Note that all siblings are horizontal and children are either vertical or diagonal.
  * <p>Note that {@code LinkedSegment}s are also constructed using {@link mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression#evaluate EvaluatableExpression.evaluate}.
  * 
  * @author Oruovo Anthony Etineakpopha
@@ -225,7 +318,8 @@ public interface LinkedSegment extends Segment {
 	 * Time created: 13:52:32 ---------------------------------------------------
 	 */
 	/**
-	 * Gets the sibling of this {@code LinkedSegment}. If there is no sibling, then this value will be {@code null}.
+	 * Gets the sibling of this {@code LinkedSegment}.A sibling is a right-ward consecutive node.
+	 * If there is no sibling, then this value will be {@code null}.
 	 * <p>Using the example of this class' documentation, we can retrieve the sibling by doing:
 	 *<pre>
 	 *	<code>
@@ -275,7 +369,9 @@ public interface LinkedSegment extends Segment {
 	 * @param index the index of the {@code LinkedSegment} which will have it's focus set to the {@code boolean} value.
 	 * @param f the focus to be set.
 	 * @return a new {@code LinkedSegment} tree whereby the focus (specified by {@link #isFocused}) of the {@code LinkedSegment} at index
-	 * is the same as the {@code boolean} argument.
+	 * is the same as the {@code boolean} argument. In practice, this will be called recursively and
+	 *         unless {@code this} is the head of the tree that initiated the call,
+	 *         it may not be directly returned.
 	 * @throws IndexOutOfBoundsException if no {@code LinkedSegment} at the specified index exists.
 	 */
 	LinkedSegment setFocus(int index, boolean f) throws IndexOutOfBoundsException;
@@ -292,7 +388,9 @@ public interface LinkedSegment extends Segment {
 	 * @param index the index of the {@code LinkedSegment} which will have it's error property set to the {@code boolean} value.
 	 * @param e the error property to be set.
 	 * @return a new {@code LinkedSegment} tree such that the {@code LinkedSegment} at the given index has the same error (specified by {@link #hasError})
-	 * property as the {@code boolean} argument.
+	 * property as the {@code boolean} argument. In practice, this will be called recursively and
+	 *         unless {@code this} is the head of the tree that initiated the call,
+	 *         it may not be directly returned.
 	 * @throws IndexOutOfBoundsException if no {@code LinkedSegment} at the specified index exists.
 	 */
 	LinkedSegment setError(int index, boolean e) throws IndexOutOfBoundsException;
@@ -308,7 +406,10 @@ public interface LinkedSegment extends Segment {
 	 * @param sibling the {@code LinkedSegment} that will be set as the sibling of the {@code LinkedSegment} at the index that was specified.
 	 * Assigning {@code null} here will cause the {@code LinkedSegment} specified at the index to be deleted and it
 	 * will not have a sibling afterwards.
-	 * @return a new {@code LinkedSegment} tree whereby the {@code LinkedSegment} at the specified index has the {@code LinkedSegment} argument as it's sibling.
+	 * @return a new {@code LinkedSegment} tree whereby the {@code LinkedSegment} at the specified index has the
+	 * {@code LinkedSegment} argument as it's sibling. In practice, this will be called recursively and
+	 *         unless {@code this} is the head of the tree that initiated the call,
+	 *         it may not be directly returned.
 	 * @throws IndexOutOfBoundsException if no {@code LinkedSegment} at the specified index exists.
 	 */
 	LinkedSegment setSibling(int index, LinkedSegment sibling) throws IndexOutOfBoundsException;
@@ -323,7 +424,10 @@ public interface LinkedSegment extends Segment {
 	 * @param childToSet the {@code LinkedSegment} value that will be set as the new child at the given index of this {@code LinkedSegment}. If this value
 	 * is {@code null} then this {@code LinkedSegment} will have no child at the specified index. Howbeit, this is
 	 * is an unexpected behaviour.
-	 * @return a new {@code LinkedSegment} tree whereby the child {@code LinkedSegment} at the specified index has the {@code LinkedSegment} argument as it's value.
+	 * @return a new {@code LinkedSegment} tree whereby the child {@code LinkedSegment} at the specified index has the
+	 * {@code LinkedSegment} argument as it's value. In practice, this will be called recursively and
+	 *         unless {@code this} is the head of the tree that initiated the call,
+	 *         it may not be directly returned.
 	 * @throws IndexOutOfBoundsException if no {@code LinkedSegment} at the specified index exists.
 	 */
 	LinkedSegment setChild(int childIndex, LinkedSegment childToSet) throws IndexOutOfBoundsException;
@@ -341,11 +445,64 @@ public interface LinkedSegment extends Segment {
 	 *		LinkedSegment nine = head.getSibling().concat(Digits.integer('9', new DigitPunc()));//the segment representing the visual '+9'
 	 *	</code>
 	 *</pre>
+	 * This is an horizontal traversal.
 	 * @param s the {@code LinkedSegment} to be concatenated to this tree. This value is non-null.
-	 * @return a new {@code LinkedSegment} tree with the last node being the argument.
+	 * @return a new {@code LinkedSegment} tree with the last node being the argument. In practice, this will be called recursively and
+	 *         unless {@code this} is the head of the tree that initiated the call,
+	 *         it may not be directly returned.
 	 * @throws NullPointerException if the argument is {@code null}.
 	 */
 	LinkedSegment concat(LinkedSegment s) throws NullPointerException;
+	
+	/*
+	 * Date: 14 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:35:47 ---------------------------------------------------
+	 */
+	/**
+	 * Formats this {@code LinkedSegment} and then traverses the {@code LinkedSegment} tree (permuting all the children)
+	 * calling {@code format} for each {@code LinkedSegment} encountered. A {@code LinkedSegment} is formatted by
+	 * transforming it's image into a display-language-specific (such as TeX, LaTeX, AsciiMath,
+	 * MathML etc) string, storing the string in the given {@code Appendable} and then executing the
+	 * same operation on the children. The formatter argument is used to create additional
+	 * visual effects as desired.
+	 * <p>This method does not (nor should it) mutate this {@code LinkedSegment}. Any side effects must be invisible
+	 * to the caller if the {@code LinkedSegment} is used for further operations i.e none of the methods
+	 * of this interface should behave differently after calling this method, hence this method may be called
+	 * as many times as possible and still have a consistent behaviour. The only visible side effect is the strings written
+	 * to the {@code Appendable} argument.
+	 * @param a an {@code Appendable} that holds the final form after this method returns.
+	 * @param f used for creating additional visual effects as desired.
+	 * @param indexes acts as a reference for the index of each {@code LinkedSegment} encountered. This reference
+	 * may be used by the formatter. To prevent exceptions being thrown, this list should contain a {@code -1}
+	 * as it's sole element.
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
+	 */
+	@Override
+	void format(Appendable a, Formatter f, List<Integer> indexes) throws IndexOutOfBoundsException;
+	
+	/*
+	 * Date: 14 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:46:49 ---------------------------------------------------
+	 */
+	/**
+	 * Converts this {@code LinkedSegment} into a string executable by programs such as Symja, Mathematica etc,
+	 * and then traverses the {@code LinkedSegment} tree (permuting all children) calling {@code toString(Appendable, Log, List)}
+	 * for each {@code LinkedSegment} encountered. The converted string can be retrieved from the given Appendable.
+	 * <p>This method does not (nor should it) mutate this {@code LinkedSegment}. Any side effects must be invisible
+	 * to the caller if the {@code LinkedSegment} is used for further operations i.e none of the methods
+	 * of this interface should behave differently after calling this method, hence this method may be called
+	 * as many times as possible and still have a consistent behaviour. The only visible side effect is the strings written
+	 * to the {@code Appendable} argument.
+	 * @param a the value where the resultant string is stored.
+	 * @param l an object used as a logging tool to inform the developer about for important infos,
+	 * warnings and errors.
+	 * @param indexes acts as a reference for the index of each {@code LinkedSegment} encountered. This reference
+	 * may be used by the log. To prevent exceptions being thrown, this list should contain a {@code -1}
+	 * as it's sole element.
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
+	 */
+	@Override
+	void toString(Appendable a, Log l, List<Integer> indexes) throws IndexOutOfBoundsException;
 
 	/*
 	 * Date: 14 Nov 2023 -----------------------------------------------------------
@@ -387,11 +544,12 @@ public interface LinkedSegment extends Segment {
 	 * Time created: 07:02:24 ---------------------------------------------------
 	 */
 	/**
-	 * Retrieves the {@code LinkedSegment} at the given index as an isolated {@code LinkedSegment}. An isolated
-	 * {@code LinkedSegment} is one without a sibling. Throws an  exception if no {@code LinkedSegment} exists
+	 * Traverses the tree horizontally and retrieves the {@code LinkedSegment} at the
+	 * given index as an isolated {@code LinkedSegment}. An isolated {@code LinkedSegment}
+	 * is one without a sibling. Throws an  exception if no {@code LinkedSegment} exists
 	 * at the specified index.
-	 * <p>Using the example of this class' documentation, we can retrieve the {@code LinkedSegment} at an index
-	 * by doing:
+	 * <p>Using the example of this class' documentation, we can retrieve the
+	 * {@code LinkedSegment} at an index by doing:
 	 *<pre>
 	 *	<code>
 	 *		LinkedSegment l = formula.get(1);//Gets the representation of '+'
@@ -460,54 +618,6 @@ public interface LinkedSegment extends Segment {
 			return getSibling().subsegment(fromIndex - 1);
 		throw new IndexOutOfBoundsException();
 	}
-	
-	/*
-	 * Date: 14 Nov 2023 -----------------------------------------------------------
-	 * Time created: 07:35:47 ---------------------------------------------------
-	 */
-	/**
-	 * Formats this {@code LinkedSegment} and then traverses the {@code LinkedSegment} tree (permuting all the children)
-	 * calling {@code format} for each {@code LinkedSegment} encountered. A {@code LinkedSegment} is formatted by
-	 * transforming it's image into a display-language-specific (such as TeX, LaTeX, AsciiMath,
-	 * MathML etc) string, storing the string in the given {@code Appendable} and then executing the
-	 * same operation on the children. The formatter argument is used to create additional
-	 * visual effects as desired.
-	 * <p>This method does not (neither should it) mutate this {@code LinkedSegment}. Any side effects must be invisible
-	 * to the caller if the {@code LinkedSegment} is used for further operations i.e none of the methods
-	 * of this interface should behave differently after calling this method, hence this method may be called
-	 * as many times as possible and still have a consistent behaviour. The only visible side effect is the strings written
-	 * to the {@code Appendable} argument.
-	 * @param a an {@code Appendable} that holds the final form after this method returns.
-	 * @param f used for creating additional visual effects as desired.
-	 * @param indexes acts as a reference for the index of each {@code LinkedSegment} encountered. This reference
-	 * may be used by the formatter.
-	 * @throws IndexOutOfBoundsException {@inheritDoc}
-	 */
-	@Override
-	void format(Appendable a, Formatter f, List<Integer> indexes) throws IndexOutOfBoundsException;
-	
-	/*
-	 * Date: 14 Nov 2023 -----------------------------------------------------------
-	 * Time created: 07:46:49 ---------------------------------------------------
-	 */
-	/**
-	 * Converts this {@code LinkedSegment} into a string executable by programs such as Symja, Mathematica etc,
-	 * and then traverses the {@code LinkedSegment} tree (permuting all children) calling {@code toString(Appendable, Log, List)}
-	 * for each {@code LinkedSegment} encountered. The converted string can be retrieved from the given Appendable.
-	 * <p>This method does not (neither should it) mutate this {@code LinkedSegment}. Any side effects must be invisible
-	 * to the caller if the {@code LinkedSegment} is used for further operations i.e none of the methods
-	 * of this interface should behave differently after calling this method, hence this method may be called
-	 * as many times as possible and still have a consistent behaviour. The only visible side effect is the strings written
-	 * to the {@code Appendable} argument.
-	 * @param a the value where the resultant string is stored.
-	 * @param l an object used as a logging tool to inform the developer about for important infos,
-	 * warnings and errors.
-	 * @param indexes acts as a reference for the index of each {@code LinkedSegment} encountered. This reference
-	 * may be used by the log.
-	 * @throws IndexOutOfBoundsException {@inheritDoc}
-	 */
-	@Override
-	void toString(Appendable a, Log l, List<Integer> indexes) throws IndexOutOfBoundsException;
 
 	/*
 	 * default LinkedSegment delete(int index) throws IndexOutOfBoundsException {

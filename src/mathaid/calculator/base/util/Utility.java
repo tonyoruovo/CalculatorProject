@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayDeque;
@@ -141,7 +142,7 @@ public final class Utility {
 	 * @return a "zero only" {@code String} whose length == {@code numOfZeros}
 	 */
 	public static String zeros(int numOfZeros) {
-		return new BigDecimal("1E" + numOfZeros).toBigInteger().toString().substring(1);
+		return d("1E" + numOfZeros).toBigInteger().toString().substring(1);
 	}
 
 	/**
@@ -151,12 +152,12 @@ public final class Utility {
 	 * @return whether the number is integer, true if it is, false otherwise.
 	 */
 	public static boolean isInteger(BigDecimal n) {
-//		if (n.abs().compareTo(new BigDecimal(Double.MAX_VALUE + "")) <= 0
-//				&& n.abs().compareTo(new BigDecimal(Double.MIN_VALUE + "")) >= 0)
+//		if (n.abs().compareTo(d(Double.MAX_VALUE + "")) <= 0
+//				&& n.abs().compareTo(d(Double.MIN_VALUE + "")) >= 0)
 //			return Fraction.isInteger(Double.parseDouble(n.toString()));
 
 //		if (n.signum() > 0) {
-//			n = n.subtract(new BigDecimal(n.toBigInteger()));
+//			n = n.subtract(d(n.toBigInteger()));
 //			return n.signum() == 0;
 //		}
 
@@ -187,14 +188,14 @@ public final class Utility {
 		if ((!isInt) && (!s.contains(".")))
 			return s;
 		if (!isInt) {
-			if (new BigInteger(s.substring(s.indexOf(".") + 1), radix).compareTo(BigInteger.ZERO) == 0)
+			if (i(s.substring(s.indexOf(".") + 1), radix).compareTo(BigInteger.ZERO) == 0)
 				return s.substring(0, s.indexOf("."));
 			return s.substring(0, s.indexOf(".") + 1) + new StringBuilder(
-					new BigInteger(new StringBuilder(s.substring(s.indexOf(".") + 1)).reverse().toString(), radix)
+					i(new StringBuilder(s.substring(s.indexOf(".") + 1)).reverse().toString(), radix)
 							.toString(radix))
 					.reverse();
 		}
-		return new StringBuilder(new BigInteger(new StringBuilder(s).reverse().toString(), radix).toString(radix))
+		return new StringBuilder(i(new StringBuilder(s).reverse().toString(), radix).toString(radix))
 				.reverse().toString();
 	}
 
@@ -215,7 +216,7 @@ public final class Utility {
 	 *         stripped
 	 */
 	public static String stripLeadingZeros(String s, int radix) {
-		return new BigInteger(s, radix).toString(radix);
+		return i(s, radix).toString(radix);
 	}
 
 	/*
@@ -312,7 +313,7 @@ public final class Utility {
 		String b = num.abs().toString(2);
 		if (b.length() >= bits.length())
 			return b;
-		BigInteger bin = new BigInteger(b, 2);
+		BigInteger bin = i(b, 2);
 		bin = not(bin, bits).add(BigInteger.ONE);
 		return bin.toString(2);
 	}
@@ -340,7 +341,7 @@ public final class Utility {
 		String b = n.abs().toString(2);
 		if (b.length() >= bits.length())
 			return b;
-		return new BigInteger(toTwosBinary(n, bits), 2).subtract(BigInteger.ONE).toString(2);
+		return i(toTwosBinary(n, bits), 2).subtract(BigInteger.ONE).toString(2);
 	}
 
 	/*
@@ -365,7 +366,7 @@ public final class Utility {
 		final int signum = n.signum();
 		n = n.add(BigInteger.TWO.pow(bits.length() - 1)/* .subtract(BigInteger.ONE) */);
 		if (signum >= 0)
-			return n.or(new BigInteger("1" + zeros(bits.length() - 1), 2)).toString(2);
+			return n.or(i("1" + zeros(bits.length() - 1), 2)).toString(2);
 
 		String bin = n.toString(2);
 		return concatLeadingZeros(bin, bits);
@@ -405,7 +406,7 @@ public final class Utility {
 
 		bin = n.add(BigInteger.TWO.pow(bits.length())).toString(2);
 
-//		bin = not(new BigInteger(toExcessBinary(n, bits), 2), bits).toString(2);
+//		bin = not(i(toExcessBinary(n, bits), 2), bits).toString(2);
 
 //		bin = n.abs().add(BigInteger.TWO.pow(bin.length()).subtract(BigInteger.ONE)).toString(2);
 
@@ -433,7 +434,7 @@ public final class Utility {
 		final int signum = n.signum();
 
 		if (signum < 0)
-			return n.abs().or(new BigInteger("1" + zeros(bits.length() - 1), 2)).toString(2);
+			return n.abs().or(i("1" + zeros(bits.length() - 1), 2)).toString(2);
 
 		return concatLeadingZeros(n.toString(2), bits);
 	}
@@ -458,7 +459,7 @@ public final class Utility {
 		StringBuffer temp = new StringBuffer("A");
 		for (int i = 4; i < bits.length(); i += i)
 			temp.append(temp);
-		BigInteger mask = new BigInteger(temp.toString(), 16);
+		BigInteger mask = i(temp.toString(), 16);
 		mask = mask.add(n).xor(mask);
 		return concatLeadingZeros(mask.abs().toString(2), bits);
 	}
@@ -483,7 +484,7 @@ public final class Utility {
 	 *                          {@code String} argument is signed
 	 */
 	public static String twosToDecimal(String binary, BitLength bits) throws RuntimeException {
-		BigInteger unsigned = new BigInteger(binary, 2);
+		BigInteger unsigned = i(binary, 2);
 		if (unsigned.signum() < 0)
 			new ValueFormatException(SIGNED_NUMBER_NOT_ACCEPTED, unsigned, 2);
 		binary = concatLeadingZeros(unsigned.toString(2), bits);
@@ -514,7 +515,7 @@ public final class Utility {
 	 *                          {@code String} argument is signed
 	 */
 	public static String onesToDecimal(String binary, BitLength bits) throws RuntimeException {
-		BigInteger unsigned = new BigInteger(binary, 2);
+		BigInteger unsigned = i(binary, 2);
 		if (unsigned.signum() < 0)
 			new ValueFormatException(SIGNED_NUMBER_NOT_ACCEPTED, unsigned, 2);
 		binary = concatLeadingZeros(unsigned.toString(2), bits);
@@ -545,7 +546,7 @@ public final class Utility {
 	 *                          {@code String} argument is signed
 	 */
 	public static String excessToDecimal(String binary, BitLength bits) throws RuntimeException {
-		BigInteger unsigned = new BigInteger(binary, 2);
+		BigInteger unsigned = i(binary, 2);
 		if (unsigned.signum() < 0)
 			new ValueFormatException(SIGNED_NUMBER_NOT_ACCEPTED, unsigned, 2);
 		binary = concatLeadingZeros(unsigned.toString(2), bits);
@@ -574,7 +575,7 @@ public final class Utility {
 	 *                          {@code String} argument is signed
 	 */
 	public static String unsignedToDecimal(String binary, BitLength bits) throws RuntimeException {
-		BigInteger unsigned = new BigInteger(binary, 2);
+		BigInteger unsigned = i(binary, 2);
 		if (unsigned.signum() < 0)
 			new ValueFormatException(SIGNED_NUMBER_NOT_ACCEPTED, unsigned, 2);
 		binary = concatLeadingZeros(unsigned.toString(2), bits);
@@ -601,16 +602,16 @@ public final class Utility {
 	 *                          {@code String} argument is signed
 	 */
 	public static String smrToDecimal(String binary, BitLength bits) throws RuntimeException {
-		BigInteger unsigned = new BigInteger(binary, 2);
+		BigInteger unsigned = i(binary, 2);
 		if (unsigned.signum() < 0)
 			new ValueFormatException(SIGNED_NUMBER_NOT_ACCEPTED, unsigned, 2);
 		binary = concatLeadingZeros(unsigned.toString(2), bits);
-		if (binary.charAt(0) == '1' && BigInteger.ZERO.compareTo(new BigInteger(binary.substring(1), 2)) == 0)
+		if (binary.charAt(0) == '1' && BigInteger.ZERO.compareTo(i(binary.substring(1), 2)) == 0)
 			return "-0";
 		final boolean isNegative = binary.charAt(0) == '1';
 		if (!isNegative)
 			return unsigned.toString();
-		unsigned = new BigInteger(binary.substring(1), 2).negate();
+		unsigned = i(binary.substring(1), 2).negate();
 		return unsigned.toString();
 	}
 
@@ -632,16 +633,16 @@ public final class Utility {
 	 *                          {@code String} argument is signed
 	 */
 	public static String negaToDecimal(String binary, BitLength bits) throws RuntimeException {
-		BigInteger unsigned = new BigInteger(binary, 2);
+		BigInteger unsigned = i(binary, 2);
 		if (unsigned.signum() < 0)
 			new ValueFormatException(SIGNED_NUMBER_NOT_ACCEPTED, unsigned, 2);
 		binary = concatLeadingZeros(unsigned.toString(2), bits);
 
 		StringBuffer temp = new StringBuffer("A");
-//		n = new BigInteger(toTwosBinary(n, bits), 2);
+//		n = i(toTwosBinary(n, bits), 2);
 		for (int i = 4; i < bits.length(); i += i)
 			temp.append(temp);
-		BigInteger mask = new BigInteger(temp.toString(), 16);
+		BigInteger mask = i(temp.toString(), 16);
 		mask = unsigned.xor(mask).subtract(mask);
 		return mask.toString();
 	}
@@ -694,17 +695,17 @@ public final class Utility {
 
 		switch (rep) {
 		case EXCESS_K:
-			return new BigInteger(toExcessBinary(decimal, bits), 2);
+			return i(toExcessBinary(decimal, bits), 2);
 		case NEGABINARY:
-			return new BigInteger(toNegaBinary(decimal, bits), 2);
+			return i(toNegaBinary(decimal, bits), 2);
 		case ONE_C:
-			return new BigInteger(toOnesBinary(decimal, bits), 2);
+			return i(toOnesBinary(decimal, bits), 2);
 		case SMR:
-			return new BigInteger(toSmrBinary(decimal, bits), 2);
+			return i(toSmrBinary(decimal, bits), 2);
 		case TWO_C:
-			return new BigInteger(toTwosBinary(decimal, bits), 2);
+			return i(toTwosBinary(decimal, bits), 2);
 		case UNSIGNED:
-			return new BigInteger(toUnsignedBinary(decimal, bits), 2);
+			return i(toUnsignedBinary(decimal, bits), 2);
 		case MATH:
 		default:
 			return decimal;
@@ -747,20 +748,20 @@ public final class Utility {
 					bits.getClass().getName());
 		switch (rep) {
 		case EXCESS_K:
-			return new BigInteger(excessToDecimal(binary, bits));
+			return i(excessToDecimal(binary, bits));
 		case NEGABINARY:
-			return new BigInteger(negaToDecimal(binary, bits));
+			return i(negaToDecimal(binary, bits));
 		case ONE_C:
-			return new BigInteger(onesToDecimal(binary, bits));
+			return i(onesToDecimal(binary, bits));
 		case SMR:
-			return new BigInteger(smrToDecimal(binary, bits));
+			return i(smrToDecimal(binary, bits));
 		case TWO_C:
-			return new BigInteger(twosToDecimal(binary, bits));
+			return i(twosToDecimal(binary, bits));
 		case UNSIGNED:
-			return new BigInteger(unsignedToDecimal(binary, bits));
+			return i(unsignedToDecimal(binary, bits));
 		case MATH:
 		default:
-			return new BigInteger(binary, 2);
+			return i(binary, 2);
 
 		}
 	}
@@ -776,7 +777,7 @@ public final class Utility {
 	 * {@code mantissaBits} parameter, the result will be such that
 	 * 
 	 * <pre>
-	 * BigDecimal dec = new BigDecimal("0.1");
+	 * BigDecimal dec = d("0.1");
 	 * Radix radix = Radix.BIN;
 	 * int bits = 23;
 	 * String fraction = Utility.fromDecimal(dec, radix, bits)
@@ -804,7 +805,7 @@ public final class Utility {
 			return (s < 0 ? "-" : "") + fraction;
 		if (radix == Radix.DEC)
 			return (s < 0 ? "-" : "") + n.toPlainString();
-		n = n.subtract(new BigDecimal(n.toBigInteger()));
+		n = n.subtract(d(n.toBigInteger()));
 		if (radix == Radix.OCT)
 			mantissaBits = (int) Math.ceil(mantissaBits / 3);
 		// ((mantissaBits / 3) + (mantissaBits % 3 == 0 ? 0 : 1));
@@ -814,9 +815,9 @@ public final class Utility {
 		StringBuilder f = new StringBuilder(fraction + ".");
 		int i = 0;
 		do {
-			n = n.multiply(new BigDecimal(radix.getRadix() + ""));
+			n = n.multiply(d(radix.getRadix() + ""));
 			f.append(n.toBigInteger().toString(radix.getRadix()));
-			n = n.subtract(new BigDecimal(n.toBigInteger()));
+			n = n.subtract(d(n.toBigInteger()));
 			i += 1;
 		} while (BigDecimal.ZERO.compareTo(n) != 0 && i < mantissaBits);
 
@@ -878,7 +879,7 @@ public final class Utility {
 					n = toDecimal(num.substring(num.indexOf(".") + 1, num.indexOf("p")),
 							num.substring(0, num.indexOf(".")), r, p.getMathContext());
 					/* multiply the result by 2 to the power of the exponent */
-					n = n.multiply(new BigDecimal("2").pow(exponent, p.getMathContext()), p.getMathContext());
+					n = n.multiply(d("2").pow(exponent, p.getMathContext()), p.getMathContext());
 					if (n.compareTo(p.getMaxValue()) > 0 || n.compareTo(p.getMinValue()) < 0)
 						try {
 							writeTextToFile("", "out.txt",
@@ -888,38 +889,38 @@ public final class Utility {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-					return n.multiply(new BigDecimal(sign)).round(p.getMathContext());
+					return n.multiply(d(sign)).round(p.getMathContext());
 				}
-				s = new BigDecimal(num).toPlainString();
+				s = d(num).toPlainString();
 				hasPoint = s.contains(".");
 				if (!hasPoint)// If it doesn't have, then it is an integer
-					return new BigDecimal(new BigInteger(s, r.getRadix())).multiply(new BigDecimal(sign))
+					return d(i(s, r.getRadix())).multiply(d(sign))
 							.round(p.getMathContext());// treat it like an integer
 				n = toDecimal(s.substring(s.indexOf(".") + 1), s.substring(0, s.indexOf(".")), r, p.getMathContext());
 				if (n.compareTo(p.getMaxValue()) > 0 || n.compareTo(p.getMinValue()) < 0)
 					new PrecisionOverflowException(n, p);// thrown exception (ArithmeticException)
 
-				return n.multiply(new BigDecimal(sign)).round(p.getMathContext());
+				return n.multiply(d(sign)).round(p.getMathContext());
 			}
 
 		if (r == Radix.DEC)
-			return new BigDecimal(num).multiply(new BigDecimal(sign));
+			return d(num).multiply(d(sign));
 
-		s = num;// new BigDecimal(num).toPlainString();
+		s = num;// d(num).toPlainString();
 		hasPoint = s.contains(".");
 		if (!hasPoint) {// If it doesn't have, then it is an integer
 			boolean hasExponent = s.contains("E");
 			if (hasExponent) {
 				StringBuilder sb = new StringBuilder();
-				String ss = new BigInteger(s.substring(0, s.indexOf('E')), r.getRadix()).toString();
+				String ss = i(s.substring(0, s.indexOf('E')), r.getRadix()).toString();
 				sb.append(ss).append(s.substring(s.indexOf('E')));
-				return new BigDecimal(sb.toString()).multiply(new BigDecimal(sign));
+				return d(sb.toString()).multiply(d(sign));
 			}
-			return new BigDecimal(new BigInteger(s, r.getRadix()));// treat it like an integer
+			return d(i(s, r.getRadix()));// treat it like an integer
 		}
 		n = toDecimal(s.substring(s.indexOf(".") + 1), s.substring(0, s.indexOf(".")), r, MathContext.DECIMAL128);
 
-		return n.multiply(new BigDecimal(sign));
+		return n.multiply(d(sign));
 	}
 
 	/*
@@ -948,23 +949,23 @@ public final class Utility {
 	 *                          {@code Radix} argument is {@code Radix.DEC}
 	 */
 	private static BigDecimal toDecimal(String fraction, String integer, Radix radix, MathContext mc) {
-		boolean isNegative = (new BigInteger(integer, radix.getRadix()).signum() < 0);
+		boolean isNegative = (i(integer, radix.getRadix()).signum() < 0);
 		if (radix == Radix.DEC)
 			try {
-				return isNegative ? new BigDecimal(new BigInteger(integer)).subtract(new BigDecimal(fraction))
-						: new BigDecimal(new BigInteger(integer)).add(new BigDecimal(fraction));
+				return isNegative ? d(i(integer)).subtract(d(fraction))
+						: d(i(integer)).add(d(fraction));
 			} catch (NumberFormatException e) {
 				new ValueFormatException(EMPTY, e, e.getMessage());// thrown exception (NumberFormatException)
 			}
-//		String integer = new BigInteger(num.substring(0, num.indexOf(".")), radix.getRadix()).toString();
+//		String integer = i(num.substring(0, num.indexOf(".")), radix.getRadix()).toString();
 		BigDecimal radixIndex = BigDecimal.ZERO;
 		for (int i = 1; i <= fraction.length(); i++) {
 			int n = Integer.parseInt("-" + i);
-			radixIndex = radixIndex.add(new BigDecimal(digitForChar(fraction.charAt(i - 1), radix.getRadix()))
-					.multiply(new BigDecimal(radix.getRadix() + "").pow(n, mc)));
+			radixIndex = radixIndex.add(d(digitForChar(fraction.charAt(i - 1), radix.getRadix()))
+					.multiply(d(radix.getRadix() + "").pow(n, mc)));
 		}
-		return isNegative ? new BigDecimal(new BigInteger(integer, radix.getRadix())).subtract(radixIndex)
-				: new BigDecimal(new BigInteger(integer, radix.getRadix())).add(radixIndex);
+		return isNegative ? d(i(integer, radix.getRadix())).subtract(radixIndex)
+				: d(i(integer, radix.getRadix())).add(radixIndex);
 	}
 
 	/*
@@ -1106,11 +1107,11 @@ public final class Utility {
 	 * @return the complement of the {@code BigInteger} argument
 	 */
 	public static BigInteger not(BigInteger n, BitLength bits) {
-		BigInteger mask = new BigInteger("1" + zeros(bits.length()), 2);
+		BigInteger mask = i("1" + zeros(bits.length()), 2);
 		n = n.abs().or(mask);
 		String bin = n.toString(2);
 		bin = bin.replaceAll("0", "2").replaceAll("1", "0").replaceAll("2", "1");
-		return new BigInteger(bin, 2);
+		return i(bin, 2);
 	}
 
 	/*
@@ -1121,7 +1122,7 @@ public final class Utility {
 	 * Tests a method's performance by printing the time it takes to execute into
 	 * the specified output.
 	 * 
-	 * @param out    the specified {@code PrintStream}.
+	 * @param out    the specified {@code Appendable}.
 	 * @param clock  an object for localised time format
 	 * @param caller the object or class from which the method is called, If this
 	 *               method is static, then it can be left as {@code null}.
@@ -1130,11 +1131,12 @@ public final class Utility {
 	 *               method does not have parameters.
 	 * @return the return value of the specified method or {@code null}, if the
 	 *         return type is {@code void}.
+	 * @throws IOException for the appendable. See {@link Appendable#append(CharSequence)}, {@link PrintStream#append(CharSequence)}.
 	 */
-	public static Object getBenchMark(PrintStream out, Clock clock, Object caller, Method m, Object... args) {
+	public static Object getBenchMark(Appendable out, Clock clock, Object caller, Method m, Object... args) throws IOException {
 		Object returnValue = null;
 		Instant instant = clock == null ? Instant.now() : Instant.now(clock);
-		out.println("BenchMarking started at " + instant.truncatedTo(ChronoUnit.SECONDS) + " ... ");
+		out.append("BenchMarking started at " + instant.truncatedTo(ChronoUnit.SECONDS) + " ... \n");
 		long nano = 0;
 		try {
 			nano = System.nanoTime();
@@ -1149,10 +1151,35 @@ public final class Utility {
 		long[] msms = getMSNS(current / 60.0D);
 		assert msms.length == 3;
 
-		out.println("This program took " + msms[0] + " minute(s), " + msms[1] + " second(s), " + e
-				+ " millisecond(s) to execute.");
+		out.append("This program took " + msms[0] + " minute(s), " + msms[1] + " second(s), " + e
+				+ " millisecond(s) to execute.\n");
 
 		return returnValue;
+	}
+	
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 08:32:09 ---------------------------------------------------
+	 */
+	/**
+	 * Computes how long it will take to execute {@code m} if invoked with {@code methodArgs} as it's arguments.
+	 * @param caller the instance that owns the method {@code m}. Can be <code>null</code> if {@code m} was declared as a static method using the {@code static} modifier.
+	 * @param m the method whose runtime is to be computed.
+	 * @param methodArgs all arguments that {@code m} will need to be run, in the same order that they were given at declaration.
+	 * @return a 4-length tuple showing the start time, elapsed time, end time and return value of the method.
+	 */
+	public static Tuple.Quadruple<Instant, Duration, Instant, Object> benchMark(Object caller, Method m, Object... methodArgs) {
+		Object returnValue = null;
+		Instant start = Instant.now();
+		Instant end = null;
+		try {
+			returnValue = m.invoke(caller, methodArgs);
+			end = Instant.now();
+		} catch (Throwable th) {
+			th.printStackTrace();
+		}
+
+		return Tuple.of(start, Duration.between(start, end), end, returnValue);
 	}
 
 	/*
@@ -1558,7 +1585,7 @@ public final class Utility {
 	 * representing a decimal formatted with the input arguments. For example:
 	 * 
 	 * <pre>
-	 * BigInteger[] mixedFraction = new BigFraction("3054577/1128").toMixed();
+	 * BigInteger[] mixedFraction = f("3054577/1128").toMixed();
 	 * String TeX = Utility.toTeXString(mixedFraction, ',', 3);
 	 * System.out.println(TeX); // prints "2,707\frac{1,081}{1,128}"
 	 * </pre>
@@ -1607,7 +1634,7 @@ public final class Utility {
 	 * {@code integerDelimeter} and {@code digitsPerUnit}. For example:
 	 * 
 	 * <pre>
-	 * BigInteger n = new BigInteger("1234567890");
+	 * BigInteger n = i("1234567890");
 	 * String s = Utility.toTeXString(n, ',', 3);
 	 * System.out.print(s); // prints 1,234,567,890
 	 * </pre>
@@ -1625,7 +1652,7 @@ public final class Utility {
 	 *         does not take {@code Locale} into consideration)
 	 */
 	public static String toTexString(BigInteger n, char integerDelimiter, int digitsPerUnit) {
-		return toTexString(new BigDecimal(n), '\u0000', integerDelimiter, '\u0000', digitsPerUnit);
+		return toTexString(d(n), '\u0000', integerDelimiter, '\u0000', digitsPerUnit);
 	}
 
 	/*
@@ -1665,7 +1692,7 @@ public final class Utility {
 	 * {@code digitsPerUnit}. For example:
 	 * 
 	 * <pre>
-	 * BigDecimal n = new BigDecimal("1234.567890");
+	 * BigDecimal n = d("1234.567890");
 	 * String s = Utility.toTeXString(n, '.', ',', ' ', 3);
 	 * System.out.print(s); // prints 1,234.567 890
 	 * </pre>
@@ -1870,8 +1897,8 @@ public final class Utility {
 	 */
 	public static boolean isNumber(String s) {
 		try {
-			new BigDecimal(s);
-		} catch (@SuppressWarnings("unused") NumberFormatException e) {
+			d(s);
+		} catch (NumberFormatException e) {
 			return false;
 		}
 		return true;
@@ -1892,7 +1919,7 @@ public final class Utility {
 	 */
 	public static boolean isNumber(String s, int radix) {
 		try {
-			new BigInteger(s, radix);
+			i(s, radix);
 		} catch (@SuppressWarnings("unused") NumberFormatException e) {
 			try {
 				new Apfloat(s, s.length(), radix);
@@ -2213,7 +2240,7 @@ public final class Utility {
 		MathContext mc = new MathContext(nonRecur.stripTrailingZeros().toPlainString().length(),
 				RoundingMode.HALF_EVEN);
 		if (recur.length() == 0)
-			return new BigFraction(nonRecur, mc, null, new BigDecimal("1E-10"));
+			return new BigFraction(nonRecur, mc, null, d("1E-10"));
 
 		BigFraction r = BigFraction.fromRecurringDecimal(recur.toCharArray(), 0, recur.length());
 
@@ -2233,7 +2260,7 @@ public final class Utility {
 	 * Handy method for returning a {@code BigFraction} using:
 	 * 
 	 * <pre>
-	 * <code>new BigFraction(n, mc, null, ac == null ? new BigDecimal("1E-10") : ac)</code>
+	 * <code>f(n, mc, null, ac == null ? d("1E-10") : ac)</code>
 	 * </pre>
 	 * 
 	 * @param n  a {@code BigDecimal} which is the value
@@ -2243,7 +2270,7 @@ public final class Utility {
 	 * @return a {@code BigFraction}
 	 */
 	private static BigFraction defaultFractionalConstructor(BigDecimal n, MathContext mc, BigDecimal ac) {
-		return new BigFraction(n, mc, null, ac == null ? new BigDecimal("1E-10") : ac);
+		return new BigFraction(n, mc, null, ac == null ? d("1E-10") : ac);
 	}
 
 	/*
@@ -2324,7 +2351,7 @@ public final class Utility {
 			sb.append(r.nextInt(10));// 0-9
 			i++;
 		} while (i < length);
-		return new BigDecimal(sb.toString());
+		return d(sb.toString());
 	}
 
 	/*
@@ -2424,10 +2451,208 @@ public final class Utility {
 	 * Time created: 07:49:17--------------------------------------------
 	 */
 	/**
+	 *<style>
+	 *	table {
+	 *		border: 0.15em solid rgb(2, 2, 105);
+	 *		border-radius: 0.3em;
+	 *		border-collapse: separate;
+	 *		border-spacing: 0;
+	 *	}
+	 *	th {
+	 *		background-color: rgb(2, 2, 105);
+	 *		color: rgb(243, 227, 202);
+	 *		text-transform: uppercase;
+	 *	}
+	 *	th,
+	 *	td {
+	 *		padding: 0.5em;
+	 *	}
+	 *	tr > *:not(:last-child) {
+	 *		border-right: 0.15em solid rgb(2, 2, 105);
+	 *	}
+	 *	thead th,
+	 *	tbody td {
+	 *		border-bottom: 0.15em solid rgb(2, 2, 105);
+	 *	}
+	 *	td {
+	 *		word-break: keep-all;
+	 *	}
+	 *</style>
 	 * Converts the {@code BigDecimal} into a forced engineering decimal string.
 	 * Although the {@code BigDecimal} class already has a method for this, it does
 	 * not support engineering suffixes neither will it display a value in
-	 * engineering form if the significand has fewer than 3 digits
+	 * engineering form if the significand has fewer than 3 digits.
+	 * <p>
+	 * The following is the table of supported suffixes:
+	 *<table>
+	 *	<thead>
+	 *		<tr>
+	 *			<th>Name</th>
+	 *			<th><code>BigDecimal</code> Exponent</th>
+	 *			<th>Suffix</th>
+	 *			<th>Decimal value</th>
+	 *			<th>Thousandth value</th>
+	 *		</tr>
+	 *	</thead>
+	 *	<tbody>
+	 *		<tr>
+	 *			<td>Quetta</td>
+	 *			<td><code>E30</code></td>
+	 *			<td><code>Q</code></td>
+	 *			<td>10<sup>30</sup></td>
+	 *			<td>1000<sup>10</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Ronna</td>
+	 *			<td><code>E27</code></td>
+	 *			<td><code>R</code></td>
+	 *			<td>10<sup>27</sup></td>
+	 *			<td>1000<sup>9</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Yotta</td>
+	 *			<td><code>E24</code></td>
+	 *			<td><code>Y</code></td>
+	 *			<td>10<sup>24</sup></td>
+	 *			<td>1000<sup>8</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Zetta</td>
+	 *			<td><code>E21</code></td>
+	 *			<td><code>Z</code></td>
+	 *			<td>10<sup>21</sup></td>
+	 *			<td>1000<sup>7</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Exa</td>
+	 *			<td><code>E18</code></td>
+	 *			<td><code>E</code></td>
+	 *			<td>10<sup>18</sup></td>
+	 *			<td>1000<sup>6</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Petta</td>
+	 *			<td><code>E15</code></td>
+	 *			<td><code>P</code></td>
+	 *			<td>10<sup>15</sup></td>
+	 *			<td>1000<sup>5</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Terra</td>
+	 *			<td><code>E12</code></td>
+	 *			<td><code>T</code></td>
+	 *			<td>10<sup>12</sup></td>
+	 *			<td>1000<sup>4</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Giga</td>
+	 *			<td><code>E9</code></td>
+	 *			<td><code>G</code></td>
+	 *			<td>10<sup>9</sup></td>
+	 *			<td>1000<sup>3</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Mega</td>
+	 *			<td><code>E6</code></td>
+	 *			<td><code>M</code></td>
+	 *			<td>10<sup>6</sup></td>
+	 *			<td>1000<sup>2</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Kilo</td>
+	 *			<td><code>E3</code></td>
+	 *			<td><code>k</code></td>
+	 *			<td>10<sup>3</sup></td>
+	 *			<td>1000<sup>1</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>N/A</td>
+	 *			<td><code>E0</code></td>
+	 *			<td>N/A</td>
+	 *			<td>10<sup>0</sup></td>
+	 *			<td>1000<sup>0</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Milli</td>
+	 *			<td><code>E-3</code></td>
+	 *			<td><code>m</code></td>
+	 *			<td>10<sup>-3</sup></td>
+	 *			<td>1000<sup>-1</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Micro</td>
+	 *			<td><code>E-6</code></td>
+	 *			<td><code>&#x03BC;</code></td>
+	 *			<td>10<sup>-6</sup></td>
+	 *			<td>1000<sup>-2</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Nano</td>
+	 *			<td><code>E-9</code></td>
+	 *			<td><code>n</code></td>
+	 *			<td>10<sup>-9</sup></td>
+	 *			<td>1000<sup>-3</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Pico</td>
+	 *			<td><code>E-12</code></td>
+	 *			<td><code>p</code></td>
+	 *			<td>10<sup>-12</sup></td>
+	 *			<td>1000<sup>-4</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Femto</td>
+	 *			<td><code>E-15</code></td>
+	 *			<td><code>f</code></td>
+	 *			<td>10<sup>-15</sup></td>
+	 *			<td>1000<sup>-5</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Atto</td>
+	 *			<td><code>E-18</code></td>
+	 *			<td><code>a</code></td>
+	 *			<td>10<sup>-18</sup></td>
+	 *			<td>1000<sup>-6</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Zepto</td>
+	 *			<td><code>E-21</code></td>
+	 *			<td><code>z</code></td>
+	 *			<td>10<sup>-21</sup></td>
+	 *			<td>1000<sup>-7</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Yocto</td>
+	 *			<td><code>E-24</code></td>
+	 *			<td><code>y</code></td>
+	 *			<td>10<sup>-24</sup></td>
+	 *			<td>1000<sup>-8</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Ronto</td>
+	 *			<td><code>E-27</code></td>
+	 *			<td><code>r</code></td>
+	 *			<td>10<sup>-27</sup></td>
+	 *			<td>1000<sup>-9</sup></td>
+	 *		</tr>
+	 *		<tr>
+	 *			<td>Quecto</td>
+	 *			<td><code>E-30</code></td>
+	 *			<td><code>q</code></td>
+	 *			<td>10<sup>-30</sup></td>
+	 *			<td>1000<sup>-10</sup></td>
+	 *		</tr>
+	 *	</tbody>
+	 *	<tfoot>
+	 *		<tr>
+	 *			<th>Name</th>
+	 *			<th><code>BigDecimal</code> Exponent</th>
+	 *			<th>Suffix</th>
+	 *			<th>Decimal value</th>
+	 *			<th>Thousandth value</th>
+	 *		</tr>
+	 *	</tfoot>
+	 *</table>
 	 * 
 	 * @param n         a {@code BigDecimal}
 	 * @param useSuffix a check for whether to display using an engineering suffix
@@ -2439,6 +2664,8 @@ public final class Utility {
 		String form = formatAsStandardForm(n, 3);
 		if (useSuffix) {
 			Map<String, String> suffixes = new HashMap<>();
+			suffixes.put("E30", "Q");
+			suffixes.put("E27", "R");
 			suffixes.put("E24", "Y");
 			suffixes.put("E21", "Z");
 			suffixes.put("E18", "E");
@@ -2446,15 +2673,17 @@ public final class Utility {
 			suffixes.put("E12", "T");
 			suffixes.put("E9", "G");
 			suffixes.put("E6", "M");
-			suffixes.put("E3", "K");
+			suffixes.put("E3", "k");
 			suffixes.put("E-3", "m");
-			suffixes.put("E-6", "µ");
+			suffixes.put("E-6", "\u03BC");
 			suffixes.put("E-9", "n");
 			suffixes.put("E-12", "p");
 			suffixes.put("E-15", "f");
 			suffixes.put("E-18", "a");
 			suffixes.put("E-21", "z");
 			suffixes.put("E-24", "y");
+			suffixes.put("E-27", "r");
+			suffixes.put("E-30", "q");
 
 			String exp = form.substring(form.indexOf('E'));
 			String suffix = suffixes.getOrDefault(exp, exp);
@@ -2542,6 +2771,15 @@ public final class Utility {
 
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:24:28 ---------------------------------------------------
+	 */
+	/**
+	 * Creates an infinite stream of randomly generated {@code Long} values using the given seed.
+	 * @param seed the starting point for this method.
+	 * @return an infinite {@code java.util.stream.LongStream}.
+	 */
 	public static java.util.stream.LongStream streamInfiniteLong(long seed) {
 		return java.util.stream.LongStream.generate(new LongSupplier(seed));
 	}
@@ -2566,9 +2804,9 @@ public final class Utility {
 			throw new IllegalArgumentException("Password out of range: 6 \u2265 password Length \u2264 18");
 		StringBuilder secretBuilder = new StringBuilder();
 		secretBuilder.append(d.get(Calendar.MONTH)).append(d.get(Calendar.DAY_OF_MONTH))
-				.append(BigInteger.valueOf(relatedObject.hashCode()).toString(16)).append(d.get(Calendar.YEAR))
-				.append(BigInteger.valueOf(d.get(Calendar.MILLISECOND))
-						.or(BigInteger.valueOf(System.currentTimeMillis())).toString(16));
+				.append(i(relatedObject.hashCode()).toString(16)).append(d.get(Calendar.YEAR))
+				.append(i(d.get(Calendar.MILLISECOND))
+						.or(i(System.currentTimeMillis())).toString(16));
 		int secretSplitValue = new Random().nextInt(7);
 		secretSplitValue = secretSplitValue == 0 || secretSplitValue == 1 ? secretSplitValue + 2 : secretSplitValue;
 		List<String> splitSecret = Split(secret, secretSplitValue);
@@ -2998,7 +3236,7 @@ public final class Utility {
 	 */
 	/**
 	 * A short hand for
-	 * {@code new BigFraction(BigInteger.valueOf(long), BigInteger.valueOf(long))}
+	 * {@code new BigFraction(i(long), i(long))}
 	 * for the purpose of convenience.
 	 * 
 	 * @param n an {@code int} value as the numerator
@@ -3032,7 +3270,7 @@ public final class Utility {
 	 */
 	/**
 	 * A short hand for
-	 * {@code new BigFraction(BigInteger.valueOf(long), BigInteger.valueOf(long))}
+	 * {@code new BigFraction(i(long), i(long))}
 	 * for the purpose of convenience.
 	 * 
 	 * @param n a {@code long} value as the numerator
@@ -3134,7 +3372,7 @@ public final class Utility {
 	 */
 	/**
 	 * A short hand for
-	 * {@code new BigFraction(BigDecimal, null, null, new BigDecimal("1E-10"))} for
+	 * {@code new BigFraction(f, null, null, d("1E-10"))} for
 	 * the purpose of convenience.
 	 * 
 	 * @param f a {@code BigDecimal} value
@@ -3150,7 +3388,7 @@ public final class Utility {
 	 * 4:05:42 PM ---------------------------------------------------
 	 */
 	/**
-	 * A short hand for {@code new MathContext(int, RoundingMode.HALF_EVEN)} for the
+	 * A short hand for {@code new MathContext(s, RoundingMode.HALF_EVEN)} for the
 	 * purpose of convenience.
 	 * 
 	 * @param s an {@code int} value representing the scale
@@ -3166,7 +3404,7 @@ public final class Utility {
 	 * 4:10:28 PM ---------------------------------------------------
 	 */
 	/**
-	 * A short hand for {@code new MathContext(int, RoundingMode)} for the purpose
+	 * A short hand for {@code new MathContext(s, RoundingMode)} for the purpose
 	 * of convenience.
 	 * 
 	 * @param s  an {@code int} value representing the scale
@@ -3212,26 +3450,142 @@ public final class Utility {
 	}
 
 	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for creating {@code Object} arrays for the purpose of
+	 * convenience.
+	 * @param <T> the type of array to be returned.
+	 * @param x {@code Object} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	@SafeVarargs
+	public static <T> T[] a(T ...x) {
+		
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for creating {@code boolean} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code boolean} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static boolean[] ab(boolean ...x) {
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for creating {@code byte} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code byte} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static byte[] ab(byte ...x) {
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A short hand for creating {@code short} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code short} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static short[] as(short ...x) {
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A char hand for creating {@code char} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code char} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static char[] ac(char ...x) {
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A int hand for creating {@code int} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code int} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static int[] ai(int ...x) {
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A long hand for creating {@code long} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code long} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static long[] al(long ...x) {
+		return x;
+	}
+
+	/*
+	 * Date: 23 Nov 2023 -----------------------------------------------------------
+	 * Time created: 06:06:55 ---------------------------------------------------
+	 */
+	/**
+	 * A String hand for creating {@code String} arrays for the purpose of
+	 * convenience.
+	 * @param x {@code String} varags which are the elements of the array.
+	 * @return array whose elements are the argument(s) of this function. Will return an empty array if no argument is provided.
+	 */
+	public static String[] as(String ...x) {
+		return x;
+	}
+	
+	/*
 	 * Date: Feb 14, 2023
 	 * ----------------------------------------------------------- Time created:
 	 * 3:41:13 PM ---------------------------------------------------
 	 */
 	/**
-	 * Returns the number of values between <code>n1</code> (inclusive)
-	 * and <code>n2</code> (exclusive).
+	 * Returns the number of values between <code>n1</code> (inclusive) and
+	 * <code>n2</code> (exclusive).
 	 * <p>
 	 * For example:
+	 * 
 	 * <pre>
 	 * <code>
-	 * BigInteger num = getNumOfValuesBetween(new BigInteger("1"), new BigInteger("100"));
+	 * BigInteger num = getNumOfValuesBetween(i("1"), i("100"));
 	 * System.out.println(num);// prints 99
 	 * </code>
 	 * </pre>
 	 * 
 	 * @param n1 a {@code BigInteger} representing the from value
 	 * @param n2 a {@code BigInteger} representing the to value
-	 * @return the number of values between {@code n1} (inclusive)
-	 * 		and {@code n2} (exclusive).
+	 * @return the number of values between {@code n1} (inclusive) and {@code n2}
+	 *         (exclusive).
 	 */
 	public static BigInteger getNumOfValuesBetween(BigInteger n1, BigInteger n2) {
 		return n1.max(n2).subtract(n1.min(n2)).abs();
@@ -3243,22 +3597,24 @@ public final class Utility {
 	 * 3:41:13 PM ---------------------------------------------------
 	 */
 	/**
-	 * Returns the sum of all the values between <code>n1</code> (inclusive)
-	 * and <code>n2</code> (exclusive).
+	 * Returns the sum of all the values between <code>n1</code> (inclusive) and
+	 * <code>n2</code> (exclusive).
 	 * <p>
 	 * For example:
+	 * 
 	 * <pre>
 	 * <code>
-	 * BigInteger num = getSeries(new BigInteger("1"), new BigInteger("101"));
+	 * BigInteger num = getSeries(i("1"), i("101"));
 	 * System.out.println(num);// prints 98
 	 * </code>
 	 * </pre>
+	 * 
 	 * The order of the values is of no importance to the result.
 	 * 
 	 * @param n1 a {@code BigInteger} value
 	 * @param n2 a {@code BigInteger} value
-	 * @return the number of values between {@code n1} (exclusive)
-	 * 		and {@code n2} (exclusive).
+	 * @return the number of values between {@code n1} (exclusive) and {@code n2}
+	 *         (exclusive).
 	 */
 	public static BigInteger getSeries(BigInteger n1, BigInteger n2) {
 		BigInteger num = getNumOfValuesBetween(n1, n2);
@@ -3266,24 +3622,22 @@ public final class Utility {
 	}
 
 	/**
-	 * Returns the computed hashCode of all the {@code Object}
-	 * argument(s) as an {@code int} value representing the
-	 * hash code of all of them combined. Returns {@code 0} if
-	 * no Object is passed as an argument.
+	 * Returns the computed hashCode of all the {@code Object} argument(s) as an
+	 * {@code int} value representing the hash code of all of them combined. Returns
+	 * {@code 0} if no Object is passed as an argument.
 	 * 
-	 * @param msb determines whether or not to returns only the
-	 * most significant bits of the computed hash (if the final
-	 * value is too long for an integer). If set to {@code true}
-	 * then only the first 32 bits of the actual hash is returned
-	 * otherwise only the last 32 bits of the actual hash is
-	 * returned.
-	 * @return the first (or last) 32 bits of the generated hash
-	 * of the given Objects or 0 if no object was passed.
+	 * @param msb determines whether or not to returns only the most significant
+	 *            bits of the computed hash (if the final value is too long for an
+	 *            integer). If set to {@code true} then only the first 32 bits of
+	 *            the actual hash is returned otherwise only the last 32 bits of the
+	 *            actual hash is returned.
+	 * @return the first (or last) 32 bits of the generated hash of the given
+	 *         Objects or 0 if no object was passed.
 	 */
-	public static int hash(boolean msb, Object...objects) {
+	public static int hash(boolean msb, Object... objects) {
 		BigInteger in = i(0);
 		final int len = 32;
-		for(int i = objects.length - 1; i >= 0; i--)
+		for (int i = objects.length - 1; i >= 0; i--)
 			in = i(objects[i].hashCode()).shiftLeft(in.bitLength()).and(in);
 		return (in.bitLength() < len ? in : (msb ? FloatAid.getHigh(in, len) : FloatAid.getLow(in, len))).intValue();
 	}
@@ -3293,20 +3647,209 @@ public final class Utility {
 	 * Time created: 16:32:23 ---------------------------------------------------
 	 */
 	/**
-	 * Formats a list into a comma separated string (CSV).
-	 * Returns an empty string if the list is empty. Will
-	 * throw a {@code NullPointerException} if the argument
-	 * is {@code null}.
+	 * Formats a list into a comma separated value (CSV) and returns the result as
+	 * as a string. Returns an empty string if the list is empty. Will throw a
+	 * {@code NullPointerException} if the argument is {@code null}.
+	 * 
 	 * @param <T> the type of list to be formatted.
-	 * @param l the list to be formatted.
+	 * @param l   the list to be formatted.
 	 * @return a string where each subsequent value is preceded by a comma.
 	 */
 	public static <T> String toCSV(List<T> l) {
 		StringBuilder sb = new StringBuilder(l.size() * 2);
-		for(int i = 0; i < l.size(); i++, sb.append(",")) {
+		for (int i = 0; i < l.size(); i++, sb.append(",")) {
 			sb.append(l.get(i));
 		}
 		return sb.toString();
 	}
+
+	/*
+	 * Date: 18 Mar 2020---------------------------------------------------- Time
+	 * created: 11:38:37--------------------------------------------
+	 */
+	/**
+	 * Formats the string into a common integer format that uses given separator and
+	 * groups the digits so they always have leading zeros if the index of the most
+	 * significant bit is not up to {@code len - 1}, to mimic bit registers. For
+	 * example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * int i = 12345678;
+	 * String s = Integer.toBinaryString(i);
+	 * System.out.println(bf(s, 4, 32, ' ')); // prints: 0000 0000 1011 1100 0110 0001 0100 1110
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param s   the value to be formatted
+	 * @param div the number of digits per group
+	 * @param len the total bit-length of the formatted value. Helps with prepending
+	 *            zeros.
+	 * @param sep the separator per group
+	 * @return s after formatting
+	 */
+	public static String bf(String s, int div, int len, char sep) {
+		if (len < 1)
+			len = s.length();
+		StringBuilder sb = new StringBuilder(len + (len / div));
+		s = String.format("%1$s%2$s", string('0', Math.max(len - s.length(), 0)), s);
+		int j = 0;
+		for (int i = s.length() - 1; i >= 0; i--) {
+			sb.insert(0, s.charAt(i));
+			if (j != 0 && (j + 1) % div == 0 && j != len - 1)
+				sb.insert(0, sep);
+			j += 1;
+			if (j + 1 > len)
+				break;
+		}
+		return sb.toString();
+	}
 	
+	/**
+	 * Converts a given input string to Snake Case.
+	 * <p>
+	 * Snake Case is a naming convention where words are written in lowercase and separated by underscores.
+	 * Punctuation, spaces, and special characters are replaced with underscores, and the entire string is converted to lowercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Snake Case.
+	 * @return The input string converted to Snake Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String snakeCaseResult = toSnakeCase(input);
+	 * System.out.println(snakeCaseResult); // Output: this_is_an_example_string_with_some_punctuations_hyphens_and_periods
+	 * </code></pre>
+	 */
+	public static String toSnakeCase(String inputString) {
+	    String[] words = inputString.split("[\\s()\\-.,/_:]+");
+	    return String.join("_", words).toLowerCase();
+	}
+
+	/**
+	 * Converts a given input string to Kebab Case.
+	 * <p>
+	 * Kebab Case is a naming convention where words are written in lowercase and separated by hyphens.
+	 * Punctuation, spaces, and special characters are replaced with hyphens, and the entire string is converted to lowercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Kebab Case.
+	 * @return The input string converted to Kebab Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String kebabCaseResult = toKebabCase(input);
+	 * System.out.println(kebabCaseResult); // Output: this-is-an-example-string-with-some-punctuations-hyphens-and-periods
+	 * </code></pre>
+	 */
+	public static String toKebabCase(String inputString) {
+	    String[] words = inputString.split("[\\s()\\-.,/_:]+");
+	    return String.join("-", words).toLowerCase();
+	}
+
+	/**
+	 * Converts a given input string to Macro Case.
+	 * <p>
+	 * Macro Case is a naming convention where words are written in uppercase and separated by underscores.
+	 * Punctuation, spaces, and special characters are replaced with underscores, and the entire string is converted to uppercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Macro Case.
+	 * @return The input string converted to Macro Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String macroCaseResult = toMacroCase(input);
+	 * System.out.println(macroCaseResult); // Output: THIS_IS_AN_EXAMPLE_STRING_WITH_SOME_PUNCTUATIONS_HYPHENS_AND_PERIODS
+	 * </code></pre>
+	 */
+	public static String toMacroCase(String inputString) {
+	    String[] words = inputString.split("[\\s()\\-.,/_:]+");
+	    return String.join("_", words).toUpperCase();
+	}
+
+	/**
+	 * Converts a given input string to Train Case.
+	 * <p>
+	 * Train Case is a naming convention where words are written in uppercase and separated by hyphens.
+	 * Punctuation, spaces, and special characters are replaced with hyphens, and the entire string is converted to uppercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Train Case.
+	 * @return The input string converted to Train Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String trainCaseResult = toTrainCase(input);
+	 * System.out.println(trainCaseResult); // Output: THIS-IS-AN-EXAMPLE-STRING-WITH-SOME-PUNCTUATIONS-HYPHENS-AND-PERIODS
+	 * </code></pre>
+	 */
+	public static String toTrainCase(String inputString) {
+	    String[] words = inputString.split("[\\s()\\-.,/_:]+");
+	    return String.join("-", words).toUpperCase();
+	}
+
+	/**
+	 * Converts a given input string to Flat Case.
+	 * <p>
+	 * Flat Case is a naming convention where words are concatenated together without any separators.
+	 * Punctuation, spaces, and special characters are removed, and the entire string is converted to lowercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Flat Case.
+	 * @return The input string converted to Flat Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String flatCaseResult = toFlatCase(input);
+	 * System.out.println(flatCaseResult); // Output: thisisanexamplestringwithsomepunctuationshyphensandperiods
+	 * </code></pre>
+	 */
+	public static String toFlatCase(String inputString) {
+	    return inputString.replaceAll("[\\s()\\-.,/_:]+", "").toLowerCase();
+	}
+
+	/**
+	 * Converts a given input string to Camel Case.
+	 * <p>
+	 * Camel Case is a naming convention where the first word is in lowercase, and the first letter of each subsequent word is capitalized.
+	 * Punctuation, spaces, and special characters are removed, and the first letter of the entire string is converted to lowercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Camel Case.
+	 * @return The input string converted to Camel Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String camelCaseResult = toCamelCase(input);
+	 * System.out.println(camelCaseResult); // Output: thisIsAnExampleStringWithSomePunctuationsHyphensAndPeriods
+	 * </code></pre>
+	 */
+	public static String toCamelCase(String inputString) {
+	    String[] words = inputString.split("[\\s()\\-.,/_:]+");
+	    StringBuilder result = new StringBuilder(words[0].toLowerCase());
+	    for (int i = 1; i < words.length; i++) {
+	        result.append(words[i].substring(0, 1).toUpperCase()).append(words[i].substring(1));
+	    }
+	    return result.toString();
+	}
+
+	/**
+	 * Converts a given input string to Pascal Case.
+	 * <p>
+	 * Pascal Case is a naming convention where the first letter of each word is capitalized.
+	 * Punctuation, spaces, and special characters are removed, and the first letter of the entire string is converted to uppercase.
+	 * </p>
+	 *
+	 * @param inputString The input string to be converted to Pascal Case.
+	 * @return The input string converted to Pascal Case.
+	 * <pre><code>
+	 * String input = "This is an example string with (some) punctuations, hyphens, and periods.";
+	 * String pascalCaseResult = toPascalCase(input);
+	 * System.out.println(pascalCaseResult); // Output: ThisIsAnExampleStringWithSomePunctuationsHyphensAndPeriods
+	 * </code></pre>
+	 */
+	public static String toPascalCase(String inputString) {
+	    String[] words = inputString.split("[\\s()\\-.,/_:]+");
+	    StringBuilder result = new StringBuilder();
+	    for (String word : words) {
+	        result.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
+	    }
+	    return result.toString();
+	}
+
 }

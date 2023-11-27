@@ -4,19 +4,22 @@
 package mathaid.calculator.base.util;
 
 import static java.lang.System.out;
+//import static java.lang.System.out;
 import static mathaid.calculator.base.util.Constants.HALF;
 import static mathaid.calculator.base.util.Constants.ONE;
 import static mathaid.calculator.base.util.Constants.TWO;
 import static mathaid.calculator.base.util.Constants.ZERO;
 import static mathaid.calculator.base.util.Constants.pi;
 import static mathaid.calculator.base.util.Utility.i;
+import static mathaid.calculator.base.util.Utility.d;
+import static mathaid.calculator.base.util.Utility.f;
+import static mathaid.calculator.base.util.Utility.mc;
+import static mathaid.calculator.base.util.Utility.rm;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
@@ -54,100 +57,36 @@ public final class Arith {
 	private Arith() {
 	}
 
-	private static class PExp {
-		BigInteger prime;
-		long exp;
-
-		PExp(BigInteger prime, long exp) {
-			this.prime = prime;
-			this.exp = exp;
-		}
-	}
-
-	static final BigInteger BIG_THREE = BigInteger.valueOf(3);
-
-	public static void moTest(BigInteger a, BigInteger n) {
-		if (!n.isProbablePrime(20)) {
-			out.println("Not computed. Modulus must be prime for this algorithm");
-			return;
-		}
-
-		if (a.bitLength() < 100)
-			out.printf("ord(%s)", a);
-		else
-			out.print("ord([big])");
-
-		if (n.bitLength() < 100)
-			out.printf(" mode %s ", n);
-		else
-			out.print(" mod [big] ");
-		BigInteger mob = moBachShallit58(a, n, factor(n.subtract(n.subtract(BigInteger.ONE))));
-		out.println("= " + mob);
-
-	}
-
-	private static BigInteger moBachShallit58(BigInteger a, BigInteger n, List<PExp> pf) {
-		BigInteger n1 = n.subtract(BigInteger.ONE);
-		BigInteger mo = BigInteger.ONE;
-		for (PExp pe : pf) {
-			BigInteger y = n1.divide(pe.prime.pow((int) pe.exp));
-			long o = 0;
-			BigInteger x = a.modPow(y, n.abs());
-			while (x.compareTo(BigInteger.ONE) > 0) {
-				x = x.modPow(pe.prime, n.abs());
-				o++;
-			}
-			BigInteger o1 = BigInteger.valueOf(o);
-			o1 = pe.prime.pow(o1.intValue());
-			o1 = o1.divide(mo.gcd(o1));
-			mo = mo.multiply(o1);
-		}
-		return mo;
-	}
-
-	private static List<PExp> factor(BigInteger n) {
-		List<PExp> pf = new ArrayList<>();
-		BigInteger nn = n;
-		Long e = 0L;
-		while (!nn.testBit(e.intValue()))
-			e++;
-		if (e > 0L) {
-			nn = nn.shiftRight(e.intValue());
-			pf.add(new PExp(BigInteger.TWO, e));
-		}
-		BigInteger s = sqrt(nn);
-		BigInteger d = BIG_THREE;
-		while (nn.compareTo(BigInteger.ONE) > 0) {
-			if (d.compareTo(s) > 0)
-				d = nn;
-			e = 0L;
-			while (true) {
-				BigInteger[] qr = nn.divideAndRemainder(d);
-				if (qr[1].bitLength() > 0)
-					break;
-				nn = qr[0];
-				e++;
-			}
-			if (e > 0L) {
-				pf.add(new PExp(d, e));
-				s = sqrt(nn);
-			}
-			d = d.add(BigInteger.TWO);
-		}
-		return pf;
-	}
-
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 16:06:54 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the square root of {@code n}.
+	 * 
+	 * @param n the argument to the square root function.
+	 * @return the result of the square root of {@code n}.
+	 */
 	public static BigInteger sqrt(BigInteger n) {
-//		BigInteger b = n;
-//		while (true) {
-//			BigInteger a = b;
-//			b = n.divide(a).add(a).shiftRight(1);
-//			if (b.compareTo(a) >= 0)
-//				return a;
-//		}
 		return sqrt(new BigDecimal(n), Constants.DEFAULT_ROUND).toBigInteger();
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 17:17:24 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the left-ward rotation of the bits in {@code n} using the given
+	 * {@code bits} for clipping the result.
+	 * <p>
+	 * This is the direct implementation of bit left-rotation using the given
+	 * {@code BigLength} to simulate register bits.
+	 * 
+	 * @param n        the value to be rotated.
+	 * @param position the distance of the rotation.
+	 * @param bits     the number of bits to work with.
+	 * @return the result of rotating the bits of {@code n} to the left.
+	 */
 	public static BigInteger rotateLeft(BigInteger n, int position, BitLength bits) {
 		BigInteger x = n.shiftLeft(position);// x=n<<position
 		BigInteger y;
@@ -157,6 +96,22 @@ public final class Arith {
 		return x;
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 17:17:24 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the right-ward rotation of the bits in {@code n} using the given
+	 * {@code bits} for clipping the result.
+	 * <p>
+	 * This is the direct implementation of bit right-rotation using the given
+	 * {@code BigLength} to simulate register bits.
+	 * 
+	 * @param n        the value to be rotated.
+	 * @param position the distance of the rotation.
+	 * @param bits     the number of bits to work with.
+	 * @return the result of rotating the bits of {@code n} to the right.
+	 */
 	public static BigInteger rotateRight(BigInteger n, int position, BitLength bits) {
 		BigInteger x = n.shiftRight(position);
 		BigInteger y;
@@ -166,6 +121,21 @@ public final class Arith {
 		return x;
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 19:55:02 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the lowest common multiple of {@code a} and {@code b}.
+	 * <p>
+	 * Will treat both argument as positive.
+	 * 
+	 * @param a a non-negative {@code BigInteger} representing one of the 2 operands
+	 *          of the lcm operator.
+	 * @param b a non-negative {@code BigInteger} representing one of the 2 operands
+	 *          of the lcm operator.
+	 * @return a non-negative representing the lcm of both argument.
+	 */
 	public static BigInteger lcm(BigInteger a, BigInteger b) {
 		return new BigFraction(BigInteger.ONE, a).lcm(new BigFraction(BigInteger.ONE, b));
 	}
@@ -175,13 +145,13 @@ public final class Arith {
 	 * Time created: 13:13:49--------------------------------------------
 	 */
 	/**
-	 * Calculates and returns the factorial of a {@code BigInteger}
-	 * using the regular top-to-bottom recursive algorithm.
+	 * Calculates and returns the factorial of a {@code BigInteger} using the
+	 * regular top-to-bottom recursive algorithm.
 	 * 
 	 * @param n a {@code BigInteger}.
 	 * @return the result of the factorial (<i>n</i>!) of the argument
-	 * @throws StackOverflowError If the argument is too big or is negative which in turn would
-	 *                            cause the method to recurse too deeply.
+	 * @throws StackOverflowError If the argument is too big or is negative which in
+	 *                            turn would cause the method to recurse too deeply.
 	 */
 	static BigInteger regularFactorial(BigInteger n) throws StackOverflowError {
 		if (n.signum() == 0)
@@ -192,15 +162,18 @@ public final class Arith {
 	}
 
 	/*
-	 * Date: Mar 17, 2023 -----------------------------------------------------------
-	 * Time created: 1:39:17 AM ---------------------------------------------------
+	 * Date: Mar 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 1:39:17 AM ---------------------------------------------------
 	 */
 	/**
-	 * Performs iterative multiplication on every value from {@code start} to {@code end}
-	 * returns the result. This is a factorial helper method.
+	 * Performs iterative multiplication on every value from {@code start} to
+	 * {@code end} returns the result. This is a factorial helper method.
+	 * 
 	 * @param start the starting value (inclusive)
-	 * @param end the ending value (inclusive)
-	 * @return a {@code BigInteger} that is the result of iterative multiplication from the first argument to the second.
+	 * @param end   the ending value (inclusive)
+	 * @return a {@code BigInteger} that is the result of iterative multiplication
+	 *         from the first argument to the second.
 	 */
 	private static BigInteger unitFactorial(BigInteger start, BigInteger end) {
 		var val = i(1);
@@ -210,14 +183,18 @@ public final class Arith {
 	}
 
 	/*
-	 * Date: Mar 17, 2023 -----------------------------------------------------------
-	 * Time created: 1:45:27 AM ---------------------------------------------------
+	 * Date: Mar 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 1:45:27 AM ---------------------------------------------------
 	 */
 	/**
-	 * Performs <span style="font-style:italic">n</span>! by calling {@link #unitFactorial(BigInteger, BigInteger)} in chunks specified by the threshold argument,
-	 * then evaluates each chunk using parallelism.
-	 * @param n the value to on which the factorial is performed 
-	 * @param threshold the smallest unit of factorial computation a single chunk should undertake.
+	 * Performs <span style="font-style:italic">n</span>! by calling
+	 * {@link #unitFactorial(BigInteger, BigInteger)} in chunks specified by the
+	 * threshold argument, then evaluates each chunk using parallelism.
+	 * 
+	 * @param n         the value to on which the factorial is performed
+	 * @param threshold the smallest unit of factorial computation a single chunk
+	 *                  should undertake.
 	 * @return a value that is the factorial of the first argument
 	 */
 	private static BigInteger linearFactorial(BigInteger n, BigInteger threshold) {
@@ -229,7 +206,8 @@ public final class Arith {
 		while (n.compareTo(threshold) >= 0) {
 			n = n.subtract(threshold);
 			final var fIndex = index;
-			values.add(() -> unitFactorial(i(fIndex).multiply(threshold).add(i(1)), i(fIndex).add(i(1)).multiply(threshold)));
+			values.add(() -> unitFactorial(i(fIndex).multiply(threshold).add(i(1)),
+					i(fIndex).add(i(1)).multiply(threshold)));
 			index++;
 		}
 		if (n.signum() != 0) {
@@ -238,18 +216,21 @@ public final class Arith {
 		}
 		return values.parallelStream().reduce(i(1), (x, y) -> x.multiply(y.get()), (x, y) -> x.multiply(y));
 	}
-	
+
 	/*
-	 * Date: Mar 17, 2023 -----------------------------------------------------------
-	 * Time created: 1:52:18 AM ---------------------------------------------------
+	 * Date: Mar 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 1:52:18 AM ---------------------------------------------------
 	 */
 	/**
 	 * Performs multiplication on all the values from n to m and returns the result.
+	 * 
 	 * @param n the lower bound of the range to be multiplied
 	 * @param m the upper bound of the range to be multiplied
-	 * @return a {@code BigInteger} that is the result of the multiplication from the first argument to the second.
+	 * @return a {@code BigInteger} that is the result of the multiplication from
+	 *         the first argument to the second.
 	 * @throws StackOverflowError if the difference between n and m is too large for
-	 * the recursion to traverse
+	 *                            the recursion to traverse
 	 */
 	private static BigInteger bottom2UpFactorial(BigInteger n, BigInteger m) throws StackOverflowError {
 		if (n.compareTo(m) == 0)
@@ -260,27 +241,37 @@ public final class Arith {
 	}
 
 	/*
-	 * Date: Mar 17, 2023 -----------------------------------------------------------
-	 * Time created: 1:59:08 AM ---------------------------------------------------
+	 * Date: Mar 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 1:59:08 AM ---------------------------------------------------
 	 */
 	/**
-	 * Performs <span style="font-style:italic">n</span>! by calling {@link #bottom2UpFactorial(BigInteger, BigInteger)} in chunks specified by the threshold argument,
-	 * then evaluates each chunk using parallelism.
-	 * @param n the value to on which the factorial is performed 
-	 * @param threshold the smallest unit of factorial computation a single chunk should undertake.
+	 * Performs <span style="font-style:italic">n</span>! by calling
+	 * {@link #bottom2UpFactorial(BigInteger, BigInteger)} in chunks specified by
+	 * the threshold argument, then evaluates each chunk using parallelism.
+	 * 
+	 * @param n         the value to on which the factorial is performed
+	 * @param threshold the smallest unit of factorial computation a single chunk
+	 *                  should undertake.
 	 * @return a value that is the factorial of the {@code n}
-	 * @throws StackOverflowError if threshold is too large. A stable value would be {@code 5_000}
+	 * @throws StackOverflowError if threshold is too large. A stable value would be
+	 *                            {@code 5_000}
 	 */
-	private static BigInteger recursiveFactorial(BigInteger n, BigInteger threshold)throws StackOverflowError {
+	private static BigInteger recursiveFactorial(BigInteger n, BigInteger threshold) throws StackOverflowError {
 		if (n.compareTo(threshold) <= 0)
 			return regularFactorial(n);
 		final var max = n;
 		var index = 0;
 		var values = new java.util.LinkedList<java.util.function.Supplier<BigInteger>>();
+		/*
+		 * split n into chunks, where each chunk is the size of 'threshold' and add them
+		 * to 'values'
+		 */
 		while (n.compareTo(threshold) >= 0) {
 			n = n.subtract(threshold);
 			final var fIndex = index;
-			values.add(() -> bottom2UpFactorial(i(fIndex).multiply(threshold).add(i(1)), i(fIndex).add(i(1)).multiply(threshold)));
+			values.add(() -> bottom2UpFactorial(i(fIndex).multiply(threshold).add(i(1)),
+					i(fIndex).add(i(1)).multiply(threshold)));
 			index++;
 		}
 		if (n.signum() != 0) {
@@ -289,28 +280,51 @@ public final class Arith {
 		}
 		return values.parallelStream().reduce(i(1), (x, y) -> x.multiply(y.get()), (x, y) -> x.multiply(y));
 	}
-	
+
 	/*
-	 * Date: Mar 17, 2023 -----------------------------------------------------------
-	 * Time created: 2:03:42 AM ---------------------------------------------------
+	 * Date: Mar 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 2:03:42 AM ---------------------------------------------------
 	 */
 	/**
-	 * Calculates the factorial of the given <code>BigInteger</code> using either the recursive or iterative algorithm.
-	 * @param i the value on which factorial is to be performed
-	 * @param recursive {@code true} if using the recursive algorithm and false if otherwise
+	 * Calculates the factorial of the given <code>BigInteger</code> using either
+	 * the recursive or iterative algorithm.
+	 * <p>
+	 * An example of both algorithm is:
+	 * 
+	 * <pre>
+	 *	<code>
+	 *		StringBuilder a = new StringBuilder();
+	 *		var x = Utility.benchMark(null, Arith.class.getMethod("factorial", BigInteger.class, boolean.class), Utility.i(120_000), false);
+	 *		a.append(Tuple.of(x.get(), x.get2nd().toMillis(), x.get3rd(), x.get4th()));
+	 *		a.append('\n');
+	 *		x = Utility.benchMark(null, Arith.class.getMethod("factorial", BigInteger.class, boolean.class), Utility.i(120_000), true);
+	 *		a.append(Tuple.of(x.get(), x.get2nd().toMillis(), x.get3rd(), x.get4th()));
+	 *		a.append('\n');
+	 *		System.out.println(a);
+	 *	</code>
+	 * </pre>
+	 * 
+	 * @param i         the value on which factorial is to be performed
+	 * @param recursive {@code true} if using the recursive algorithm and false if
+	 *                  otherwise
 	 * @return the factorial of the first argument
 	 */
 	public static BigInteger factorial(BigInteger i, boolean recursive) {
-		if(recursive) return recursiveFactorial(i, i(5_000));
+		if (recursive)
+			return recursiveFactorial(i, i(5_000));
 		return linearFactorial(i, i(5_000));
 	}
-	
+
 	/*
-	 * Date: Mar 17, 2023 -----------------------------------------------------------
-	 * Time created: 2:06:59 AM ---------------------------------------------------
+	 * Date: Mar 17, 2023
+	 * ----------------------------------------------------------- Time created:
+	 * 2:06:59 AM ---------------------------------------------------
 	 */
 	/**
-	 * Calculates the factorial of the given number. This is equivalent to calling {@code factorial(i, false)}
+	 * Calculates the factorial of the given number. This is equivalent to calling
+	 * {@code factorial(i, false)}
+	 * 
 	 * @param i the operand of the factorial
 	 * @return a value that is the factorial of the input
 	 */
@@ -345,6 +359,18 @@ public final class Arith {
 		return n;
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:09:44 ---------------------------------------------------
+	 */
+	/**
+	 * Wraps {@code n} to a {@code org.apfloat.Apfloat} rounding to the given
+	 * {@code precision} using {@code RoundingMode.HALF_EVEN}.
+	 * 
+	 * @param n         the value to be wrapped.
+	 * @param precision the precision of the returned object.
+	 * @return the {@code org.apfloat.Apfloat} value of {@code n}.
+	 */
 	private static Apfloat asApfloat(BigDecimal n, int precision) {
 		return ApfloatMath.round(new Apfloat(n), precision, RoundingMode.HALF_EVEN);
 	}
@@ -954,11 +980,36 @@ public final class Arith {
 	////////////////////// Power function methods //////////////////////
 	///////////////////////////////////////////////////////////////////
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:14:42 ---------------------------------------------------
+	 */
+	/**
+	 * Generates a ("normally" if specified) random value from the given
+	 * {@code digits} as the seed.
+	 * 
+	 * @param digits   the seed.
+	 * @param gaussian <code>true</code>, if "normal" unpredictable random is
+	 *                 desired.
+	 * @return a randomly generated decimal.
+	 */
 	public static BigDecimal random(long digits, boolean gaussian) {
 		return new BigDecimal(
 				gaussian ? ApfloatMath.randomGaussian(digits).toString() : ApfloatMath.random(digits).toString());
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:33:36 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates and returns the cube root of {@code x} using the specified
+	 * precision to control rounding.
+	 * 
+	 * @param x         the argument to the cube root function.
+	 * @param precision the number of significant digits to be in the result.
+	 * @return the result of the the cube root of {@code x}.
+	 */
 	public static BigDecimal cbrt(BigDecimal x, int precision) {
 		return new BigDecimal(ApfloatMath.cbrt(asApfloat(x, precision)).toString());
 	}
@@ -1144,6 +1195,16 @@ public final class Arith {
 		}
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:36:50 ---------------------------------------------------
+	 */
+	/**
+	 * Returns <code>true</code> if {@code x} is a multiple of ten.
+	 * 
+	 * @param x the value to be checked.
+	 * @return <code>true</code> if {@code x} is a multiple of 10.
+	 */
 	private static boolean isPowerOfTen(BigDecimal x) {
 		return BigInteger.ONE.equals(x.unscaledValue());
 	}
@@ -1209,6 +1270,16 @@ public final class Arith {
 		}
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:39:01 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if {@code x} is <code>0</code>.
+	 * 
+	 * @param x the value to be checked.
+	 * @return <code>true</code> if {@code x == 0} else returns <code>false</code>.
+	 */
 	private static boolean squareRootZeroResultAssertions(BigDecimal x) {
 		return x.compareTo(BigDecimal.ZERO) == 0;
 	}
@@ -1239,6 +1310,20 @@ public final class Arith {
 				ApfloatMath.pow(asApfloat(x, c.getPrecision()), asApfloat(p, c.getPrecision())).toString());
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:40:33 ---------------------------------------------------
+	 */
+	/**
+	 * Root function that calculates the root of {@code x} using {@code index} as
+	 * the index (power) of the root operation and {@code scale} as the number of
+	 * significant digits to be in the result.
+	 * 
+	 * @param x     the value whose root is to be computed.
+	 * @param index the index or power of the root function.
+	 * @param scale the max number of significant digits to be in the result.
+	 * @return the result of the root of {@code x} to the power of {@code index}.
+	 */
 	public static BigDecimal root(BigDecimal x, long index, int scale) {
 		return new BigDecimal(ApfloatMath.root(asApfloat(x, scale), index).toString());
 	}
@@ -1247,6 +1332,16 @@ public final class Arith {
 	////////////////// Miscellaneous function methods //////////////////
 	///////////////////////////////////////////////////////////////////
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:48:52 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the factorial of the given number.
+	 * 
+	 * @param n the operand of the factorial.
+	 * @return the factorial of the argument.
+	 */
 	public static BigDecimal factorial(BigDecimal n) {
 		if (Utility.isInteger(n)) {
 			if (n.signum() == 0)
@@ -1259,6 +1354,19 @@ public final class Arith {
 		return new BigDecimal(x);
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:51:07 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the factorial of the given number adjusting the result using
+	 * {@code c}.
+	 * 
+	 * @param n the operand of the factorial.
+	 * @param c the rounding object
+	 * @return the factorial of the {@code BigDecimal} argument rounded using the
+	 *         {@code MathContext}.
+	 */
 	public static BigDecimal factorial(BigDecimal n, MathContext c) {
 //		c = Utility.requireNonNullElse(c, Constants.DEFAULT_ROUND);
 		if (Utility.isInteger(n)) {
@@ -1272,6 +1380,18 @@ public final class Arith {
 		return new BigDecimal(x);
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:53:02 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates {@code gamma(n)}, truncating the significand of the result (if
+	 * more than).
+	 * 
+	 * @param n         the argument to the gamma function.
+	 * @param precision the max number of significant digits in the result.
+	 * @return the result of applying the gamma function to {@code n}
+	 */
 	public static BigDecimal gamma(BigDecimal n, int precision) {
 		return new BigDecimal(ApfloatMath.gamma(asApfloat(n, precision)).toString());
 	}
@@ -1313,16 +1433,37 @@ public final class Arith {
 		return b[0];
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:56:09 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the value of the bernoulli index.
+	 * 
+	 * @param n the bernoulli index.
+	 * @return a value which is the bernoulli index of {@code n}
+	 */
 	static BigDecimal getBern(int n) {
 		if (n == 1)
 			return Arith.sqrt(new BigDecimal(0.25), Constants.DEFAULT_ROUND);
 		try {
 			return n % 2 == 0 ? Constants.BERNOULLI[n / 2] : Constants.ZERO;
-		} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 		}
 		return computeBernoulliNumber(n, Constants.DEFAULT_ROUND);
 	}
 
+	/*
+	 * Date: 26 Nov 2023 -----------------------------------------------------------
+	 * Time created: 20:57:38 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if the argument is with the limits of a {@code double}.
+	 * 
+	 * @param x the value to be checked.
+	 * @return <code>true</code> if
+	 *         {@code x >= Double.MIN_VALUE && x <= Double.MAX_VALUE}.
+	 */
 	public static boolean isWithinJava(BigDecimal x) {
 		Double minD = Double.MIN_VALUE;
 		String minString = minD.toString();
@@ -1335,17 +1476,30 @@ public final class Arith {
 		return isWithinJava;
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:11:02 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the mod of 2 decimals that may be fractions and returns the result.
+	 * 
+	 * @param n   the left operand of the <span style="font-style:italic">mod</span>
+	 *            operator.
+	 * @param mod the right operand of the
+	 *            <span style="font-style:italic">mod</span> operator.
+	 * @return {@code n} <span style="font-style:italic">mod</span> {@code mod}.
+	 */
 	public static BigDecimal mod(BigDecimal n, BigDecimal mod) {
 		BigInteger a;
 		BigInteger b;
 		try {
 			a = n.toBigIntegerExact();
-		} catch (@SuppressWarnings("unused") ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			a = null;
 		}
 		try {
 			b = mod.toBigIntegerExact();
-		} catch (@SuppressWarnings("unused") ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			b = null;
 		}
 		if (a == null) {
@@ -1363,6 +1517,7 @@ public final class Arith {
 				} /* else */
 				return n;
 			}
+			a = n.toBigInteger();
 		}
 		if (b != null)
 			return new BigDecimal(a.mod(b));
@@ -1389,7 +1544,7 @@ public final class Arith {
 	public static BigDecimal floor(BigDecimal x) {
 		try {
 			return new BigDecimal(x.toBigIntegerExact());
-		} catch (@SuppressWarnings("unused") ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			return new BigDecimal(x.setScale(0, RoundingMode.FLOOR).toBigIntegerExact());
 		}
 	}
@@ -1411,11 +1566,23 @@ public final class Arith {
 	public static BigDecimal ceil(BigDecimal x) {
 		try {
 			return new BigDecimal(x.toBigIntegerExact());
-		} catch (@SuppressWarnings("unused") ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			return new BigDecimal(x.setScale(0, RoundingMode.CEILING).toBigIntegerExact());
 		}
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:15:31 ---------------------------------------------------
+	 */
+	/**
+	 * Static method to implement {@link Math#copySign(double, double)}.
+	 * 
+	 * @param mag  the parameter providing the magnitude of the result.
+	 * @param sign the parameter providing the sign of the result.
+	 * @return a value with the magnitude of magnitude and the sign of sign.
+	 * @see Math#copySign(double, double)
+	 */
 	public static BigDecimal copySign(BigDecimal mag, BigDecimal sign) {
 		return mag.multiply(new BigDecimal(sign.signum()));
 	}
@@ -1426,25 +1593,47 @@ public final class Arith {
 	 */
 
 	/**
-	 * Returns an array of two BigIntegers containing the integer root {@code rt} of
-	 * {@code this} and its remainder {@code x - rt.pow(radicand)}, respectively.
+	 * Returns an array of two BigIntegers containing the integer root of {@code x}
+	 * and its remainder ({@code x - root(x, radicand)}) respectively i.e
+	 * <sup>3</sup>&Sqrt;30 = 3&Sqrt;3 where {@code x = 30}, {@code radicand = 3},
+	 * {@code root-result = 3} and {@code unrooted-remainder = 3}; &Sqrt;21 =
+	 * 4&Sqrt;5 where {@code x = 21}, {@code radicand = 2}, {@code root-result = 4}
+	 * and {@code unrooted-remainder = 5}.
+	 * 
+	 * <p>The result is in the format: <ol><li>The root of x in the radicand</li><li>The result of the subtraction of of (1) from x. </li></ol>
 	 *
 	 * @param x        the value whose root is to be found
 	 * @param radicand the radicand i.e 2 for square root, 3 for cube root, 4 for
 	 *                 quad root and so on...
-	 * @param c        the context setting
 	 * @return an array of two BigIntegers with the integer root at offset 0 and the
 	 *         remainder at offset 1
-	 * @throws ArithmeticException if {@code x} is negative. (The root of a negative
-	 *                             integer)
+	 * @throws ArithmeticException if {@code x} is negative and {@code radicand} is
+	 *                             positive. (The root of a negative integer)
 	 */
 	public static BigInteger[] rootAndRemainder(BigInteger x, int radicand) {
 		return rootAndIdentity(x, radicand, true);
 	}
 
-	public static BigInteger[] rootAndFactor(BigInteger x, int radicand) {
-		return rootAndIdentity(x, radicand, false);
-	}
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 07:17:57 ---------------------------------------------------
+	 */
+	/**
+	 * Calculates the max perfect root (square, cube, quad etc depending on the {@code radicand}).
+	 * <p>
+	 * Performs <span style="font-weight:bold">surd</span> algebra on {@code x} to
+	 * the power of {@code radicand}. e.g calling {@code roootAndFactor(20, 2)}
+	 * (pseudocode) returns the array <code>[4, 5]</code>, where the first element
+	 * is the square root of the max perfect square number ({@code 16}) in
+	 * {@code 20} and the last element if the result of subtracting
+	 * 
+	 * @param x
+	 * @param radicand
+	 * @return
+	 */
+//	public static BigInteger[] rootAndFactor(BigInteger x, int radicand) {
+//		return rootAndIdentity(x, radicand, false);
+//	}
 
 	private static BigInteger[] rootAndIdentity(final BigInteger x, int radicand, boolean isAdditive) {
 		if (radicand <= 0)
@@ -1457,7 +1646,7 @@ public final class Arith {
 			try {
 				BigInteger big = trySqrt(x);
 				return new BigInteger[] { big, BigInteger.ONE };
-			} catch (@SuppressWarnings("unused") ArithmeticException e) {
+			} catch (ArithmeticException e) {
 			}
 			for (int i = 2; i <= x.intValueExact(); i++) {
 				try {
@@ -1466,7 +1655,7 @@ public final class Arith {
 					y = x1.pow(radicand);
 					y = x.divide(y);
 					return new BigInteger[] { x1, y };
-				} catch (@SuppressWarnings("unused") ArithmeticException e) {
+				} catch (ArithmeticException e) {
 				}
 			}
 			return new BigInteger[] { BigInteger.ONE, x };
@@ -1486,7 +1675,7 @@ public final class Arith {
 		try {
 			BigInteger big = tryRoot(x, radicand, c);
 			return new BigInteger[] { big, BigInteger.ONE };
-		} catch (@SuppressWarnings("unused") ArithmeticException e) {
+		} catch (ArithmeticException e) {
 		}
 
 		for (int i = 2; i <= x.intValueExact(); i++) {
@@ -1496,7 +1685,7 @@ public final class Arith {
 				y = x1.pow(radicand);
 				y = x.divide(y);
 				return new BigInteger[] { x1, y };
-			} catch (@SuppressWarnings("unused") ArithmeticException e) {
+			} catch (ArithmeticException e) {
 			}
 		}
 

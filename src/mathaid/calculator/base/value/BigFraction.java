@@ -116,24 +116,25 @@ import mathaid.spi.LoopConfiguration;
  * a different accuracy. For example:
  * 
  * <pre>
- * BigFraction f1 = BigFraction.valueOf(23.749) & semi; // default accuracy of 1E-10
- * BigFraction f2 = new BigFraction(new BigDecimal("0.5"), MathContext.DECIMAL128, null, new BigDecimal("1.0e-7"))
- * 		& semi;
- * BigFraction ans = f1.add(f2) & semi; // uses decimal addition which is more costly
+ * <code>
+ * BigFraction f1 = BigFraction.valueOf(23.749)&semi; // default accuracy of 1E-10
+ * BigFraction f2 = new BigFraction(new BigDecimal("0.5"), MathContext.DECIMAL128, null, new BigDecimal("1.0e-7"))&semi;
+ * BigFraction ans = f1.add(f2)&semi; // uses decimal addition which is more costly
+ * </code>
  * </pre>
  * 
  * An alternative approach is to use a method which is sure to return a
  * consistent accuracy. <blockquote>
  * 
- * <pre>
- * BigFraction f1 = BigFraction.valueOf(23.479) & semi; // default accuracy of 1E-10
- * BigFraction f2 = BigFraction.valueOf(0.5) & semi; // default accuracy of 1E-10
+ * <pre><code>
+ * BigFraction f1 = BigFraction.valueOf(23.479)&semi; // default accuracy of 1E-10
+ * BigFraction f2 = BigFraction.valueOf(0.5)&semi; // default accuracy of 1E-10
  * &#x002f;&#x002a;
  *  * uses natural arithmetic evaluation of numerators and denominators which is
  *  * less costly because both BigFractions are of same accuracy {@literal }
  * &#x002a;&#x002f;
- * BigFraction ans = f1.add(f2) & semi;
- * </pre>
+ * BigFraction ans = f1.add(f2)&semi;
+ * </code></pre>
  * 
  * </blockquote>When an operation involving 2 {@code BigFraction} that returns a
  * {@code BigFraction} is called, the resulting object will inherit the minimum
@@ -277,7 +278,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 * decimal expansion is:
 	 * {@code 0.147928994082840236686390532544378698224852071005917159763313609467455621301775...}.
 	 * <p>
-	 * This is used for variuos test cases in this API.
+	 * This is used for various test cases in this API.
 	 * </p>
 	 */
 	public static final BigFraction N_25_169 = new BigFraction("25", "169");
@@ -2004,8 +2005,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 
 		do {
 
-			BigInteger d = Arith
-					.floor(new BigDecimal(f.denominator).divide(new BigDecimal(f.numerator), context))
+			BigInteger d = Arith.floor(new BigDecimal(f.denominator).divide(new BigDecimal(f.numerator), context))
 					.add(BigDecimal.ONE).toBigIntegerExact();
 
 			BigFraction fr = BigFraction.ONE.divide(d);

@@ -3,13 +3,17 @@
  */
 package mathaid.calculator.base.value;
 
+import static mathaid.calculator.base.converter.AngleUnit.RAD;
+import static mathaid.calculator.base.util.Utility.d;
+import static mathaid.calculator.base.util.Utility.i;
+import static mathaid.calculator.base.util.Utility.isInteger;
+import static mathaid.calculator.base.util.Utility.isNumber;
+import static mathaid.calculator.base.util.Utility.mc;
 import static mathaid.calculator.base.value.FloatAid.calculateSignificandDigits;
 import static mathaid.calculator.base.value.FloatAid.clearMSB;
-import static mathaid.calculator.base.value.FloatAid.d;
 import static mathaid.calculator.base.value.FloatAid.fromDecimal;
 import static mathaid.calculator.base.value.FloatAid.getAllOnes;
 import static mathaid.calculator.base.value.FloatAid.getTrailingZeros;
-import static mathaid.calculator.base.value.FloatAid.i;
 import static mathaid.calculator.base.value.TC.fromDecimal;
 
 import java.io.Serializable;
@@ -18,10 +22,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-import mathaid.calculator.base.converter.AngleUnit;
 import mathaid.calculator.base.util.Arith;
 import mathaid.calculator.base.util.Constants;
-import mathaid.calculator.base.util.Utility;
 
 /*
  * Date: 2 Nov 2022----------------------------------------------------------- 
@@ -210,20 +212,15 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 	 *                                  {@code totalExponentBits > totalBitLength}.
 	 *                                  </li>
 	 *                                  <li>If
-	 *                                  <code> totalBitLength &lt; {@value #MIN_BITLENGTH}</code>
-	 *                                  </li>
+	 *                                  <code> totalBitLength &lt; {@value #MIN_BITLENGTH}</code></li>
 	 *                                  <li>If
-	 *                                  <code>totalExponentBits &lt; {@value #MIN_EXPONENT_BITS}</code>
-	 *                                  </li>
+	 *                                  <code>totalExponentBits &lt; {@value #MIN_EXPONENT_BITS}</code></li>
 	 *                                  <li>If
-	 *                                  <code>totalBitLength - totalExponentBits &lt; {@value #MIN_SIGNIFICAND_BITS}</code>
-	 *                                  </li>
+	 *                                  <code>totalBitLength - totalExponentBits &lt; {@value #MIN_SIGNIFICAND_BITS}</code></li>
 	 *                                  <li>If
-	 *                                  <code>totalExponentBits &gt; {@value #MAX_EXPONENT_BITS}</code>
-	 *                                  </li>
+	 *                                  <code>totalExponentBits &gt; {@value #MAX_EXPONENT_BITS}</code></li>
 	 *                                  <li>If
-	 *                                  <code>totalBitLength - totalExponentBits &gt; {@value #MAX_SIGNIFICAND_BITS}</code>
-	 *                                  </li>
+	 *                                  <code>totalBitLength - totalExponentBits &gt; {@value #MAX_SIGNIFICAND_BITS}</code></li>
 	 *                                  </ul>
 	 */
 	public BinaryFPPrecision(int totalExponentBits, int totalBitLength, RoundingMode rm)
@@ -325,7 +322,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 	 */
 	public MathContext getMathContext(int radix, boolean isSubnormal, int sigLength) {
 		int precision = calculateSignificandDigits(2, !isSubnormal ? significandLength : sigLength, radix) + 1;
-		return new MathContext(Math.max(2, precision), rm);
+		return mc(Math.max(2, precision), rm);
 	}
 
 	/*
@@ -351,8 +348,8 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 	 *         using this {@code BinaryFPPrecision}
 	 */
 	public BinaryFP getMaxValue() {
-//		return new BinaryFP(new BigDecimal(i(1).shiftLeft(getMaxExponent() + 1),
-//				getMathContext(10, false, significandLength, RoundingMode.HALF_EVEN)));
+//		return new BinaryFP(d(i(1).shiftLeft(getMaxExponent() + 1),
+//				getMathContext(10, false, significandLength, rm("HALF_EVEN"))));
 		return new BinaryFP(
 				iEEE754(i(0), getAllOnes(exponentLength - 1).shiftLeft(1), getAllOnes(significandLength - 1)), 0, 0);
 	}
@@ -736,7 +733,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 	 * <pre>
 	 * <code>
 	 * BinaryFPPrecision p = new BinaryFPPrecision(8, 32);
-	 * BigDecimal n = new BigDecimal("0.628");
+	 * BigDecimal n = d("0.628");
 	 * BinaryFP f = p.createFP(n);
 	 * System.out.println(f.toBigDecimal());// prints 0.628000020
 	 * </code>
@@ -832,9 +829,9 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 			return getPositiveInfinity();
 		else if (n.compareToIgnoreCase("-" + INFINITY_STRING) == 0)
 			return getNegativeInfinity();
-		else if (n.charAt(0) == '-' && Utility.isNumber(n) && d(n).signum() == 0)
+		else if (n.charAt(0) == '-' && isNumber(n) && d(n).signum() == 0)
 			return getNegativeZero();
-		else if (Utility.isNumber(n) && d(n).signum() == 0)
+		else if (isNumber(n) && d(n).signum() == 0)
 			return createFP(d(0));
 //		BigDecimal d = toDecimal(n, radix);
 		String s = FloatAid.toString(n, radix, 10, getMathContext(10, false, significandLength));
@@ -1827,7 +1824,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 
 			// toBigDecimal
 			if (b[3] == null) {// NaN or Infinity
-				return new BigDecimal("0.0e" + calculateSignificandDigits(2, getMaxExponent(), 10));
+				return d("0.0e" + calculateSignificandDigits(2, getMaxExponent(), 10));
 			}
 			StringBuilder sb = new StringBuilder(getBitLength());
 			sb.append(b[2].toString(2)).append('.')
@@ -1947,8 +1944,8 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 		 * 0 will return {@code false} here.
 		 * 
 		 * @return {@code true} if
-		 *         <code>abs(this) &lt; {@link BinaryFPPrecision#getMinNormal()}</code>
-		 *         else returns {@code false}
+		 *         <code>abs(this) &lt; {@link BinaryFPPrecision#getMinNormal()}</code> else
+		 *         returns {@code false}
 		 */
 		public boolean isSubnormal() {
 			return getBiasedExponent().signum() == 0 && getSignificand().signum() > 0;
@@ -3110,7 +3107,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 				return getNaN();
 			else if (isInfinite())
 				return getNaN();
-			return new BinaryFP(Arith.tan(toBigDecimal(), AngleUnit.RAD, getMC(10)), 0, 0);
+			return new BinaryFP(Arith.tan(toBigDecimal(), RAD, getMC(10)), 0, 0);
 		}
 
 		/*
@@ -3129,7 +3126,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 				BinaryFP ans = pi().divide(createFP("2"));
 				return signum() < 0 ? ans.negate() : ans;
 			}
-			return new BinaryFP(Arith.atan(toBigDecimal(), AngleUnit.RAD, getMC(10)), 0, 0);
+			return new BinaryFP(Arith.atan(toBigDecimal(), RAD, getMC(10)), 0, 0);
 		}
 
 		/*
@@ -3185,7 +3182,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 				return getNaN();
 			} else if (isNegativeZero() || signum() == 0)
 				return this;
-			return new BinaryFP(Arith.sin(toBigDecimal(), AngleUnit.RAD, getMC(10)), 0, 0);
+			return new BinaryFP(Arith.sin(toBigDecimal(), RAD, getMC(10)), 0, 0);
 		}
 
 		/*
@@ -3206,7 +3203,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 				return getNegativeInfinity();
 			else if (signum() == 0 || isNegativeZero())
 				return this;
-			return new BinaryFP(Arith.asin(toBigDecimal(), AngleUnit.RAD, getMC(10)), 0, 0);
+			return new BinaryFP(Arith.asin(toBigDecimal(), RAD, getMC(10)), 0, 0);
 		}
 
 		/*
@@ -3223,7 +3220,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 				return getNaN();
 			else if (isNegativeZero() || signum() == 0)
 				return this;
-			return new BinaryFP(Arith.cos(toBigDecimal(), AngleUnit.RAD, getMC(10)), 0, 0);
+			return new BinaryFP(Arith.cos(toBigDecimal(), RAD, getMC(10)), 0, 0);
 		}
 
 		/*
@@ -3240,7 +3237,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 				return getNaN();
 			else if (isNegativeZero() || signum() == 0)
 				return pi().divide(createFP("2"));
-			return new BinaryFP(Arith.acos(toBigDecimal(), AngleUnit.RAD, getMC(10)), 0, 0);
+			return new BinaryFP(Arith.acos(toBigDecimal(), RAD, getMC(10)), 0, 0);
 		}
 
 		////////////////////////////////////////////////////////////
@@ -3459,11 +3456,11 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 
 			// toBigDecimal
 			StringBuilder sb = new StringBuilder(getBitLength());
-			//use normalised format here
+			// use normalised format here
 			sb.append(b[2].toString(2)).append('.')
 					.append(getTrailingZeros(significandLength - 1).or(b[3]).toString(2).substring(1)).append('p')
 					.append(b[1].toString(2));
-			//convert from normalised format here
+			// convert from normalised format here
 			return String.format("%1$s%2$s", b[0].signum() == 0 ? "" : "-",
 					FloatAid.toScientificString(sb.toString(), 2, radix, getMC(radix)));
 		}
@@ -3580,7 +3577,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 		private boolean isEven() {
 			if (signum() == 0 || isNegativeZero() || !isFinite())
 				return false;
-			return Utility.isInteger(toBigDecimal()) && toBigDecimal().toBigInteger().remainder(i(2)).signum() == 0;
+			return isInteger(toBigDecimal()) && toBigDecimal().toBigInteger().remainder(i(2)).signum() == 0;
 		}
 
 		/*

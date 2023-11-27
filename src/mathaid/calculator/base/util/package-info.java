@@ -10,8 +10,7 @@
  * Class name: package-info------------------------------------------------ 
  */
 /**
- * Set of classes and interfaces for dealing with expressions i.e parsing,
- * compiling, interpreting and building expressions
+ * Set of classes and interfaces for general operations.
  * 
  * @author Oruovo Anthony Etineakpopha
  * 

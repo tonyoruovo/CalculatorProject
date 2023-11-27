@@ -3,7 +3,7 @@
  */
 package mathaid.calculator.base.typeset;
 
-public class Types {
+class Types {
 
 //	public static final Type EDITABLE = new BasicType(Type.EDITABLE, null, "EDITABLE");
 //	public static final Type NON_EDITABLE = new BasicType(Type.NON_EDITABLE, null, "NON_EDITABLE");

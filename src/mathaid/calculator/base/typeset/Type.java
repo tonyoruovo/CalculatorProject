@@ -4,7 +4,7 @@
 package mathaid.calculator.base.typeset;
 import java.util.NoSuchElementException;
 
-public interface Type extends Iterable<Type> {
+interface Type extends Iterable<Type> {
 
 	Type getChild();
 

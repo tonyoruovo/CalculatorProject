@@ -316,7 +316,7 @@ public abstract class DetailsList implements Observer<DataText> {
 	 * trigonometric function to exponentials.</td>
 	 * </tr>
 	 * </table>
-	 * Note that each and every one of the items in the in the above table may not
+	 * Note that some of the items in the in the above table may not
 	 * be made an entry in the {@link #getLastDetails() map} if the result returned
 	 * does not match that data type.
 	 * </p>

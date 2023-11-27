@@ -3,13 +3,11 @@
  */
 package mathaid.calculator.base.typeset;
 
-import java.util.List;
-
 /**
  * An interface that represents a middleware during formatting of a
  * {@code Segment}. It is typically stored in a {@code Map} and used as an
- * argument in {@link Segment#format(Appendable, java.util.Map, List)} using one
- * of the constants (marked as middleware in the documentation) as its keys.
+ * argument in {@link Segment#format} using one of the constants (marked as
+ * middleware in the documentation) as its keys.
  * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
@@ -29,18 +27,20 @@ public interface Marker {
 	 *                 {@code Segment}.
 	 * @return a formatted TeX code. The actual details is implementation dependent.
 	 */
-	String mark(Segment segment, String format, int type, List<Integer> position);
+	String mark(Segment segment, String format, int type, java.util.List<Integer> position);
 
 	/*
 	 * Date: 13 Nov 2023 -----------------------------------------------------------
 	 * Time created: 09:26:40 ---------------------------------------------------
 	 */
 	/**
-	 * An implementation of {@link Object#equals} which enables this {@code Marker} to be used inside a {@link Collection}
-	 * without the possibility of collision due to similarities between properties.
+	 * An implementation of {@link Object#equals} which enables this {@code Marker}
+	 * to be used inside a {@link java.util.Collection} without the possibility of
+	 * collision due to similarities between properties.
+	 * 
 	 * @param obj {@inheritDoc}
 	 * @return {@inheritDoc}
-	 * @see java.lang.Object
+	 * @see java.lang.Object#equals(Object)
 	 */
 	@Override
 	boolean equals(Object obj);

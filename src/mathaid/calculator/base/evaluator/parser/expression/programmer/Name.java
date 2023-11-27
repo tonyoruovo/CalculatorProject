@@ -89,7 +89,7 @@ public class Name extends PExpression {
 			switch (getParams().getBitRepresentation()) {
 			case Params.ResultType.REP_FLOATING_POINT: {
 				formatBuilder.append(Digits.toSegment(fp, getParams().getRadix(), 10,
-						getParams().getResultType() == ResultType.NORMALISED, getParams().getDecimalPoint().charAt(0),
+						getParams().getResultType() == ResultType.NORMALISED,
 						Calculator.fromParams(getParams(), Segment.Type.VINCULUM)));
 			}
 			default: {

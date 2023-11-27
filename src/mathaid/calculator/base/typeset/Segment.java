@@ -137,7 +137,7 @@ public interface Segment {
 		 * A constant specifying that a {@link Segment} has uses vinculum over its
 		 * recurring mantissa values (digits).
 		 */
-		public static final int VINCULUM = MANTISSA * 3;
+		public static final int VINCULUM = MANTISSA * 3 - 1;
 		/**
 		 * A constant specifying that a {@link Segment} has uses dots over its first and
 		 * last recurring mantissa values (digits).
@@ -251,7 +251,7 @@ public interface Segment {
 		public static final int PREFIX_MINUS = PREFIX * 2;
 
 		/**
-		 * A constant specifying that a {@link Segment} that is a {@link #SEPARATOR} is in fact a separator.
+		 * A constant specifying that a {@link Segment} that is a {@link #SEPARATOR} is in fact a radix point.
 		 */
 		public static final int POINT = SEPARATOR * 2;
 
@@ -375,6 +375,9 @@ public interface Segment {
 	 * Time created: 07:33:33 ---------------------------------------------------
 	 */
 	/**
+	 * Builds a string that can be rendered by graphical libraries such as TeX, MathML,
+	 * AsciiMath etc.
+	 * <p>
 	 * Formats this {@code Segment} possibly with side-effects into a specified
 	 * mathematical string such as a TeX string, marking it with the given
 	 * {@link mathaid.calculator.base.typeset.Formatter Formatter} only if this is a
@@ -406,12 +409,11 @@ public interface Segment {
 	 * Time created: 07:46:56 ---------------------------------------------------
 	 */
 	/**
-	 * Inserts the string representation of this {@code Segment} (possibly with
-	 * side-effects) into the given {@code Appendable}. The resultant string may be
-	 * evaluated by an evaluation library or program such as Symja, Mathmatica etc.
+	 * Builds an expression as a string that can be evaluated using a given Computer
+	 * Algebra System (CAS) such as Symja, Mathematica, MathLaB etc.
 	 * 
 	 * @param a       an {@code Apendable} such as a {@link StringBuilder} to store
-	 *                the evaluatable string representation of this {@code Segment}.
+	 *                the expression.
 	 * @param l       the logger or warnings and errors as well as informative
 	 *                messages.
 	 * @param indexes

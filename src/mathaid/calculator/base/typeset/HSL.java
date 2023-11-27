@@ -3,10 +3,38 @@
  * 
  */
 package mathaid.calculator.base.typeset;
-
+/*
+ * 
+ * Date: 24 Nov 2023 -----------------------------------------------------------
+ * Time created: 12:32:55 ---------------------------------------------------
+ * Package: mathaid.calculator.base.typeset ------------------------------------------------
+ * Project: CalculatorProject ------------------------------------------------
+ * File: HSL.java ------------------------------------------------------
+ * Class name: HSL ------------------------------------------------
+ */
+/**
+ * A class that represents a colour defined in HSL but using the RGB model.
+ * @author Oruovo Anthony Etineakpopha
+ * @email tonyoruovo@gmail.com
+ */
 public class HSL extends RGBA {
 
-	private static float[] convert(float a, float h, float s, float l) {
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:28:36 ---------------------------------------------------
+	 */
+	/**
+	 * Converts the arguments of a
+	 * hsl colour into a corresponding rgb colour space supported by the
+	 * {@code RGBA} class.
+	 * @param h the hue. Must be in the range [0, 360].
+	 * @param s the saturation. Must be in the range [0, 1].
+	 * @param l the lightness value. Must be in the range [0, 1].
+	 * @param a the alpha value.
+	 * @return an array of the converted rgb value that is compatible with
+	 *         {@link RGBA#RGBA(float[])}.
+	 */
+	private static float[] convert(float h, float s, float l, float a) {
 		iae(0.0f, 1.0f, new String[] { "a", "s", "l" }, a, s, l);
 		iae(0.0f, 360.0f, new String[] { "h" }, h);
 
@@ -41,13 +69,34 @@ public class HSL extends RGBA {
 		g += m;
 		b += m;
 
-		return new float[] { a, r, g, b };
+		return new float[] { r, g, b, a };
 	}
 
-	public HSL(float a, float h, float s, float l) {
-		super(convert(a, h, s, l));
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:56 ---------------------------------------------------
+	 */
+	/**
+	 * Constructs a {@code HSL} representing a in hsi colour
+	 * 
+	 * @param h the hue. Must be in the range [0, 360].
+	 * @param s the saturation. Must be in the range [0, 1].
+	 * @param l the lightness value. Must be in the range [0, 1].
+	 * @param a the alpha value.
+	 */
+	public HSL(float h, float s, float l, float a) {
+		super(convert(h, s, l, a));
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:45:39 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the hue of this colour in the range [0, 360].
+	 * 
+	 * @return the saturation of this colour.
+	 */
 	public float getHue() {
 		float r = red();
 		float g = green();
@@ -67,12 +116,30 @@ public class HSL extends RGBA {
 		return h * 60.0f;
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:46:57 ---------------------------------------------------
+	 */
+	/**
+	 * Sets the hue of this colour.
+	 * @param h the hue to be set. The range is [0, 360].
+	 */
 	public void setHue(float h) {
 		iae(0.0f, 360.0f, new String[] { "h" }, h);
-		float[] ahsl = convert(opacity(), h, getSaturation(), getLightness());
-		setOpaqueColour(new RGBA(ahsl).getOpaqueColour());
+		float[] rgba = convert(h, getSaturation(), getLightness(), opacity());
+//		setOpaqueColour(new RGBA(ahsl).getOpaqueColour());
+		setComponents(rgba);
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:45:39 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the saturation of this colour in the range [0, 1].
+	 * 
+	 * @return the saturation of this colour.
+	 */
 	public float getSaturation() {
 		float r = red();
 		float g = green();
@@ -84,12 +151,30 @@ public class HSL extends RGBA {
 		return (v - l) / Math.min(l, 1.0f - l);
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:46:57 ---------------------------------------------------
+	 */
+	/**
+	 * Sets the saturation of this colour.
+	 * @param s the saturation to be set. The range is [0, 1].
+	 */
 	public void setSaturation(float s) {
 		iae(0.0f, 1.0f, new String[] { "s" }, s);
-		float[] ahsl = convert(opacity(), getHue(), s, getLightness());
-		setOpaqueColour(new RGBA(ahsl).getOpaqueColour());
+		float[] rgba = convert(getHue(), s, getLightness(), opacity());
+//		setOpaqueColour(new RGBA(ahsl).getOpaqueColour());
+		setComponents(rgba);
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:45:39 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the lightness of this colour in the range [0, 1].
+	 * 
+	 * @return the lightness of this colour.
+	 */
 	public float getLightness() {
 		float r = red();
 		float g = green();
@@ -99,17 +184,46 @@ public class HSL extends RGBA {
 		return (mx + mn) / 2.0f;
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:46:57 ---------------------------------------------------
+	 */
+	/**
+	 * Sets the lightness of this colour.
+	 * @param l the lightness to be set. The range is [0, 1].
+	 */
 	public void setLightness(float l) {
 		iae(0.0f, 1.0f, new String[] { "l" }, l);
-		float[] ahsl = convert(opacity(), getHue(), getSaturation(), l);
-		setOpaqueColour(new RGBA(ahsl).getOpaqueColour());
+		float[] rgba = convert(getHue(), getSaturation(), l, opacity());
+//		setOpaqueColour(new RGBA(ahsl).getOpaqueColour());
+		setComponents(rgba);
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:17:34 ---------------------------------------------------
+	 */
+	/**
+	 * Returns the hash-code which is a culmination of all the values.
+	 * @return {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return Float.hashCode((getHue() + getSaturation() + getLightness()) / 3.0f);
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:18:24 ---------------------------------------------------
+	 */
+	/**
+	 * <code>true</code> if and only if the argument is an instance of
+	 * {@code HSL} and if and only if {@link #isSameColour(WebColour)} is
+	 * true for the argument.
+	 * 
+	 * @param o {@inheritDoc}
+	 * @return {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o instanceof HSL) {
@@ -119,8 +233,18 @@ public class HSL extends RGBA {
 		return false;
 	}
 
+	/*
+	 * Date: 24 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:18:45 ---------------------------------------------------
+	 */
+	/**
+	 * Gets this colour in the the format
+	 * {@code hsla(getHue(), getSaturation(), getLightness(), opacity())}
+	 * 
+	 * @return {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
-		return String.format("[ h: %1$s, s: %2$s, l: %3$s, a: %4$s ]", getHue(), getSaturation(), getLightness(), opacity());
+		return String.format("hsla(%1$s, %2$s, %3$s, %4$s)", getHue(), getSaturation(), getLightness(), opacity());
 	}
 }

@@ -23,7 +23,7 @@ import mathaid.js.JSString;
  * <b>Copied from the MathJax documentation:</b>
  * <h3>SVG Output Processor Options</h3>
  * <p>
- * he options below control the operation of the SVG output processor that is
+ * The options below control the operation of the SVG output processor that is
  * run when you include 'output/svg' in the load array of the loader block of
  * your MathJax configuration, or if you load a combined component that includes
  * the CommonHTML output jax. They are listed with their default values. To set

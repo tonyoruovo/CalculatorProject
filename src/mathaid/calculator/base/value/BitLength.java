@@ -3,6 +3,8 @@
  */
 package mathaid.calculator.base.value;
 
+import static mathaid.calculator.base.util.Utility.i;
+
 import java.math.BigInteger;
 
 /*
@@ -198,13 +200,13 @@ public enum BitLength {
 	public static BigInteger toSmallEndian(BigInteger n) {
 		int signum = n.signum();
 		n = n.abs();
-		BigInteger val = FloatAid.i(0);
+		BigInteger val = i(0);
 		do {
 			BigInteger lowByte = FloatAid.getAllOnes(8).and(n);
 			val = val.shiftLeft(8).or(lowByte);
 			n = n.shiftRight(8);
 		} while (n.signum() != 0);
-		return val.multiply(FloatAid.i(signum));
+		return val.multiply(i(signum));
 	}
 
 	/*
@@ -227,7 +229,7 @@ public enum BitLength {
 	public static BigInteger toPDP11Endian(BigInteger n) {
 		int signum = n.signum();
 		n = n.abs();
-		BigInteger val = FloatAid.i(0);
+		BigInteger val = i(0);
 		int index = 0;
 		do {
 			BigInteger lowShort = FloatAid.getAllOnes(16).and(n);
@@ -237,7 +239,7 @@ public enum BitLength {
 			n = n.shiftRight(16);
 			index += 1;
 		} while (n.signum() != 0);
-		return val.multiply(FloatAid.i(signum));
+		return val.multiply(i(signum));
 	}
 
 	/**

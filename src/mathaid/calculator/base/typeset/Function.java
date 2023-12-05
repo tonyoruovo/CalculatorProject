@@ -139,7 +139,7 @@ public final class Function extends AbstractSegment {
 		for (int i = 0; i < getChildren().length; i++) {
 			position.add(i);
 			position.add(-1);
-			getChildren()[i].toString(a, l, position);
+			getChildren()[i].toString(sb, l, position);
 			position.remove(position.size() - 1);
 			position.remove(position.size() - 1);
 			if (degree) {

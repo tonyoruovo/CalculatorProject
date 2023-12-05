@@ -24,12 +24,31 @@ import mathaid.calculator.base.value.FloatAid;
  * Class name: ProgrammerLexer------------------------------------------------ 
  */
 /**
+ * A lexer that validates values based on a given syntax for the programmer calculator.
+ * <p>
+ * A lexer is an infinite {@code Iterator} that is a token factory that reads {@code String} symbols, determines (with the help
+ * of a {@link Syntax}) their validity and generates corresponding {@link Token} objects meant to be consumed by the
+ * {@link Parser}.
+ * <p>
+ * This lexer is meant for the scientific mathaid calculator.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
 public class ProgrammerLexer implements Iterator<Token<String>> {
 
-	@SuppressWarnings("unused")
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:38:53 ---------------------------------------------------
+	 */
+	/**
+	 * Builds the default syntax.
+	 * <p>
+	 * All upper-case letters are digits. All exponent characters are lower-case except the exponent is signed. All lower-case
+	 * letters are for constants and variables.
+	 * 
+	 * @return a syntax
+	 */
 	private static CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> buildSyntax() {
 
 		CommonSyntax.Builder<EvaluatableExpression<Params>, Params> b = new CommonSyntax.Builder<>();
@@ -92,6 +111,20 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 		return b.build();
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:18:20 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code ProgrammerLexer} by specifying the initial source code to be parsed, the positions from
+	 * which to start the parsing, a default radix and syntax to used for symbol identification.
+	 * 
+	 * @param src    the source code to be parsed.
+	 * @param start  the index from which to begin the reading of symbols
+	 * @param end    the index at which to end the reading of symbols.
+	 * @param syntax the syntax that provides symbol specifications.
+	 * @param radix  the radix to used for numbers whose radix is unspecified.
+	 */
 	public ProgrammerLexer(String src, int start, int end,
 			CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> syntax,
 			int radix) {
@@ -99,50 +132,158 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 		this.syntax = syntax;
 		this.radix = radix;
 	}
-	
-	public ProgrammerLexer(String src, CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> syntax,
+
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:20:35 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code ProgrammerLexer} by specifying the initial source code to be parsed, a default radix and
+	 * syntax to used for symbol identification.
+	 * 
+	 * @param src    the source code to be parsed.
+	 * @param syntax the syntax that provides symbol specifications.
+	 * @param radix  the radix to used for numbers whose radix is unspecified.
+	 */
+	public ProgrammerLexer(String src,
+			CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> syntax,
 			int radix) {
 		this(src, 0, src.length(), syntax, radix);
 	}
-	
-	public ProgrammerLexer(String src,
-			int radix) {
+
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:21:01 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code ProgrammerLexer} by specifying the initial source code to be parsed and a default radix.
+	 * <p>
+	 * A default syntax is used.
+	 * 
+	 * @param src   the source code to be parsed.
+	 * @param radix the radix to used for numbers whose radix is unspecified.
+	 */
+	public ProgrammerLexer(String src, int radix) {
 		this(src, buildSyntax(), radix);
 	}
-	
+
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:31:44 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code ProgrammerLexer} object.
+	 * 
+	 * @param src the source code to be read.
+	 */
 	public ProgrammerLexer(String src) {
 		this(src, 10);
 	}
-	
+
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:37:46 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code ProgrammerLexer} from an empty string.
+	 */
 	public ProgrammerLexer() {
 		this("");
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:38:48 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the default radix used for validating numbers where the radix is not specified.
+	 * 
+	 * @return the default radix
+	 */
 	public int getRadix() {
 		return radix;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:38:09 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the source code.
+	 * 
+	 * @return the source code.
+	 */
 	public String getSource() {
 		return src;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:37:18 ---------------------------------------------------
+	 */
+	/**
+	 * Sets the source code to the given value. A <code>null</code> value has no effect.
+	 * <p>
+	 * This resets the iterator's cursor.
+	 * 
+	 * @param src the non-null value to be used as the new source code.
+	 */
 	public void setSource(String src) {
 		this.src = src;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:36:54 ---------------------------------------------------
+	 */
+	/**
+	 * Sets the default radix used for validating numbers where the radix is not specified.
+	 * 
+	 * @param radix the default radix to be set
+	 */
 	public void setRadix(int radix) {
 		this.radix = radix;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:36:27 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the syntax used for validating symbols
+	 * 
+	 * @return the syntax.
+	 */
 	public CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> getSyntax() {
 		return syntax;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:36:16 ---------------------------------------------------
+	 */
+	/**
+	 * Returns <code>true</code>.
+	 * 
+	 * @return <code>true</code>.
+	 */
 	@Override
 	public boolean hasNext() {
 		return true;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:35:54 ---------------------------------------------------
+	 */
+	/**
+	 * Advances the cursor, reads all the symbols from the previous index to the new index of the cursor, validates the value read
+	 * and returns it if it passes the validation. Will throw an exception if validation fails.
+	 * <p>
+	 * Spaces are ignored.
+	 * 
+	 * @return the next {@code Token} if the cursor has not reached the end of the source else returns an end-of-file {@code Token}.
+	 */
 	@Override
 	public Token<String> next() {
 		if (index < src.length()) {
@@ -164,8 +305,12 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 04:42:34--------------------------------------------
 	 */
 	/**
-	 * @param c
-	 * @return
+	 * Gets the next symbol that represents a punctuation such as an operator using the given {@code char} as a hint.
+	 * <p>
+	 * Called by {@link #next} when the {@code char} hint is encountered.
+	 * 
+	 * @param c the hint for the type of punctuated token to be returned.
+	 * @return the next punctuator token.
 	 */
 	private Token<String> getSymbolToken(char c) {
 		if (c == '-' && index < src.length()) {// for lamda
@@ -198,14 +343,35 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 04:41:18--------------------------------------------
 	 */
 	/**
-	 * @param c
-	 * @return
+	 * Checks if the given {@code char} value is a punctuation or delimiter. Basically, this checks if the value is a number,
+	 * variable or constant.
+	 * 
+	 * @param c the value to be checked.
+	 * @return <code>true</code> if the argument is considered as a punctuation or a delimiter by the internal syntax.
 	 */
 	private boolean isSymbol(char c) {
 		return syntax.getPunctuatorsAndDelimiters().contains(c);
 	}
 
-	@SuppressWarnings("unused")
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:09:27 ---------------------------------------------------
+	 */
+	/**
+	 * Generates a {@code Token} comprising of numeric symbols.
+	 * <pre>
+	 * <code>&lt;integer-digits&gt;.?&lt;integer-digits&gt;_&lt;decimal-digits&gt;e|p|E(-|+)|P(-|+)</code>&lt;integer-digits&gt;_&lt;decimal-digits&gt;
+	 * </pre>
+	 * <p>
+	 * This is called when the lexer encounters a digit specified by {@link #isNumber(char)}.
+	 * 
+	 * @param sb                  a string builder to be used for appending digit in a recursive context.
+	 * @param hasPoint            {@code false} when first called, will be set by this method when the lexer's cursor is at a radix
+	 *                            point.
+	 * @param radixFound          {@code false} when first called, will be set by this method when the radix specifier is found.
+	 * @param exponentCharIsFound {@code false} when first called, will be set by this method when the exponent specifier is found.
+	 * @return {@code String} of symbols that makeup a valid number as a token.
+	 */
 	private Token<String> getNumberToken(StringBuilder sb, boolean hasPoint, boolean radixFound,
 			boolean exponentCharIsFound) {
 		if (index < src.length()) {
@@ -261,9 +427,16 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 18:04:50--------------------------------------------
 	 */
 	/**
-	 * @param exp
+	 * Appends the exponent part of a number into the given {@code StringBuilder} asserting that a sign character (for the exponent)
+	 * should be append as well.
+	 * <p>
+	 * This is called recursively by {@link #getNumberToken(StringBuilder, boolean, boolean, boolean)}.
+	 * 
+	 * @param exp         a {@code StringBuilder}.
+	 * @param signIsFound an Assertion that the sign is found. This will be {@code false} on the initial call and will be
+	 *                    automatically set on subsequent calls when the sign characters have been read. This causes this method to
+	 *                    behave differently depending on it's value.
 	 */
-	@SuppressWarnings("unused")
 	private void getExp(StringBuilder exp, boolean signIsFound) {
 		if (index < src.length()) {
 			char c = src.charAt(index);
@@ -301,10 +474,22 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 		}
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 17:04:37 ---------------------------------------------------
+	 */
+	/**
+	 * Called by {@link #getNumberToken} to append the radix part of a number into the given {@code StringBuilder}.
+	 * <p>
+	 * This is called recursively by {@link #getNumberToken}.
+	 * 
+	 * @param sb a {@code StringBuilder}.
+	 * @implNote Only decimal digits are supported.
+	 */
 	private void getRadixValue(StringBuilder sb) {
 		if (index < src.length()) {
 			char c = src.charAt(index);
-			if (isDigit(c)) {
+			if (isDecimalDigit(c)) {
 				sb.append(c);
 				index++;
 				getRadixValue(sb);
@@ -319,10 +504,12 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 16:25:54--------------------------------------------
 	 */
 	/**
-	 * @param cRadix
-	 * @return
+	 * Checks if the argument is a decimal digit.
+	 * 
+	 * @param cRadix the value to be checked.
+	 * @return <code>true</code> if {@code cRadix} is a decimal character or else {@code false}.
 	 */
-	private boolean isDigit(char cRadix) {
+	private boolean isDecimalDigit(char cRadix) {
 		return FloatAid.isNumber(cRadix, 10);
 	}
 
@@ -331,14 +518,29 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 15:34:07--------------------------------------------
 	 */
 	/**
-	 * @param c
-	 * @param exponentCharIsFound
-	 * @return
+	 * Checks if the character is an exponent based on the given assertion.
+	 * 
+	 * @param c                   the value to be checked.
+	 * @param exponentCharIsFound an assertion that the argument is an exponent character.
+	 * @return <code>((c == 'p' || c == 'e') || isSignedExponent(c)) && !exponentCharIsFound</code>.
 	 */
 	private boolean isExponent(char c, boolean exponentCharIsFound) {
 		return ((c == 'p' || c == 'e') || isSignedExponent(c)) && !exponentCharIsFound;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:46:16 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if the argument is a signed exponent by employing lookahead and checking if the next character is a sign character.
+	 * <p>
+	 * The value to be checked must be an upper-case character.
+	 * 
+	 * @param c the value to be checked.
+	 * @return <code>true</code> if the argument is an upper-case exponent character and it has a sign suffix or else returns
+	 *         {@code false}.
+	 */
 	private boolean isSignedExponent(char c) {
 		if (src.length() > index + 1) {
 			char sign = src.charAt(index + 1);
@@ -369,14 +571,29 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 14:49:36--------------------------------------------
 	 */
 	/**
-	 * @param c
-	 * @return
+	 * Checks if the given {@code char} argument is a number. This is determined by the internal syntax.
+	 * <p>
+	 * All alphanumeric characters that are valid digits must be in upper-case.
+	 * 
+	 * @param c the value to be checked.
+	 * @return <code>true</code> if the argument is a number or else returns {@code false}.
 	 */
 	private boolean isNumber(char c) {
 //		return FloatAid.isNumber(c, Character.MAX_RADIX) && !isLowerCaseLetter(c);
 		return syntax.getDigits().contains(c) && !isLowerCaseLetter(c);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:43:47 ---------------------------------------------------
+	 */
+	/**
+	 * Generates the next letter token (used for declaring variables and constants) from the reading the next set of symbols.
+	 * <p>
+	 * Called by {@link #next()} when an alphabetic character is encountered.
+	 * 
+	 * @return the next letter token.
+	 */
 	private Token<String> getLetterToken() {
 		/*
 		 * Since index was already incremented, we need to decrement it once to get the
@@ -397,12 +614,28 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 	 * Time created: 14:40:21--------------------------------------------
 	 */
 	/**
-	 * @return
+	 * Gets the next character to be validated by this lexer.
+	 * 
+	 * @return the next character to be read and validated.
 	 */
 	private char getNextCharacter() {
 		return src.charAt(index);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 16:40:18 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if the given character is lower case Latin alphabet.
+	 * <p>
+	 * All symbols used for variables and constants must be in lower-case.
+	 * <p>
+	 * Letters {@code 'p'} and {@code 'e'} will return false as they are used for exponent values within a floating point number.
+	 * 
+	 * @param letter the value to be checked.
+	 * @return <code>true</code> if the argument is a latin lower case letter or else returns <code>false</code>.
+	 */
 	private boolean isLowerCaseLetter(char letter) {
 		/*
 		 * a letter cannot start with a 'p' or 'e' as those are used for exponent

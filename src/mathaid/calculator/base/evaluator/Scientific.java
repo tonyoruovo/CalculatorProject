@@ -7,6 +7,31 @@
  */
 package mathaid.calculator.base.evaluator;
 
+import static mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.fromParams;
+import static mathaid.calculator.base.typeset.Digits.toSegment;
+import static mathaid.calculator.base.util.Arith.sqrt;
+import static mathaid.calculator.base.util.Constants.apery;
+import static mathaid.calculator.base.util.Constants.catalan;
+import static mathaid.calculator.base.util.Constants.conf;
+import static mathaid.calculator.base.util.Constants.conway;
+import static mathaid.calculator.base.util.Constants.e;
+import static mathaid.calculator.base.util.Constants.eb;
+import static mathaid.calculator.base.util.Constants.em;
+import static mathaid.calculator.base.util.Constants.khinchin;
+import static mathaid.calculator.base.util.Constants.levy;
+import static mathaid.calculator.base.util.Constants.lieb;
+import static mathaid.calculator.base.util.Constants.mills;
+import static mathaid.calculator.base.util.Constants.omega;
+import static mathaid.calculator.base.util.Constants.pi;
+import static mathaid.calculator.base.util.Constants.plastic;
+import static mathaid.calculator.base.util.Constants.recFib;
+import static mathaid.calculator.base.util.Constants.sierpinski;
+import static mathaid.calculator.base.util.Constants.superGR;
+import static mathaid.calculator.base.util.Constants.uniParabola;
+import static mathaid.calculator.base.util.Utility.d;
+import static mathaid.calculator.base.util.Utility.f;
+import static mathaid.calculator.base.util.Utility.mc;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,10 +43,14 @@ import mathaid.calculator.base.evaluator.parser.PrattParser;
 import mathaid.calculator.base.evaluator.parser.ScientificLexer;
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.scientific.Name;
+import mathaid.calculator.base.evaluator.parser.expression.scientific.Name.Params;
 import mathaid.calculator.base.typeset.BasicSegment;
+import mathaid.calculator.base.typeset.DigitPunc;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
+import mathaid.calculator.base.util.Tuple;
 import mathaid.calculator.base.util.Tuple.Couple;
+import mathaid.functional.Supplier;
 import mathaid.functional.Supplier.Function;
 
 public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
@@ -41,12 +70,12 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 	public static final int INT_INPUT_MASK = 3;
 	public static final int SYMBOL_INPUT_MASK = 2;
 
-	private static class Symja implements Evaluator<String> {
+	private class Symja implements Evaluator<String> {
 
-		Symja(Name.Params p) {
+		Symja() {
 			EvalEngine ev = new EvalEngine(false);
-			ev.setNumericPrecision(p.getScale());
-			ev.setNumericMode(p.getResultType() == Name.Params.ResultType.EXPRESSION, p.getScale());
+			ev.setNumericPrecision(getScale());
+			ev.setNumericMode(getResultType() == Name.Params.ResultType.EXPRESSION, getScale());
 			evaluator = new EvalUtilities(ev, false, false);
 		}
 
@@ -62,6 +91,7 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 		 */
 		@Override
 		public String evaluate(String expression) {
+			evaluator.getEvalEngine().setNumericMode(getResultType() == Name.Params.ResultType.EXPRESSION, getScale());
 			String s = evaluator.evaluate(expression).toString();
 			return s;
 		}
@@ -70,7 +100,132 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 
 	}
 	
-	Scientific(){
+	static DigitPunc fp(Params p) {
+		return fromParams(p, p.getNumOfRepeats());
+	}
+	
+	static void initConstants(Map<String, Tuple.Couple<String, Supplier.Function<Params, SegmentBuilder>>> s) {
+		//PI, Archimedes' constant
+		Supplier.Function<Params, SegmentBuilder> fx = p -> new SegmentBuilder(toSegment(pi(p.getScale()), 0,
+					fp(p)));
+		s.put("Pi", Tuple.of("\\pi", fx));
+
+		//Euler's number i.e exponential growth constant
+		fx = p -> new SegmentBuilder(toSegment(e(p.getScale()), 0,
+				fp(p)));
+		s.put("E", Tuple.of("e", fx));
+		
+		//Tau - constant for 2 * Pi
+		fx = p -> new SegmentBuilder(toSegment(pi(p.getScale()).multiply(d(2)), 0,
+				fp(p)));
+		s.put("\u03A4", Tuple.of("\\tau", fx));
+		
+		//Pythagoras constant Sqrt[2]
+		fx = p -> new SegmentBuilder(toSegment(sqrt(d(2), mc(p.getScale())), 0,
+				fp(p)));
+		s.put("Py", Tuple.of("\\sqrt{2}", fx));
+		
+		//Theodorus constant Sqrt[3]
+		fx = p -> new SegmentBuilder(toSegment(sqrt(d(3), mc(p.getScale())), 0,
+				fp(p)));
+		s.put("Th", Tuple.of("\\sqrt{3}", fx));
+		
+		//Apery number to the 50th index in the apery series
+		fx = p -> new SegmentBuilder(toSegment(apery(50), p.getResultType() == Params.ResultType.MFRAC, fp(p)));
+		s.put("Ap", Tuple.of("\\zeta(3)", fx));
+		
+		//golden ratio
+		fx = p -> new SegmentBuilder(toSegment(sqrt(d(5), mc(p.getScale())).add(d(1)).divide(d(2), mc(p.getScale())), 0, fp(p)));
+		s.put("Gr", Tuple.of("\\phi", fx));
+		
+		//Super golden ratio
+		fx = p -> new SegmentBuilder(toSegment(superGR(p.getScale()), 0, fp(p)));
+		s.put("SgR", Tuple.of("\\psi_S", fx));
+		
+		//Silver ratio
+		fx = p -> new SegmentBuilder(toSegment(sqrt(d(2), mc(p.getScale())).add(d(1)), 0, fp(p)));
+		s.put("\u0394", Tuple.of("\\delta_S", fx));
+		
+		//Euler-Mascheroni constant
+		fx = p -> new SegmentBuilder(toSegment(em(p.getScale()), 0, fp(p)));
+		s.put("\\u03b3", Tuple.of("\\gamma", fx));
+		
+		//Meissel–Mertens constant
+		fx = p -> new SegmentBuilder(toSegment(d("0.2614972128476427837554268386086958590516", mc(p.getScale())), 0, fp(p)));
+		s.put("Mm", Tuple.of("M", fx));
+		
+		//Gauss–Kuzmin–Wirsing constant
+		fx = p -> new SegmentBuilder(toSegment(d("0.30366300289873265859744812190155623", mc(p.getScale())), 0, fp(p)));
+		s.put("GkW", Tuple.of("\\lamda_2", fx));
+		
+		//Hafner–Sarnak–McCurley constant
+		fx = p -> new SegmentBuilder(toSegment(d("0.35323637185499598454351655043268201", mc(p.getScale())), 0, fp(p)));
+		s.put("HsM", Tuple.of("\\sigma", fx));
+		
+		//Conway constant
+		fx = p -> new SegmentBuilder(toSegment(conway(p.getScale()), 0, fp(p)));
+		s.put("\u03bb", Tuple.of("\\lambda", fx));
+		
+		//Mills constant
+		fx = p -> new SegmentBuilder(toSegment(mills(p.getScale()), 0, fp(p)));
+		s.put("\u03b8", Tuple.of("\\theta", fx));
+		
+		//Plastic constant
+		fx = p -> new SegmentBuilder(toSegment(plastic(p.getScale()), 0, fp(p)));
+		s.put("\u03c1", Tuple.of("\\rho", fx));
+		
+		//Ramanujan–Soldner constant
+		fx = p -> new SegmentBuilder(toSegment(d("1.45136923488338105028396848589202744", mc(p.getScale())), 0, fp(p)));
+		s.put("\u03bc", Tuple.of("\\mu", fx));
+		
+		//Levy's constant
+		fx = p -> new SegmentBuilder(toSegment(levy(p.getScale()), 0, fp(p)));
+		s.put("LeV", Tuple.of("L_y", fx));
+		
+		//Conjugate of fibonacci constant
+		fx = p -> new SegmentBuilder(toSegment(conf(p.getScale()), 0, fp(p)));
+		s.put("CfC", Tuple.of("\\psi_{CF}", fx));
+		
+		//Reciprocal fibonacci constant
+		fx = p -> new SegmentBuilder(toSegment(recFib(250, p.getScale()), 0, fp(p)));
+		s.put("RfC", Tuple.of("\\psi_{RF}", fx));
+		
+		//Feigenbaum 2nd constant. It is a rational value but the sci calculator cannot yet process constants with rational values
+//		fx = p -> new SegmentBuilder(toSegment(f(8177, 3267), p.getResultType() == Params.ResultType.MFRAC, fp(p)));
+//		s.put("FbS", Tuple.of("F_2", fx));
+		fx = p -> new SegmentBuilder(toSegment(f(8177, 3267).getDecimalExpansion(p.getScale()), 0, fp(p)));
+		s.put("FbS", Tuple.of("F_2", fx));
+		
+		//Sierpinski's constant
+		fx = p -> new SegmentBuilder(toSegment(sierpinski(p.getScale()), 0, fp(p)));
+		s.put("Ks", Tuple.of("K", fx));
+		
+		//Khinchin's constant
+		fx = p -> new SegmentBuilder(toSegment(khinchin(p.getScale()), 0, fp(p)));
+		s.put("KhC", Tuple.of("K_0", fx));
+		
+		//universal parabolic constant
+		fx = p -> new SegmentBuilder(toSegment(uniParabola(p.getScale()), 0, fp(p)));
+		s.put("Up", Tuple.of("P_2", fx));
+		
+		//Erdos–Borwein's constant
+		fx = p -> new SegmentBuilder(toSegment(eb(250, p.getScale()), 0, fp(p)));
+		s.put("ErBo", Tuple.of("E", fx));
+		
+		//Lieb's square ice constant
+		fx = p -> new SegmentBuilder(toSegment(lieb(p.getScale()), 0, fp(p)));
+		s.put("LsI", Tuple.of("L_c", fx));
+		
+		//Catalan's constant
+		fx = p -> new SegmentBuilder(toSegment(catalan(p.getScale()), 0, fp(p)));
+		s.put("Ct", Tuple.of("L_c", fx));
+		
+		//Omega constant
+		fx = p -> new SegmentBuilder(toSegment(omega(p.getScale()), 0, fp(p)));
+		s.put("\u03A9", Tuple.of("\\Omega", fx));
+	}
+
+	public Scientific() {
 		lexer = new ScientificLexer();
 		parser = new PrattParser<>();
 		resultType = Name.Params.ResultType.DECIMAL;
@@ -78,16 +233,17 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 		mantGroupSize = intGroupSize;
 		recurringType = LinkedSegment.Type.VINCULUM;
 		numOfRepeats = 2;
-		scale = 28;
+		scale = 35;
 		decimalPoint = ".";
 		intSeparator = ",";
-		mantSeparator = " ";
+		mantSeparator = "~";
 		divisionString = new String[] { "/", "\\div" };
 		multiplicationString = new String[] { "*", "\\times" };
 		trig = AngleUnit.DEG;
 		constants = new HashMap<>();
 		boundVariables = new HashMap<>();
-		symja = new Symja(Scientific.this);
+		symja = new Symja();
+		initConstants(constants);
 	}
 
 	public Evaluator<String> getSymja() {
@@ -252,7 +408,11 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 	 * Time created: 20:34:16---------------------------------------------------
 	 */
 	/**
-	 * @param constants the constants to be added
+	 * @param name     the name within the expression that will be used to fetch the segment format from the constant map
+	 * @param constant the first element is the MathJax format the next is the segment builder of the actual numeric value. This
+	 *                 need to be implemented in the scientific expression package where {@code Name} exists. In it format method,
+	 *                 it uses the same string for the toString and the format of the segment being returned. This is wrong. It
+	 *                 should use a valid format.
 	 */
 	public void addConstant(String name, Couple<String, Function<Name.Params, SegmentBuilder>> constant) {
 		this.constants.put(name, constant);
@@ -372,13 +532,14 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 	public void setIntgeral(boolean intgeral) {
 		this.integral = intgeral;
 	}
-	
+
 	/*
 	 * Most Recent Date: 8 Oct 2022-----------------------------------------------
 	 * Most recent time created: 09:31:44--------------------------------------
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @return
 	 */
 	@Override
@@ -392,12 +553,13 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @return
 	 */
 	public void setDifferential(boolean diff) {
 		this.diff = diff;
 	}
-	
+
 	/*
 	 * Date: 16 Sep 2022-----------------------------------------------------------
 	 * Time created: 20:34:16---------------------------------------------------
@@ -496,6 +658,7 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @param expression
 	 * @return
 	 * @throws RuntimeException
@@ -505,8 +668,9 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 		final String src = symja.evaluate(expression);
 		lexer.setSource(src);
 		EvaluatableExpression<Name.Params> f = parser.parse(lexer, lexer.getSyntax(), Scientific.this);
+		parser.reset();
 
-		if (EXPRESSION_MASK == (modifier & EXPRESSION_MASK))// (getResultType() != Name.Params.ResultType.EXPRESSION)
+		if (getResultType() != Name.Params.ResultType.EXPRESSION)// (EXPRESSION_MASK == (modifier & EXPRESSION_MASK))
 			f = f.evaluate();
 		SegmentBuilder sb = new SegmentBuilder();
 		f.format(sb);
@@ -514,8 +678,9 @@ public class Scientific implements Evaluator<LinkedSegment>, Name.Params {
 			sb.append(new BasicSegment("", " + C", LinkedSegment.Type.AUTO_COMPLETE));
 		return sb.toSegment();
 	}
+
 	private final Scientific.Symja symja;
-	
+
 	private final ScientificLexer lexer;
 	private final PrattParser<EvaluatableExpression<Name.Params>, Name.Params> parser;
 

@@ -818,7 +818,7 @@ public class ScientificCalculator<T extends GUIComponent<T>, F> implements Calcu
 		 * Most recent time created: 14:25:00--------------------------------------
 		 * TODO: will add graphing
 		 */
-		@SuppressWarnings("unused")
+		@SuppressWarnings("null")
 		/**
 		 * {@inheritDoc}
 		 */
@@ -872,7 +872,7 @@ public class ScientificCalculator<T extends GUIComponent<T>, F> implements Calcu
 					} else if (isFrac) {
 						if (Utility.isFraction(s)) {
 							BigFraction f = Digits.fromSegmentString(s);
-							LinkedSegment sg = Digits.toSegment(f, false, Calculator.fromParams(ScientificCalculator.this, ScientificCalculator.this.numOfRepeats));
+							LinkedSegment sg = Digits.toSegment(f, false, EvaluatableExpression.fromParams(ScientificCalculator.this, ScientificCalculator.this.numOfRepeats));
 							details.put(new MomentString("Expression"), sg);
 						} else {
 							details.put(new MomentString("Expression"), src);

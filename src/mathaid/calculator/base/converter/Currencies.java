@@ -613,6 +613,7 @@ public final class Currencies {
 		protected BigDecimal sanitize(String rawText) {
 			if (rawText == null)
 				new NullException(String.class);
+			@SuppressWarnings("null")
 			Scanner sc = new Scanner(rawText.trim());
 			if (sc.hasNextBigDecimal()) {
 				BigDecimal ans = sc.nextBigDecimal();
@@ -1054,6 +1055,7 @@ public final class Currencies {
 		 * @throws IllegalArgumentException - if {@code iso} is &lt; {@code 3}, if {@code dateCreated} is more recent than {@code dateDeprecated} or {@code dateCreated} is more recent than today.
 		 * @throws NullPointerException - if any of the stipulation (for null tolerable values) is violated. See parameter description section.
 		 */
+		@SuppressWarnings("null")
 		private MediumOfExchange(String country, String iso, int numericCode, int fractionalDigits, String displayName,
 				String symbol, java.util.Calendar dateCreated, java.util.Calendar datePegged, String peggedWith, BigDecimal peggedRate,
 				java.util.Calendar dateDeprecated, String newCurrency) throws IllegalArgumentException, NullPointerException {

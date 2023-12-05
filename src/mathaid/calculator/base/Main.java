@@ -6,10 +6,35 @@ package mathaid.calculator.base;
 import static java.lang.System.err;
 import static java.lang.System.in;
 import static java.lang.System.out;
-
-import static mathaid.calculator.base.util.Arith.*;
-import java.util.*;
 import static mathaid.calculator.base.util.Utility.*;
+import static mathaid.calculator.base.util.Constants.*;
+import static mathaid.calculator.base.util.Arith.*;
+import static mathaid.calculator.base.typeset.Digits.*;
+import static mathaid.calculator.base.typeset.Segments.*;
+import static mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.*;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import mathaid.calculator.base.evaluator.Evaluator;
+import mathaid.calculator.base.evaluator.Scientific;
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
+import mathaid.calculator.base.evaluator.parser.expression.scientific.Name.Params;
+import mathaid.calculator.base.typeset.DigitPunc;
+import mathaid.calculator.base.typeset.Digits;
+import mathaid.calculator.base.typeset.Formatter;
+import mathaid.calculator.base.typeset.LinkedSegment;
+import mathaid.calculator.base.typeset.Segment;
+import mathaid.calculator.base.typeset.SegmentBuilder;
+import mathaid.calculator.base.util.Arith;
+import mathaid.calculator.base.util.Constants;
+import mathaid.calculator.base.util.Tuple;
+import mathaid.calculator.base.util.Utility;
+import mathaid.functional.Supplier;
 
 /*
  * Date: 18 Mar 2020----------------------------------------------------
@@ -21,24 +46,133 @@ import static mathaid.calculator.base.util.Utility.*;
  */
 /**
  * @author Oruovo Anthony Etineakpopha
- * 
  */
 //@SuppressWarnings("deprecation")
 public class Main {
+
+	/**
+	 * Sets the calculators fields using {@code set <i|b|s> <name-of-the-field-to-be-set> <value>}. i is for int fields b is for
+	 * boolean fields s is for String fields
+	 */
+	static void set(Evaluator<?> e, String cmd) {
+		String[] cmds = cmd.split("\\s");
+		Class<?> c = e.getClass();
+		Field f;
+		try {
+			f = c.getDeclaredField(cmds[2]);
+		} catch (NoSuchFieldException | SecurityException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		f.setAccessible(true);
+		try {
+			switch (cmds[1].toLowerCase()) {
+			case "i":
+				f.setInt(e, Integer.parseInt(cmds[3]));
+				System.out.println("int field set");
+				break;
+			case "b":
+				f.setBoolean(e, Boolean.parseBoolean(cmds[3]));
+				System.out.println("boolean field set");
+				break;
+			case "s":
+				f.set(e, String.valueOf(cmds[3]));
+				System.out.println("Stringt field set");
+				break;
+			default:
+				System.err.println(cmds[1] + " is an unknown type!");
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * Print the calculators fields using {@code get <i|b|s> <name-of-the-field-to-be-printed>}. i is for int fields b is for
+	 * boolean fields s is for String fields
+	 */
+	static void get(Evaluator<?> e, String cmd) {
+		String[] cmds = cmd.toLowerCase().split("\\s");
+		Class<?> c = e.getClass();
+		Field f;
+		try {
+			f = c.getDeclaredField(cmds[2]);
+		} catch (NoSuchFieldException | SecurityException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		f.setAccessible(true);
+		try {
+			switch (cmds[1]) {
+			case "i":
+				System.out.println(cmds[2] + " = " + f.getInt(e));
+				break;
+			case "b":
+				System.out.println(cmds[2] + " = " + f.getBoolean(e));
+				break;
+			case "s":
+				System.out.println(cmds[2] + " = " + f.get(e));
+				break;
+			default:
+				System.err.println(cmds[1] + " is an unknown type!");
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	static void eval(Evaluator<LinkedSegment> e) {
+
+		Scanner sc = new Scanner(in);
+
+		StringBuilder sb = new StringBuilder();
+		List<Integer> l = new ArrayList<>(Arrays.asList(-1));
+		while (true) {
+			String cmd = sc.nextLine();
+			if (cmd.toLowerCase().matches("(?:end|exit|stop|cancel)"))
+				break;
+			else if (cmd.toLowerCase().startsWith("set")) {
+				set(e, cmd);
+				continue;
+			} else if (cmd.toLowerCase().startsWith("get")) {
+				get(e, cmd);
+				continue;
+			}
+			try {
+				Segment s = e.evaluate(cmd);
+				s.toString(sb, null, l);
+				err.println(sb);
+				sb.delete(0, sb.length());
+				l.clear();
+				l.add(-1);
+				s.format(sb, Formatter.empty(), l);
+				out.println(sb);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+			sb.delete(0, sb.length());
+			l.clear();
+			l.add(-1);
+		}
+
+		sc.close();
+
+	}
 
 	// Please show in the segment-builder documentation the difference between
 	// setting the focus on an inner child using vanilla linked-segment and doing
 	// the same using segment-builder.
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		out.println(new Object[] { err, in });
-		int a = 150;
-		int b = 2;
-		var x = rootAndRemainder(i(a), b);
-		out.println(Arrays.toString(x));
-		x = rootAndFactor(i(a), b);
-		out.println(Arrays.toString(x));
+
+		Scientific s = new Scientific();
 		
+		eval(s);
 
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;
@@ -171,4 +305,3 @@ public class Main {
 
 	}
 }
-

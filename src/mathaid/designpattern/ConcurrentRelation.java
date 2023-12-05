@@ -3,9 +3,7 @@
  */
 package mathaid.designpattern;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -113,7 +111,9 @@ public class ConcurrentRelation<T> {
 		subjects.remove(s);
 	}
 
+	@SuppressWarnings("unused")
 	private ScheduledThreadPoolExecutor subjectThreadPool;
+	@SuppressWarnings("unused")
 	private ReentrantLock lock;
 	private PriorityQueue<RunnableSubject<T>> subjects;
 //	private List<RunnableSubject<T>> subjects;

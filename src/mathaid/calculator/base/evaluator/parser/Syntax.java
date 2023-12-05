@@ -45,6 +45,8 @@ import mathaid.calculator.base.evaluator.parser.parselet.Parselet;
  * @param <E> The {@code Expression} type that will be used with this
  *            {@code Syntax}.
  * @param <P> An associated {@code Parser}
+ * @param <S> The syntax type of the parsers and parselets
+ * @param <A> The type expression params for parseselets.
  */
 public interface Syntax<T, B, E extends Expression<B>, P extends Parser<T, B, E, P, S, A>, S extends Syntax<T, B, E, P, S, A>, A> {
 

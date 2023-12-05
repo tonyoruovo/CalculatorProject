@@ -26,6 +26,8 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
  * Class name: FunctionParselet------------------------------------------------ 
  */
 /**
+ * A prefix {@code Parselet} for creating {@code Function} objects.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -37,14 +39,18 @@ public class FunctionParselet implements
 	 * Most recent time created: 12:06:39--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
-	 * @param alreadyParsedLeft
-	 * @param yetToBeParsedToken
-	 * @param parser
-	 * @param lexerReference
-	 * @param syntax
-	 * @param params
-	 * @return
+	 * Parses the token argument and searches for a closing symbol specified by {@link CommonSyntax#functionClose()}. If it is not
+	 * found (then that means that this function contains arguments), all the arguments found are added to a list. The arguments
+	 * must be separated by a symbol specified by {@link CommonSyntax#functionArgDelimiter()}. After the last argument is added to
+	 * the list, the closing symbol is consumed and a {@link Function} object is returned.
+	 * 
+	 * @param alreadyParsedLeft  represents the name of the returned {@code Function} object.
+	 * @param yetToBeParsedToken unused. Can be left as <code>null</code>.
+	 * @param parser         used for parsing each of the arguments.
+	 * @param lexerReference {@inheritDoc}
+	 * @param syntax         used for getting the the symbol used for the guarding the function's arguments.
+	 * @param params         {@inheritDoc}
+	 * @return a {@code Function} object {@inheritDoc}
 	 */
 	@Override
 	public EvaluatableExpression<Params> parse(EvaluatableExpression<Params> alreadyParsedLeft,
@@ -53,7 +59,7 @@ public class FunctionParselet implements
 			CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params> syntax,
 			Params params) {
 		List<EvaluatableExpression<Params>> args = new ArrayList<>();
-		
+
 		Type<String> functionEndType = syntax.getType(syntax.functionClose());
 		if (!parser.match(functionEndType, lexerReference)) {
 			do {

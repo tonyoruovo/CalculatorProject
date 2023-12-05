@@ -31,13 +31,28 @@ import mathaid.calculator.base.value.FloatAid;
  * Class name: NameParselet------------------------------------------------ 
  */
 /**
+ * A prefix {@code Parselet} for creating expression that are {@link Name} expressions.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
 public class NameParselet implements
 		Parselet<String, SegmentBuilder, EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, CommonSyntax<EvaluatableExpression<Params>, PrattParser<EvaluatableExpression<Params>, Params>, Params>, Params> {
 
-	//Does not affect Rep.MATH
+	// Does not affect Rep.MATH
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 10:50:05 ---------------------------------------------------
+	 */
+	/**
+	 * Converts the value given by {@code n} to the bit representation set in {@code p} and returns the result.
+	 * <p>
+	 * The does not have any effect when bit representation is {@link ResultType#REP_MATH}.
+	 * 
+	 * @param n the value to be converted.
+	 * @param p the value for accessing the endianess and bit representation.
+	 * @return the converted {@code BigInteger} value
+	 */
 	static BigInteger toCurrentEndianess(BigInteger n, Params p) {
 		if (p.getBitRepresentation() != ResultType.REP_MATH)
 			switch (p.getEndianess()) {
@@ -51,6 +66,16 @@ public class NameParselet implements
 		return n;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 10:55:24 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the corresponding {@code BinaryFPPrecision} for the set bit length with the {@code Params} object.
+	 * 
+	 * @param p the value for accessing the bit length
+	 * @return a {@code BinaryFPPrecision} object matching the bit length.
+	 */
 	private static BinaryFPPrecision getPrecision(Params p) {
 		switch (p.getBitLength()) {
 		case 8:
@@ -77,18 +102,19 @@ public class NameParselet implements
 	 * Most recent time created: 08:02:22--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Creates a new {@code Name} object.
+	 * <p>
+	 * Endianess, bit-length, bit representation all play an important role in the creation.
 	 * 
-	 * @param alreadyParsedLeft
-	 * @param yetToBeParsedToken
-	 * @param parser
-	 * @param lexerReference
-	 * @param syntax
-	 * @param params
-	 * @return
+	 * @param alreadyParsedLeft  not accessed. Can be <code>null</code>.
+	 * @param yetToBeParsedToken the value being parsed.
+	 * @param parser             {@inheritDoc}
+	 * @param lexerReference     {@inheritDoc}
+	 * @param syntax             {@inheritDoc}
+	 * @param params             {@inheritDoc}
+	 * @return a new {@code Name} objec.
 	 */
-	//Endianess is applied here
-	@SuppressWarnings("unused")
+	// Endianess is applied here
 	@Override
 	public PExpression parse(EvaluatableExpression<Params> alreadyParsedLeft, Token<String> yetToBeParsedToken,
 			PrattParser<EvaluatableExpression<Params>, Params> parser, Iterator<Token<String>> lexerReference,

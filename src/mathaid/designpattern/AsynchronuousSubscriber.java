@@ -3,8 +3,6 @@
  */
 package mathaid.designpattern;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -78,7 +76,7 @@ public class AsynchronuousSubscriber<T> implements Runnable {
 					lock.lock(); 
 					subscriber.doAction();
 					elapsed = System.currentTimeMillis();
-				} catch (@SuppressWarnings("unused") Exception e) {
+				} catch (Exception e) {
 					elapsed = System.currentTimeMillis();
 					Thread t = Thread.currentThread();
 					System.err.println("Class: " + subscriber.getClass().getName() + ", " + t.getName() + ", ID: "

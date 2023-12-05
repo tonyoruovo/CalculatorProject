@@ -27,6 +27,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import mathaid.MomentString;
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.ExpressionParams;
 import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpression.Params;
 import mathaid.calculator.base.typeset.DigitPunc;
@@ -64,12 +65,12 @@ public class PDetails implements Result.Details {
 			Params p) {
 		if (temp.get() == null) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp.get2nd());
-			LinkedSegment seg = Digits.toSegment(fp, p.getRadix(), 10, false, p.getDecimalPoint().charAt(0),
-					Calculator.fromParams(p, Segment.Type.VINCULUM));
+			LinkedSegment seg = Digits.toSegment(fp, p.getRadix(), 10, false,
+					EvaluatableExpression.fromParams(p, Segment.Type.VINCULUM));
 			details.put(new MomentString("As decimal floating-point"), seg);
 		} else if (temp.get2nd() == null) {
 			BinaryFP fp = temp.get();
-			LinkedSegment seg = Digits.toSegment(fp, 10, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			LinkedSegment seg = Digits.toSegment(fp, 10, 10, true, fromParams(p));
 			details.put(new MomentString("Expression"), seg);
 
 			seg = Digits.toRadixedSegment(BigInteger.valueOf(fp.signum() < 0 ? 1 : 0), p.getRadix(), fromParams(p));
@@ -84,20 +85,20 @@ public class PDetails implements Result.Details {
 			seg = Digits.toRadixedSegment(fp.toBigInteger(), 2, fromParams(p));
 			details.put(new MomentString("Bit layout (2's complement)"), seg);
 
-			seg = Digits.toSegment(fp, 2, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 2, 10, true, fromParams(p));
 			details.put(new MomentString("normalised (Binary Significand)"), seg);
-			seg = Digits.toSegment(fp, 8, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 8, 10, true, fromParams(p));
 			details.put(new MomentString("normalised (Octal Significand)"), seg);
-			seg = Digits.toSegment(fp, 10, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, true, fromParams(p));
 			details.put(new MomentString("normalised"), seg);
-			seg = Digits.toSegment(fp, 16, 10, true, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 16, 10, true, fromParams(p));
 			details.put(new MomentString("normalised (Hexadecimal Significand)"), seg);
 
-			seg = Digits.toSegment(fp, 2, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 2, 10, false, fromParams(p));
 			details.put(new MomentString("Binary Significand"), seg);
-			seg = Digits.toSegment(fp, 8, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 8, 10, false, fromParams(p));
 			details.put(new MomentString("Octal Significand"), seg);
-			seg = Digits.toSegment(fp, 16, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 16, 10, false, fromParams(p));
 			details.put(new MomentString("Hexadecimal Significand"), seg);
 		}
 	}
@@ -175,7 +176,7 @@ public class PDetails implements Result.Details {
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Unsigned)"), seg);
 		}
 	}
@@ -255,7 +256,7 @@ public class PDetails implements Result.Details {
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Signed magnitude)"), seg);
 		}
 	}
@@ -333,7 +334,7 @@ public class PDetails implements Result.Details {
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString("As decimal floating-point (2's complement)"), seg);
 		}
 	}
@@ -411,7 +412,7 @@ public class PDetails implements Result.Details {
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString("As decimal floating-point (1's complement)"), seg);
 		}
 	}
@@ -489,7 +490,7 @@ public class PDetails implements Result.Details {
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Negabinary)"), seg);
 		}
 	}
@@ -570,7 +571,7 @@ public class PDetails implements Result.Details {
 		// floating point
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString("As decimal floating-point (Mathematical)"), seg);
 		}
 	}
@@ -648,7 +649,7 @@ public class PDetails implements Result.Details {
 		if (p.getBitLength() >= 8) {
 			BinaryFP fp = getPrecision(p).fromBitLayout(temp[2]);
 			String n = FloatAid.getTrailingZeros(p.getBitLength() - 1).toString(10);
-			seg = Digits.toSegment(fp, 10, 10, false, p.getDecimalPoint().charAt(0), fromParams(p));
+			seg = Digits.toSegment(fp, 10, 10, false, fromParams(p));
 			details.put(new MomentString(String.format("As decimal floating-point (Excess-%s)", n)), seg);
 		}
 	}
@@ -704,7 +705,7 @@ public class PDetails implements Result.Details {
 	}
 
 	private static DigitPunc fromParams(Params p) {
-		return Calculator.fromParams(p, Segment.Type.VINCULUM);
+		return EvaluatableExpression.fromParams(p, Segment.Type.VINCULUM);
 	}
 
 	public NavigableMap<MomentString, LinkedSegment> getDetails(ExpressionParams<?> p, LinkedSegment src) {

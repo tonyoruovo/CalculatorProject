@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class AsynchronuousObserverUpdater implements Runnable {
 	private final Subject<?> subject;
+	@SuppressWarnings("unused")
 	private ReentrantLock lock;
 	private volatile long interval;
 	private final long initial;

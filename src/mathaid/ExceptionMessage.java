@@ -358,7 +358,7 @@ public enum ExceptionMessage implements LocalizableMessage {
 				if (c.compare(s, "null") != 0)// This is for the Empty String message constant
 					return s;
 			}
-		} catch (@SuppressWarnings("unused") MissingResourceException e) {
+		} catch (MissingResourceException e) {
 		}
 
 		return source;

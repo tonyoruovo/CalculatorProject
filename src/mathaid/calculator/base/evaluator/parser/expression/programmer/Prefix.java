@@ -13,6 +13,7 @@ import static mathaid.calculator.base.evaluator.parser.expression.programmer.Fun
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.typeset.Segments;
@@ -36,28 +37,77 @@ import mathaid.calculator.base.value.US;
  * Class name: Prefix------------------------------------------------ 
  */
 /**
+ * An expression that represents unary operator that are on the left side of an operand such as {@code !}, {@code -}.
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
 public class Prefix extends Name {
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:09:31 ---------------------------------------------------
+	 */
+	/**
+	 * Constructs a {@code Prefix} operator by specifying the operand, symbol, evaluation and format options.
+	 * 
+	 * @param name the symbol of the operator
+	 * @param right the sole operand of this operator.
+	 * @param params the {@code ExpressionParams} representing options for the evaluation and format within this expression.
+	 */
 	public Prefix(String name, PExpression right, Params params) {
 		super(name, params, String.class);
 		this.right = right;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:10:41 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the sole operand of this prefix operator.
+	 * @return the right operand.
+	 */
 	public PExpression getRight() {
 		return right;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:11:26 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if {@code this} is the negation operand {@code -}
+	 * @return {@code this == '-'}.
+	 */
 	private boolean isNegation() {
 		return getName().equals(MINUS);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:11:40 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if {@code this} is the plus operand {@code +}
+	 * @return {@code this == '+'}.
+	 */
 	private boolean isPlus() {
 		return getName().equals(PLUS);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:12:32 ---------------------------------------------------
+	 */
+	/**
+	 * Appends the {@code LinkedSegment} representation of this operator and it's operand into the format builder.
+	 * <p>
+	 * The format is ordered so: symbol, operand.
+	 * <p>
+	 * This has no side-effects.
+	 * 
+	 * @param f {@inheritDoc}
+	 */
 	@Override
 	public void format(SegmentBuilder f) {
 		switch (getName()) {
@@ -76,6 +126,21 @@ public class Prefix extends Name {
 		right.format(f);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:14:05 ---------------------------------------------------
+	 */
+	/**
+	 * Evaluates this unary operator and returns the result.
+	 * <p>
+	 * The operand will have it's {@link EvaluatableExpression#evaluate() evaluate()} method called before the final evaluation
+	 * is done.
+	 * <p>
+	 * This has no side-effects.
+	 * 
+	 * @return a new {@code PExpression} that is the result of evaluating this operator. May return the same object
+	 *         especially if called more than once.
+	 */
 	@Override
 	public PExpression evaluate() {
 		Params p = getParams();
@@ -227,5 +292,8 @@ public class Prefix extends Name {
 		return this;
 	}
 
+	/**
+	 * The sole operand.
+	 */
 	private final PExpression right;
 }

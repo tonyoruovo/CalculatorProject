@@ -71,6 +71,7 @@ public class RandomWrapper implements Cloneable, Serializable, AutoCloseable {
 		 * @param i
 		 * @return
 		 */
+		@SuppressWarnings("resource")
 		public static RandomWrapper create(int i) {
 			Random r = new Random(i);
 //			System.out.println(i);

@@ -39,6 +39,7 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.typeset.Segments;
@@ -59,6 +60,17 @@ import mathaid.calculator.base.value.US;
  * Class name: Function------------------------------------------------ 
  */
 /**
+ * An expression with a parameter (argument) that performs an action on the parameter which results in a new value being created
+ * from the action.
+ * <p>
+ * Functions have an arity, which gives the number of argument required before it can give a result. Arity types include:
+ * nullary (takes 0 number of argument), unary (takes 1 argument), binary (takes 2 arguments) etc. If the function is evaluated
+ * without the correct arity, it will result in an exception.
+ * <p>
+ * The result of an evaluation depends on the {@linkplain Params#getBitRepresentation() bit representation} of the expression,
+ * some functions can only evaluate in certain bit representations. E.g {@code bitCount(3.5ap-2)}, {@code ceil(0xeeb12)} (when
+ * bit representation is floating-point) will all throw an exception.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -69,18 +81,39 @@ public class Function extends Name {
 	 * Time created: 09:17:50---------------------------------------------------
 	 */
 	/**
-	 * @param name
-	 * @param params
+	 * Constructs a {@code Function} with a given name, argument list and params object.
+	 * 
+	 * @param name   an {@code EvaluatableExpression} that is the identifier of this {@code Function}.
+	 * @param args the argument(s)/parameter(s) to this function.
+	 * @param params the {@code ExpressionParams} representing options for the evaluation and format within this expression.
 	 */
 	public Function(String name, List<PExpression> args, Params params) {
 		super(name, params, String.class);
 		this.args = args;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 08:15:05 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the arguments given at the constructor.
+	 * 
+	 * @return an unmodifiable list of all the arguments of this function.
+	 */
 	public List<PExpression> getArguments() {
 		return Collections.unmodifiableList(args);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 08:15:14 ---------------------------------------------------
+	 */
+	/**
+	 * Converts all the arguments into {@code LinkedSegment} nodes and returns them in the same order .
+	 * 
+	 * @return an array of the formatted arguments.
+	 */
 	private LinkedSegment[] argsToSegments() {
 		LinkedSegment[] s = new LinkedSegment[args.size()];
 		SegmentBuilder sb = new SegmentBuilder();
@@ -92,11 +125,41 @@ public class Function extends Name {
 		return s;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 08:18:14 ---------------------------------------------------
+	 */
+	/**
+	 * Appends the {@code LinkedSegment} representation of this function into the format builder.
+	 * <p>
+	 * The name is first formatted and appended to the given builder, after which the arguments are formatted and appended.
+	 * <p>
+	 * This has no side-effects.
+	 * 
+	 * @param sb {@inheritDoc}
+	 */
 	@Override
 	public void format(SegmentBuilder sb) {
-		sb.append(Segments.genericFunction(String.format(" \\mathrm{%s}", getName()), getName(), argsToSegments(), false, false));
+		sb.append(Segments.genericFunction(String.format(" \\mathrm{%s}", getName()), getName(), argsToSegments(),
+				false, false));
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 08:15:35 ---------------------------------------------------
+	 */
+	/**
+	 * Performs computations on the arguments and returns the result as an {@code PExpression}.
+	 * <p>
+	 * All arguments given will have their {@link EvaluatableExpression#evaluate() evaluate()} method called on them, then their
+	 * results will be applied to this function. The result itself depends on the type of function, it's arguments, as well as the
+	 * {@linkplain Params#getBitRepresentation() bit representation}.
+	 * <p>
+	 * This has no side-effects.
+	 * 
+	 * @return a new {@code EvaluatableExpression} that is the result of evaluating this function. May return the same object
+	 *         especially if called more than once.
+	 */
 	@Override
 	public PExpression evaluate() {
 		switch (getName()) {
@@ -490,6 +553,9 @@ public class Function extends Name {
 		throw new ArithmeticException("unknown function name");
 	}
 
+	/**
+	 * Stores the arguments i.e the parameters to this function.
+	 */
 	final List<PExpression> args;
 
 }

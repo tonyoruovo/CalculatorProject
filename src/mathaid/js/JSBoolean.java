@@ -88,7 +88,7 @@ public class JSBoolean extends JSValue<JSBoolean> {
 	public void parseToScript(Appendable parser, int tabs) {
 		try {
 			parser.append(String.valueOf(val));
-		}catch(@SuppressWarnings("unused") IOException e) {}
+		}catch(IOException e) {}
 	}
 	
 	/*

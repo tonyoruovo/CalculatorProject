@@ -6,14 +6,15 @@ package mathaid.calculator.base.evaluator.parser.expression.programmer;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import mathaid.calculator.base.evaluator.Calculator;
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpression.Params.ResultType;
 import mathaid.calculator.base.typeset.Digits;
+import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.Segment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.typeset.Segments;
+import mathaid.calculator.base.value.BinaryFPPrecision;
 import mathaid.calculator.base.value.BinaryFPPrecision.BinaryFP;
 import mathaid.calculator.base.value.FloatAid;
 
@@ -26,24 +27,50 @@ import mathaid.calculator.base.value.FloatAid;
  * Class name: Name------------------------------------------------ 
  */
 /**
+ * Represents constants and numbers. Because hex numbers are supported, upper case A through F is not allowed for naming of
+ * constants. Constant names are expected to be in lower case.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
 public class Name extends PExpression {
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 19:07:40 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code Name} expression.
+	 * <p>
+	 * This is also likely the constructor be overridden by sub-classes.
+	 * 
+	 * @param name   the value of the name which can be alphanumeric (for integers and floating point) or can be alphabetic (for
+	 *               variables and constants).
+	 *               <p>
+	 *               For floating point values, the format must conform to {@link BinaryFPPrecision#createFP(String, int)}. For
+	 *               integers, values must be in the format specified by {@link BigInteger#BigInteger(String, int)}. For variables
+	 *               and constants, only single non-decimal-digit characters are supported.
+	 * @param params the {@code Params} representing options for the evaluation and format within this expression.
+	 * @param k      the value specifying the type of string input. Only 3 values are valid namely:
+	 *               <ul>
+	 *               <li><code>BigInteger.class</code>: specifies that {@code name} is an integer.</li>
+	 *               <li><code>BinaryFP.class</code>: specifies that {@code name} is a floating-point.</li>
+	 *               <li><code>String.class</code>: specifies that {@code name} is a variable/constant.</li>
+	 *               </ul>
+	 */
 	public Name(String name, Params params, Class<?> k) {
 		super(params);
-		if (k == BigInteger.class) {
+		if (k.equals(BigInteger.class)) {
 			this.integer = new BigInteger(name, params.getRadix());
 			this.fp = null;
 			this.name = null;
 			this.carry = null;
-		} else if (k == BinaryFP.class) {
-			this.fp = getPrecision().createFP(name, params.getRadix());
+		} else if (k.equals(BinaryFP.class)) {
 			this.integer = null;
+			this.fp = getPrecision().createFP(name, params.getRadix());
 			this.name = null;
 			this.carry = null;
-		} else if (k == String.class) {
+		} else if (k.equals(String.class)) {
 			this.fp = null;
 			this.integer = null;
 			this.name = name;
@@ -52,6 +79,17 @@ public class Name extends PExpression {
 			throw new IllegalArgumentException();
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 19:21:55 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code Name} as an integer.
+	 * 
+	 * @param n      the literal value.
+	 * @param carry  the carry/overflow bit.
+	 * @param params the {@code Params} representing options for the evaluation and format within this expression.
+	 */
 	public Name(BigInteger n, BigInteger carry, Params params) {
 		super(params);
 		this.integer = n;
@@ -60,6 +98,16 @@ public class Name extends PExpression {
 		this.carry = carry;
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 19:22:58 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code Name} as a floating-point.
+	 * 
+	 * @param n      the literal value.
+	 * @param params the {@code Params} representing options for the evaluation and format within this expression.
+	 */
 	public Name(BinaryFP n, Params params) {
 		super(params);
 		this.fp = n;
@@ -68,6 +116,15 @@ public class Name extends PExpression {
 		this.carry = n.getCarry();
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 19:24:04 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the carry/overflow bit.
+	 * 
+	 * @return {@inheritDoc}
+	 */
 	@Override
 	public BigInteger getCarry() {
 		return carry;
@@ -78,9 +135,16 @@ public class Name extends PExpression {
 	 * Most recent time created: 10:18:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Appends the {@code LinkedSegment} representation of {@code this}.
+	 * <p>
+	 * All calculations are done with a numerical precision of <code>{@linkplain Params#getScale() scale} + 5</code> and may throw
+	 * exceptions that indicate that value(s) were out of range.
+	 * <p>
+	 * All sub-classes will override this method to provide their own evaluation unique to them.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @param formatBuilder
+	 * @param formatBuilder the builder to which the {@link LinkedSegment} representation of {@code this} will be appended.
 	 */
 	@Override
 	public void format(SegmentBuilder formatBuilder) {
@@ -90,28 +154,33 @@ public class Name extends PExpression {
 			case Params.ResultType.REP_FLOATING_POINT: {
 				formatBuilder.append(Digits.toSegment(fp, getParams().getRadix(), 10,
 						getParams().getResultType() == ResultType.NORMALISED,
-						Calculator.fromParams(getParams(), Segment.Type.VINCULUM)));
+						EvaluatableExpression.fromParams(getParams(), Segment.Type.VINCULUM)));
 			}
 			default: {
 				formatBuilder.append(Digits.toRadixedSegment(integer, getParams().getRadix(),
-						Calculator.fromParams(getParams(), Segment.Type.VINCULUM)));
+						EvaluatableExpression.fromParams(getParams(), Segment.Type.VINCULUM)));
 			}
 			}
-		else
-			formatBuilder.append(Segments.boundVariable(name, name));// NaN, +-Infinity, -0.0
+		else if (getParams().getConstants().containsKey(getName())) {
+			formatBuilder.append(Segments.constant(getParams().getConstants().get(getName()).get(), name));
+		} else if(getParams().getBoundVariables().containsKey(getName()))
+			formatBuilder.append(Segments.boundVariable(getParams().getBoundVariables().get(getName()).get(), name));// NaN, +-Infinity, -0.0
 	}
 
 	/*
 	 * Most Recent Date: 8 Oct 2022-----------------------------------------------
 	 * Most recent time created: 10:18:18--------------------------------------
+	 * Calling evaluate twice will mutate the internal value, albeit, this class is immutable
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Computes this {@code Name} if it is a bound variable or constant else just returns the same value albeit as a new object.
+	 * <p>
+	 * All sub-classes will override this method to provide their own evaluation unique to them.
+	 * <p>
+	 * This creates no side-effects.
 	 * 
-	 * Calling evaluate twice will mutate the internal value, albeit, this class is
-	 * immutable
-	 * 
-	 * @return
+	 * @return a new {@code Name} that is a number (if {@code getFloatingPoint() != null && getInteger() != null}) or the same
+	 *         object.
 	 */
 	/*
 	 * TODO: We need a way to convert to the correct endianess even though this
@@ -150,9 +219,9 @@ public class Name extends PExpression {
 	 * Most recent time created: 21:27:09--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Gets the floating-point representation. May be <code>null</code> of {@code this} was not instantiated as a floating-point.
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public BinaryFP getFloatingPoint() {
@@ -164,9 +233,9 @@ public class Name extends PExpression {
 	 * Most recent time created: 21:27:09--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * The integer representation. May be <code>null</code> of {@code this} was not instantiated as an integer.
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public BigInteger getInteger() {
@@ -178,9 +247,9 @@ public class Name extends PExpression {
 	 * Most recent time created: 10:18:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Gets the literal value.
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public String getName() {
@@ -196,10 +265,10 @@ public class Name extends PExpression {
 	 * Most recent time created: 10:18:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Checks whether {@code o} is an instance of {@code Name} and both their {@link #getName()} is equal.
 	 * 
-	 * @param o
-	 * @return
+	 * @param o the value to be compared.
+	 * @return <code>getName().equals(((Name) o).getName())</code>.
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -214,13 +283,13 @@ public class Name extends PExpression {
 	 * Most recent time created: 10:18:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Gets the hash-code of the value returned by {@link #getName()}.
 	 * 
-	 * @return
+	 * @return {@code getName().hashCode()}.
 	 */
 	@Override
 	public int hashCode() {
-		return getName().hashCode() ^ Objects.hash(this);
+		return getName().hashCode();
 	}
 
 	/*
@@ -228,17 +297,29 @@ public class Name extends PExpression {
 	 * Most recent time created: 21:25:08--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Returns {@link #getName()}
 	 * 
-	 * @return
+	 * @return {@code getName()}
 	 */
 	@Override
 	public String toString() {
 		return isInteger() ? integer.toString() : fp.toString();
 	}
 
+	/**
+	 * The integer representation. May be <code>null</code> of {@code this} was not instantiated as an integer.
+	 */
 	private final BigInteger integer;
+	/**
+	 * The carry/overflow bit.
+	 */
 	private final BigInteger carry;
+	/**
+	 * The floating-point representation. May be <code>null</code> of {@code this} was not instantiated as a floating-point.
+	 */
 	private final BinaryFP fp;
+	/**
+	 * The variable/constant representation. May be <code>null</code> of {@code this} was not instantiated as a variable/constant.
+	 */
 	private final String name;
 }

@@ -53,7 +53,7 @@ public class JSNull extends JSValue<JSNull> {
 	public void parseToScript(Appendable parser, int tabs) {
 		try {
 			parser.append(getType().getName());
-		}catch(@SuppressWarnings("unused") IOException e) {}
+		}catch(IOException e) {}
 	}
 	
 	/*

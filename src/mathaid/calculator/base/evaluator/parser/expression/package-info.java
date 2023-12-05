@@ -10,7 +10,11 @@
  * Class name: package-info------------------------------------------------ 
  */
 /**
+ * Contains classes and interfaces for defining expressions.<p>This runs parallel to the {@code mathaid.calculator.base.typeset}
+ * package.
+ * 
  * @author Oruovo Anthony Etineakpopha
+ * 
  * @email tonyoruovo@gmail.com
  */
 package mathaid.calculator.base.evaluator.parser.expression;

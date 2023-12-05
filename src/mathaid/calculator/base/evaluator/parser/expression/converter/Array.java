@@ -107,6 +107,7 @@ public class Array extends CExpression {
 		return 0;
 	}
 	
+	@SuppressWarnings("unused")
 	private final UnitVector v;
 
 }

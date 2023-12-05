@@ -54,4 +54,5 @@ public interface Evaluator<T> {
 	 *                          encountered.
 	 */
 	T evaluate(String expression) throws RuntimeException;
+	
 }

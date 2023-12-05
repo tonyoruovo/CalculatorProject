@@ -173,7 +173,7 @@ public class JSNumber extends JSValue<JSNumber> implements Comparable<JSNumber> 
 		try {
 			parser.append(Math.floor(dVal) == Math.ceil(dVal) && isNotOverflow(dVal) ? String.valueOf(lVal)
 					: String.valueOf(dVal));
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 		}
 	}
 

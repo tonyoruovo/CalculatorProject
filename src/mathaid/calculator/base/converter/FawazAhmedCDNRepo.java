@@ -213,7 +213,7 @@ final class FawazAhmedCDNRepo extends Website {
 				else if (ioe instanceof UnknownHostException)
 					new HostException(ExceptionMessage.INTERNET_NOT_AVAILABLE, (UnknownHostException) ioe);
 				new BaseException(ExceptionMessage.EMPTY, ioe);
-			} catch (@SuppressWarnings("unused") Exception e) {
+			} catch (Exception e) {
 				return null;
 			}
 		}
@@ -408,7 +408,7 @@ final class FawazAhmedCDNRepo extends Website {
 				ex.printStackTrace();
 				try {
 					new BaseException(ExceptionMessage.EMPTY, ex);
-				} catch (@SuppressWarnings("unused") Exception e) {
+				} catch (Exception e) {
 					return null;
 				}
 			}

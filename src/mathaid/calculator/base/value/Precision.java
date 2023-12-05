@@ -778,11 +778,11 @@ public enum Precision {
 
 			try {
 				new BigInteger(value.substring(value.indexOf('.') + 1, value.indexOf('p')), 16);
-			} catch (@SuppressWarnings("unused") NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				return false;
 			}
 		} /* something happened in the exponent area, probably an empty string? */
-		catch (@SuppressWarnings("unused") NumberFormatException | IndexOutOfBoundsException e) {
+		catch (NumberFormatException | IndexOutOfBoundsException e) {
 			return false;
 		}
 
@@ -1206,7 +1206,6 @@ public enum Precision {
 	 * 
 	 * @return the max value of this {@code Precision}
 	 */
-	@SuppressWarnings("cast")
 	private BigDecimal maxValue() {
 		if (this instanceof Serializable) {
 			switch (length) {
@@ -1245,7 +1244,6 @@ public enum Precision {
 	 * 
 	 * @return the min normal value
 	 */
-	@SuppressWarnings("cast")
 	private BigDecimal minNormal() {
 		if (this instanceof Serializable) {
 			switch (length) {
@@ -1285,7 +1283,6 @@ public enum Precision {
 	 * 
 	 * @return the min value
 	 */
-	@SuppressWarnings("cast")
 	private BigDecimal minValue() {
 		if (this instanceof Serializable) {
 			switch (length) {
@@ -1582,7 +1579,7 @@ public enum Precision {
 					/* If the number of significand bits is satisfied break from the loop */
 					if (raw.substring(raw.indexOf("1")).length() >= getSignificandBits())
 						break;
-				} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+				} catch (IndexOutOfBoundsException e) {
 					// Nothing to catch
 				}
 			} // End of while statement
@@ -1615,7 +1612,7 @@ public enum Precision {
 				 * or equal to 1 needs approximation
 				 */
 			} // End else
-		} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			// Do nothing
 		} // End catch
 		String rv = raw.toString();// Return value

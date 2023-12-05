@@ -88,7 +88,7 @@ public class JSString extends JSValue<JSString> {
 	public void parseToScript(Appendable parser, int tabs) {
 		try {
 			parser.append("\"" + val + "\"");
-		}catch(@SuppressWarnings("unused") IOException e) {}
+		}catch(IOException e) {}
 	}
 	
 	/*

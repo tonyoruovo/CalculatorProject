@@ -28,7 +28,10 @@ public class Group extends PExpression {
 	 * Time created: 07:32:00---------------------------------------------------
 	 */
 	/**
-	 * @param params
+	 * Constructs a {@code Group} by specifying the content, evaluation and format options.
+	 * 
+	 * @param content the root of the expression tree in this group.
+	 * @param params  the {@code Params} representing options for the evaluation and format within this expression.
 	 */
 	public Group(PExpression content, Params params) {
 		super(params);
@@ -40,7 +43,9 @@ public class Group extends PExpression {
 	 * Time created: 07:47:58---------------------------------------------------
 	 */
 	/**
-	 * @return the content
+	 * Gets the content of this group.
+	 * 
+	 * @return the content expression.
 	 */
 	public PExpression getContent() {
 		return content;
@@ -51,9 +56,11 @@ public class Group extends PExpression {
 	 * Most recent time created: 07:22:13--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Appends the {@code LinkedSegment} representation of this grouped expression and it's content into the format builder.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @param formatBuilder
+	 * @param formatBuilder {@inheritDoc}
 	 */
 	@Override
 	public void format(SegmentBuilder formatBuilder) {
@@ -71,9 +78,11 @@ public class Group extends PExpression {
 	 * Most recent time created: 07:22:13--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Evaluates this {@code Group} by calling {@link PExpression#evaluate() evaluate} on it's content.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @return
+	 * @return the result of evaluating the content. May return the same object especially if called more than once.
 	 */
 	@Override
 	public PExpression evaluate() {
@@ -85,9 +94,9 @@ public class Group extends PExpression {
 	 * Most recent time created: 07:22:13--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Gets the carry/overflow bit.
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public BigInteger getCarry() {
@@ -99,9 +108,9 @@ public class Group extends PExpression {
 	 * Most recent time created: 07:22:13--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Returns <code>null</code>.
 	 * 
-	 * @return
+	 * @return <code>null</code>
 	 */
 	@Override
 	BinaryFP getFloatingPoint() {
@@ -114,9 +123,9 @@ public class Group extends PExpression {
 	 * Most recent time created: 07:22:13--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Returns <code>null</code>.
 	 * 
-	 * @return
+	 * @return <code>null</code>
 	 */
 	@Override
 	BigInteger getInteger() {
@@ -129,9 +138,9 @@ public class Group extends PExpression {
 	 * Most recent time created: 07:22:13--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Gets the empty string {@code ""} as a group does not have a name
 	 * 
-	 * @return
+	 * @return an empty string.
 	 */
 	@Override
 	public String getName() {
@@ -145,8 +154,8 @@ public class Group extends PExpression {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param o
-	 * @return
+	 * @param o {@inheritDoc}
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -163,13 +172,16 @@ public class Group extends PExpression {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public int hashCode() {
 		return ~content.hashCode();
 	}
 
+	/**
+	 * The expression content of this group.
+	 */
 	private final PExpression content;
 
 }

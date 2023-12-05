@@ -32,7 +32,7 @@ import mathaid.calculator.base.util.Tuple.Quadruple;
  * Class name: FloatAid------------------------------------------------ 
  */
 /**
- * The {@code BitAid} class is to the {@code Precision}, {@code FloatPoint},
+ * The {@code FloatAid} class is to the {@code Precision}, {@code FloatPoint},
  * {@code BinaryFPPrecision} and {@code BinaryFP} what {@code Math} is to java's
  * value types ({@code int}, {@code long}, {@code float} and {@code double}). It
  * also has utility methods for manipulating bits (using {@code BigInteger}),
@@ -1159,7 +1159,7 @@ public final class FloatAid {
 	 * always be signed as they may be parsed as digits if unsigned (with either '+'
 	 * or '-') and the exponent character is a valid digit in that radix - for
 	 * example <code>3b8e4<sub>16</sub></code> which may be intended as
-	 * <code>3b8e+4<sub>16</sub></code> be cause the 'e' character in the value is a
+	 * <code>3b8e+4<sub>16</sub></code> because the 'e' character in the value is a
 	 * valid hex digit. Also, exponents must have their respective exponent be in
 	 * the same radix as the value or else a {@code NumberFormatException} will be
 	 * thrown when parsing the exponent or the value may not be considered as a
@@ -1174,7 +1174,7 @@ public final class FloatAid {
 	 * must be converted to binary fraction, then the radix point must be normalised
 	 * (binary scientific notation), the exponent must also be adjusted, the
 	 * normalised binary fraction (without the normalised exponent) can now be
-	 * converted to the specified radix theb multiplied by 2^normalised exponent.
+	 * converted to the specified radix then multiplied by 2^normalised exponent.
 	 * Any exponent above <code>abs({@link Integer#MAX_VALUE})</code> may cause
 	 * undefined behaviour.
 	 * <h3>The 'e' exponent character</h3>
@@ -1191,7 +1191,7 @@ public final class FloatAid {
 	 * @param radix the radix that the string argument is presented in.
 	 *              <p>
 	 *              Note that in some radixes the exponent characters 'e' and 'p'
-	 *              (the latter for radixes greater than 14 and the former for
+	 *              (the former for radixes greater than 14 and the latter for
 	 *              radixes greater than 25) may be parsed as actual digits unless a
 	 *              sign is appended to them. For example, the value
 	 *              <code>0.00hxw93270udwfnnepr<sub>36</sub></code> will be parsed
@@ -1223,14 +1223,13 @@ public final class FloatAid {
 	 *                               outside of the range
 	 *                               ({@link Character#MIN_RADIX},
 	 *                               {@link Character#MAX_RADIX})
-	 * @implNote This algorithm is faster and more efficient that
-	 *           {@link Utility#toDecimal(String, Radix, Precision)}
+	 * @implNote This algorithm is fast and efficient.
 	 */
 	public static BigDecimal toDecimal(String n, int radix, MathContext mc) throws NumberFormatException {
 		if (radix == 10 && !n.contains("p"))
 			return d(n, mc);
 		// decompose the number to it's sign, integer, point, mantissa, exponent char,
-		// exponent sign ane exponent
+		// exponent sign and exponent
 		String[] c = getComponents(n, radix);
 		if (isNumber(c)) {// only execute this block if this is a valid number
 			boolean isNormalised = isNormalised(c);// check for binary exponents

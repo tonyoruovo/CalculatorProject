@@ -1013,7 +1013,7 @@ public class Complex extends java.lang.Number {
 						last = last.multiply(this);
 					return x.signum() < 0 ? ONE.divide(last) : last;
 				}
-			} catch (@SuppressWarnings("unused") ArithmeticException e) {
+			} catch (ArithmeticException e) {
 			}
 		}
 
@@ -1477,7 +1477,7 @@ public class Complex extends java.lang.Number {
 		sb = new StringBuilder(sb.toString().replaceAll(" ", ""));
 		try {
 			real = new BigDecimal(sb.toString());
-		} catch (@SuppressWarnings("unused") NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			throw new NumberFormatException("Real part is not recognised");
 		}
 		sb.delete(0, sb.length());
@@ -1489,9 +1489,9 @@ public class Complex extends java.lang.Number {
 				sb.deleteCharAt(sb.length() - 1);
 
 			imaginary = new BigDecimal(sb.toString());
-		} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			imaginary = BigDecimal.ZERO;
-		} catch (@SuppressWarnings("unused") NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			throw new NumberFormatException("Imaginary part is not recognised");
 		}
 

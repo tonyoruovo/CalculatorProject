@@ -22,10 +22,12 @@ import static mathaid.calculator.base.typeset.Segment.Type.PREFIX_MINUS;
 import static mathaid.calculator.base.typeset.Segment.Type.PREFIX_PLUS;
 import static mathaid.calculator.base.typeset.Segment.Type.UNIT;
 import static mathaid.calculator.base.typeset.Segment.Type.VINCULUM;
+import static mathaid.calculator.base.util.Utility.d;
 import static mathaid.calculator.base.util.Utility.formatAsStandardForm;
 import static mathaid.calculator.base.util.Utility.fromDecimal;
 import static mathaid.calculator.base.util.Utility.mc;
 import static mathaid.calculator.base.util.Utility.toEngineeringString;
+import static mathaid.calculator.base.value.FloatAid.isNumber;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -37,7 +39,6 @@ import java.util.Map;
 
 import mathaid.calculator.base.value.BigFraction;
 import mathaid.calculator.base.value.BinaryFPPrecision.BinaryFP;
-import mathaid.calculator.base.value.FloatAid;
 
 /*
  * Date: 13 Nov 2023 -----------------------------------------------------------
@@ -48,14 +49,11 @@ import mathaid.calculator.base.value.FloatAid;
  * Class name: Digits ------------------------------------------------
  */
 /**
- * Set of static methods that help construct proper {@link Digit} objects which
- * are commonly found in TeX and MathJax.
- * 
+ * Set of static methods that help construct proper {@link Digit} objects which are commonly found in TeX and MathJax.
  * <p>
- * Although passing <code>null</code> to any of the method expecting a
- * {@code LinkedSegment} argument will not throw an exception, editing the tree
- * afterwards may cause an exception. it is recommended that the {@link Empty}
- * object be used instead of <code>null</code>. For example, rather than do:
+ * Although passing <code>null</code> to any of the method expecting a {@code LinkedSegment} argument will not throw an
+ * exception, editing the tree afterwards may cause an exception. it is recommended that the {@link Empty} object be used
+ * instead of <code>null</code>. For example, rather than do:
  * 
  * <pre>
  *	<code>
@@ -74,15 +72,12 @@ import mathaid.calculator.base.value.FloatAid;
  *	</code>
  * </pre>
  * 
- * This way, no exception will result from calling methods of the tree. All
- * other argument types must be non-null else a {@code NullPointerException} or
- * {@code IndexOutOfBoundsException} will be thrown.
+ * This way, no exception will result from calling methods of the tree. All other argument types must be non-null else a
+ * {@code NullPointerException} or {@code IndexOutOfBoundsException} will be thrown.
  * <p>
- * The terms segment, tree, sub-tree, subtree, node, nodes, segments all refer
- * to an instance of the {@code LinkedSegment} interface. THe terms number node,
- * number nodes, number tree, number trees, number sub-tree, number sub-trees,
- * all refer to a {@code LinkedSegment} instance where all the nodes are an
- * instance of the {@code Digit} class.
+ * The terms segment, tree, sub-tree, subtree, node, nodes, segments all refer to an instance of the {@code LinkedSegment}
+ * interface. THe terms number node, number nodes, number tree, number trees, number sub-tree, number sub-trees, all refer to a
+ * {@code LinkedSegment} instance where all the nodes are an instance of the {@code Digit} class.
  * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
@@ -94,11 +89,10 @@ public final class Digits {
 	 * Time created: 10:41:03 ---------------------------------------------------
 	 */
 	/**
-	 * Constructs a {@code LinkedSegment} for the unary operator '+'. The value that
-	 * this method returns, does not have a sibling or child.
+	 * Constructs a {@code LinkedSegment} for the unary operator '+'. The value that this method returns, does not have a sibling or
+	 * child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\textrm{+}</code>
@@ -106,8 +100,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>+</code>
@@ -128,12 +121,10 @@ public final class Digits {
 	 * Time created: 10:41:03 ---------------------------------------------------
 	 */
 	/**
-	 * Constructs a {@code LinkedSegment} for the unary operator '-', which usually
-	 * precedes a number. The value that this method returns, does not have a
-	 * sibling or child.
+	 * Constructs a {@code LinkedSegment} for the unary operator '-', which usually precedes a number. The value that this method
+	 * returns, does not have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\textrm{-}</code>
@@ -141,8 +132,8 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The SYMJA expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The SYMJA expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)})
+	 * is:
 	 * 
 	 * <pre>
 	 * <code>-</code>
@@ -163,13 +154,11 @@ public final class Digits {
 	 * Time created: 14:52:17 ---------------------------------------------------
 	 */
 	/**
-	 * Creates the plus and minus {@code Segment} using the argument as the
-	 * expression value to return whenever
-	 * {@link LinkedSegment#toString(Appendable, Log, java.util.List)} is invoked.
-	 * The value that this method returns, does not have a sibling or child.
+	 * Creates the plus and minus {@code Segment} using the argument as the expression value to return whenever
+	 * {@link LinkedSegment#toString(Appendable, Log, java.util.List)} is invoked. The value that this method returns, does not have
+	 * a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\pm</code>
@@ -177,19 +166,14 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is any valid
-	 * {@code String} that can have the same mathematical function as the
-	 * '<code>&pm;</code>' operator in the SYMJA engine.
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is any
+	 * valid {@code String} that can have the same mathematical function as the '<code>&pm;</code>' operator in the SYMJA engine.
 	 * <p>
 	 * This uses the {@link #OPERATOR} type.
 	 * 
-	 * @param expression the expression to use as a representative of the
-	 *                   '<code>&pm;</code>' operator in the evaluation string that
-	 *                   will be built using
-	 *                   {@code LinkedSegment.toString(Appendable, Log, java.util.List)}.
-	 * @return a {@code LinkedSegment} that represents the unary plus-and-minus
-	 *         operator.
+	 * @param expression the expression to use as a representative of the '<code>&pm;</code>' operator in the evaluation string that
+	 *                   will be built using {@code LinkedSegment.toString(Appendable, Log, java.util.List)}.
+	 * @return a {@code LinkedSegment} that represents the unary plus-and-minus operator.
 	 */
 	public static LinkedSegment plusMinus(String expression) {
 		return new BasicSegment("\\pm", expression, OPERATOR);
@@ -200,14 +184,12 @@ public final class Digits {
 	 * Time created: 14:50:21 ---------------------------------------------------
 	 */
 	/**
-	 * Calls {@link #plusMinus(String)} using {@code "-"} as the argument so as to
-	 * allow the SYMJA evaluation engine to evaluate it's operand sibling properly.
-	 * The value that this method returns, does not have a sibling or child.
+	 * Calls {@link #plusMinus(String)} using {@code "-"} as the argument so as to allow the SYMJA evaluation engine to evaluate
+	 * it's operand sibling properly. The value that this method returns, does not have a sibling or child.
 	 * <p>
 	 * This uses the {@link #OPERATOR} type.
 	 * 
-	 * @return a {@code LinkedSegment} that represents the unary plus-and-minus
-	 *         operator.
+	 * @return a {@code LinkedSegment} that represents the unary plus-and-minus operator.
 	 */
 	public static LinkedSegment pm() {
 		return plusMinus("-");
@@ -218,17 +200,14 @@ public final class Digits {
 	 * Time created: 10:44:09 ---------------------------------------------------
 	 */
 	/**
-	 * Creates an integer {@code Digit} from the character {@code d} which is
-	 * assumed to be the digit of a radix-based number, using the second argument
-	 * for adding relevant punctuation such as the separator. Note that this method
-	 * does not check for the radix of the character. The value that this method
-	 * returns, does not have a sibling or child.
+	 * Creates an integer {@code Digit} from the character {@code d} which is assumed to be the digit of a radix-based number, using
+	 * the second argument for adding relevant punctuation such as the separator. Note that this method does not check for the radix
+	 * of the character. The value that this method returns, does not have a sibling or child.
 	 * <p>
 	 * This uses the {@link #INTEGER} type.
 	 * 
 	 * @param d  the character from which the {@code Digit} will be created.
-	 * @param dp the {@code DigitPunc} object which provides adequate punctuation
-	 *           options for the {@code LinkedSegment} created.
+	 * @param dp the {@code DigitPunc} object which provides adequate punctuation options for the {@code LinkedSegment} created.
 	 * @return a {@code Digit} that was created from the arguments.
 	 */
 	public static Digit integer(char d, DigitPunc dp) {
@@ -240,19 +219,15 @@ public final class Digits {
 	 * Time created: 10:44:09 ---------------------------------------------------
 	 */
 	/**
-	 * Creates a mantissa {@code Digit} from the character {@code d} which is
-	 * assumed to be the digit of a radix-based number, using the second argument
-	 * for adding relevant punctuation such as the separator. Note that this method
-	 * does not check for the radix of the character. The digit created is one that
-	 * will reside at the mantissa portion of a number. This digit can have
-	 * recurring characters. The value that this method returns, does not have a
-	 * sibling or child.
+	 * Creates a mantissa {@code Digit} from the character {@code d} which is assumed to be the digit of a radix-based number, using
+	 * the second argument for adding relevant punctuation such as the separator. Note that this method does not check for the radix
+	 * of the character. The digit created is one that will reside at the mantissa portion of a number. This digit can have
+	 * recurring characters. The value that this method returns, does not have a sibling or child.
 	 * <p>
 	 * This uses the {@link #MANTISSA} type.
 	 * 
 	 * @param d  the character from which the {@code Digit} will be created.
-	 * @param dp the {@code DigitPunc} object which provides adequate punctuation
-	 *           options for the {@code LinkedSegment} created.
+	 * @param dp the {@code DigitPunc} object which provides adequate punctuation options for the {@code LinkedSegment} created.
 	 * @return a {@code Digit} that was created from the arguments.
 	 */
 	public static Digit mantissa(char d, DigitPunc dp) {
@@ -260,9 +235,8 @@ public final class Digits {
 	}
 
 	/**
-	 * Creates a {@code LinkedSegment} that represents a radix point that separates
-	 * the integer from the mantissa. The value that this method returns, does not
-	 * have a sibling or child.
+	 * Creates a {@code LinkedSegment} that represents a radix point that separates the integer from the mantissa. The value that
+	 * this method returns, does not have a sibling or child.
 	 * <p>
 	 * This uses the {@link #POINT} type.
 	 * 
@@ -278,12 +252,10 @@ public final class Digits {
 	 * Time created: 14:01:21 ---------------------------------------------------
 	 */
 	/**
-	 * Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #ARC}. The value that this method returns, does not have a sibling or
-	 * child.
+	 * Creates a {@code Digit} which is a recurring variant whose type is {@link #ARC}. The value that this method returns, does not
+	 * have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\overparen{<span style="color:gray;">d</span>}</code>
@@ -291,8 +263,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span></code>
@@ -313,12 +284,10 @@ public final class Digits {
 	 * Time created: 14:04:37 ---------------------------------------------------
 	 */
 	/**
-	 * /** Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #DOT}. The value that this method returns, does not have a sibling or
-	 * child.
+	 * /** Creates a {@code Digit} which is a recurring variant whose type is {@link #DOT}. The value that this method returns, does
+	 * not have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\dot{<span style="color:gray;">d</span>}</code>
@@ -326,8 +295,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span></code>
@@ -348,12 +316,10 @@ public final class Digits {
 	 * Time created: 14:04:37 ---------------------------------------------------
 	 */
 	/**
-	 * /** Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #DOT_ALL}. The value that this method returns, does not have a sibling
-	 * or child.
+	 * /** Creates a {@code Digit} which is a recurring variant whose type is {@link #DOT_ALL}. The value that this method returns,
+	 * does not have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\dot{<span style="color:gray;">d</span>}</code>
@@ -361,8 +327,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span></code>
@@ -383,9 +348,8 @@ public final class Digits {
 	 * Time created: 14:04:37 ---------------------------------------------------
 	 */
 	/**
-	 * /** Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #DOT_BAR}. The value that this method returns, does not have a sibling
-	 * or child.
+	 * /** Creates a {@code Digit} which is a recurring variant whose type is {@link #DOT_BAR}. The value that this method returns,
+	 * does not have a sibling or child.
 	 * 
 	 * @param d  the image of the digit i.e the actual digit expression value.
 	 * @param dp the value where punctuating options will be retrieved.
@@ -400,23 +364,19 @@ public final class Digits {
 	 * Time created: 14:04:37 ---------------------------------------------------
 	 */
 	/**
-	 * /** Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #ELLIPSIS}. The value that this method returns, does not have a
-	 * sibling or child.
+	 * /** Creates a {@code Digit} which is a recurring variant whose type is {@link #ELLIPSIS}. The value that this method returns,
+	 * does not have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span>\ldots</code>
 	 * </pre>
 	 * 
-	 * <code><span style="color:gray;">d</span></code> will be repeated as many
-	 * times as specified by {@link DigitPunc#getNumOfRecurringDigits()}. This is
-	 * also the image of {@code LinkedSegment} returned.
+	 * <code><span style="color:gray;">d</span></code> will be repeated as many times as specified by
+	 * {@link DigitPunc#getNumOfRecurringDigits()}. This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span></code>
@@ -437,9 +397,8 @@ public final class Digits {
 	 * Time created: 14:04:37 ---------------------------------------------------
 	 */
 	/**
-	 * /** Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #PARENTHESISED}. The value that this method returns, does not have a
-	 * sibling or child.
+	 * /** Creates a {@code Digit} which is a recurring variant whose type is {@link #PARENTHESISED}. The value that this method
+	 * returns, does not have a sibling or child.
 	 * 
 	 * <pre>
 	 * <code>(<span style="color:gray;">d</span>)</code>
@@ -447,8 +406,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span></code>
@@ -469,9 +427,8 @@ public final class Digits {
 	 * Time created: 14:04:37 ---------------------------------------------------
 	 */
 	/**
-	 * /** Creates a {@code Digit} which is a recurring variant whose type is
-	 * {@link #VINCULLUM}. The value that this method returns, does not have a
-	 * sibling or child.
+	 * /** Creates a {@code Digit} which is a recurring variant whose type is {@link #VINCULLUM}. The value that this method
+	 * returns, does not have a sibling or child.
 	 * 
 	 * <pre>
 	 * <code>\overline{<span style="color:gray;">d</span>}</code>
@@ -479,8 +436,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code><span style="color:gray;">d</span></code>
@@ -501,14 +457,11 @@ public final class Digits {
 	 * Time created: 14:13:43 ---------------------------------------------------
 	 */
 	/**
-	 * Creates a {@code LinkedSegment} that is {@code 10} to the power of the
-	 * argument. Proper for decimals in standard form such as 1.234E567 which will
-	 * represent 1.234 &times; 10<sup>567</sup>, in this method, {@code 567} is the
-	 * argument to this function. The value that this method returns, does not have
-	 * a sibling.
+	 * Creates a {@code LinkedSegment} that is {@code 10} to the power of the argument. Proper for decimals in standard form such as
+	 * 1.234E567 which will represent 1.234 &times; 10<sup>567</sup>, in this method, {@code 567} is the argument to this function.
+	 * The value that this method returns, does not have a sibling.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\times 10^{<span style="color:gray">power</span>}</code>
@@ -516,8 +469,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>e<span style="color:gray">power</span></code>
@@ -528,8 +480,7 @@ public final class Digits {
 	 * This uses the {@link #EXPONENT} type.
 	 * 
 	 * @param power the exponent which will be the child of the returned value.
-	 * @return a {@code LinkedSegment} that is meant to represent the scientific
-	 *         notation part of a number tree.
+	 * @return a {@code LinkedSegment} that is meant to represent the scientific notation part of a number tree.
 	 */
 	public static LinkedSegment decimalExponent(LinkedSegment power) {
 		String[] f = { " \\times 10^{", "}" };
@@ -542,12 +493,10 @@ public final class Digits {
 	 * Time created: 15:24:17 ---------------------------------------------------
 	 */
 	/**
-	 * Gets the childless {@code LinkedSegment} used for radix-based scientific
-	 * notations. The value that this method returns, does not have a sibling or
-	 * child.
+	 * Gets the childless {@code LinkedSegment} used for radix-based scientific notations. The value that this method returns, does
+	 * not have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\mathrm{p}</code>
@@ -555,23 +504,19 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>p</code>
 	 * </pre>
 	 * <p>
-	 * Note that when the argument is {@code false}, then the 'p' (for C-style
-	 * floating point exponents) characters from above are both are replaced by 'e'.
-	 * 
-	 * This is also the expression of {@code LinkedSegment} returned.
+	 * Note that when the argument is {@code false}, then the 'p' (for C-style floating point exponents) characters from above are
+	 * both are replaced by 'e'. This is also the expression of {@code LinkedSegment} returned.
 	 * <p>
 	 * This uses the {@link #EXPONENT} type.
 	 * 
 	 * @param binary if {@code true} then 'p' will be returned else 'e'.
-	 * @return a {@code LinkedSegment} that is meant to represent the scientific
-	 *         notation part of a number tree.
+	 * @return a {@code LinkedSegment} that is meant to represent the scientific notation part of a number tree.
 	 */
 	// floating-point exponent
 	public static LinkedSegment radixExponent(boolean binary) {
@@ -585,11 +530,9 @@ public final class Digits {
 	 * Time created: 15:30:52 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms the {@code BigInteger} and creates the corresponding
-	 * {@code LinkedSegment} number tree meant to represent an integer in the given
-	 * radix, where each digit will have the {@link #INTEGER} type and each will
-	 * have it's sibling be the next digit following it. The digits used for the
-	 * radix are the same used by {@link BigInteger#toString(int)}. An example is:
+	 * Transforms the {@code BigInteger} and creates the corresponding {@code LinkedSegment} number tree meant to represent an
+	 * integer in the given radix, where each digit will have the {@link #INTEGER} type and each will have it's sibling be the next
+	 * digit following it. The digits used for the radix are the same used by {@link BigInteger#toString(int)}. An example is:
 	 * 
 	 * <pre>
 	 * <code>
@@ -623,19 +566,16 @@ public final class Digits {
 	 * Time created: 16:07:14 ---------------------------------------------------
 	 */
 	/**
-	 * Generates a number tree using the characters in the given
-	 * {@code StringBuilder} whereby each digit's type is specified by the
-	 * {@code int} argument, the head of the returned tree is the
-	 * {@code LinkedSegment} argument and each node represents it corresponding
-	 * character in the
-	 * {@code StringBuilder] such that adjacent characters are siblings of one another}
+	 * Generates a number tree using the characters in the given {@code StringBuilder} whereby each digit's type is specified by the
+	 * {@code int} argument, the head of the returned tree is the {@code LinkedSegment} argument and each node represents it
+	 * corresponding character in the {@code StringBuilder] such that adjacent characters are siblings of one another}
 	 * 
 	 * @param n  the buffer holding the digits to be generated.
 	 * @param t  the type which each node will have in the number tree.
 	 * @param s  the value to which the generated number will be concatenated.
 	 * @param dp the punctuation options to apply to the generated number tree.
-	 * @return a number tree generated from the given {@code StringBuilder} where
-	 *         the nodes represent the characters of the {@code StringBuilder}.
+	 * @return a number tree generated from the given {@code StringBuilder} where the nodes represent the characters of the
+	 *         {@code StringBuilder}.
 	 */
 	private static LinkedSegment unsignedDigits(StringBuilder n, int t, LinkedSegment s, DigitPunc dp) {
 		if (n.length() > 0) {
@@ -650,21 +590,17 @@ public final class Digits {
 	 * Time created: 16:18:23 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms the {@code BigDecimal} and creates the corresponding
-	 * {@code LinkedSegment} number tree meant to represent a decimal in scientific
-	 * notation (or just the significand if the {@code int} argument is less than
-	 * one).
+	 * Transforms the {@code BigDecimal} and creates the corresponding {@code LinkedSegment} number tree meant to represent a
+	 * decimal in scientific notation (or just the significand if the {@code int} argument is less than one).
 	 * <p>
-	 * If argument is signed then the head will be the the sign. Each digit is a
-	 * node and adjacent digits are siblings. All the nodes at integer part will the
-	 * {@link #INTEGER} type, the decimal point will have the {@link #POINT} type,
-	 * the nodes at the mantissa part will have the {@link #MANTISSA} type and the
-	 * nodes at the exponent part (if specified) will have the {@link #EXPONENT}
-	 * type. An example is:
+	 * If argument is signed then the head will be the the sign. Each digit is a node and adjacent digits are siblings. All the
+	 * nodes at integer part will the {@link #INTEGER} type, the decimal point will have the {@link #POINT} type, the nodes at the
+	 * mantissa part will have the {@link #MANTISSA} type and the nodes at the exponent part (if specified) will have the
+	 * {@link #EXPONENT} type. An example is:
 	 * 
 	 * <pre>
 	 * <code>
-	 *	BigDecimal n = new BigDecimal("123456.78901234");
+	 *	BigDecimal n = d("123456.78901234");
 	 *	LinkedSegment num = Digits.toSegment(n, 1, new DigitPunc());
 	 *	List&lt;Integer&gt; l = new ArrayList&lt;&gt;(Arrays.asList(-1));
 	 *	num.toString(System.out, null, l);//prints 1.2345678901234e5
@@ -676,14 +612,11 @@ public final class Digits {
 	 * </pre>
 	 * 
 	 * @param n   the value to be transformed into a {@code LinkedSegment}.
-	 * @param exp factor of the scientific exponent to use. E.g engineering notation
-	 *            can use {@code 3} here while the common scientific notations can
-	 *            use {@code 1}. Use {@code -1} if no scientific notation is
-	 *            desired.
+	 * @param exp factor of the scientific exponent to use. E.g engineering notation can use {@code 3} here while the common
+	 *            scientific notations can use {@code 1}. Use {@code -1} if no scientific notation is desired.
 	 * @param dp  the punctuation options to apply to the generated number tree.
-	 * @return a number tree whose nodes are the digits in the given
-	 *         {@code BigDecimal}.
-	 * @see Utility#formatAsStandardForm(BigDecimal, int)
+	 * @return a number tree whose nodes are the digits in the given {@code BigDecimal}.
+	 * @see mathaid.calculator.base.util.Utility#formatAsStandardForm(BigDecimal, int)
 	 */
 	public static LinkedSegment toSegment(BigDecimal n, int exp, DigitPunc dp) {
 		if (exp < 1) {
@@ -723,16 +656,14 @@ public final class Digits {
 	 * Time created: 16:40:24 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms the {@code BigDecimal} and creates the corresponding
-	 * {@code LinkedSegment} number tree meant to represent a decimal in engineering
-	 * notation. If computed value fits into values that can be represented as by
-	 * engineering suffixes, then an engineering suffix is used if the
-	 * {@code boolean} argument is {@code true}, a numerical exponent is used
-	 * instead. An example is:
+	 * Transforms the {@code BigDecimal} and creates the corresponding {@code LinkedSegment} number tree meant to represent a
+	 * decimal in engineering notation. If computed value fits into values that can be represented as by engineering suffixes, then
+	 * an engineering suffix is used if the {@code boolean} argument is {@code true}, a numerical exponent is used instead. An
+	 * example is:
 	 * 
 	 * <pre>
 	 * <code>
-	 *	BigDecimal n = new BigDecimal("123456.78901234");
+	 *	BigDecimal n = d("123456.78901234");
 	 *	LinkedSegment num = Digits.toSegment(n, true, new DigitPunc());
 	 *	List&lt;Integer&gt; l = new ArrayList&lt;&gt;(Arrays.asList(-1));
 	 *	num.toString(System.out, null, l);//prints: 123.45678901234E3
@@ -743,24 +674,17 @@ public final class Digits {
 	 * </code>
 	 * </pre>
 	 * <p>
-	 * If argument is signed then the head will be the the sign. Each digit is a
-	 * node and adjacent digits are siblings. All the nodes at integer part will the
-	 * {@link #INTEGER} type, the decimal point will have the {@link #POINT} type,
-	 * the nodes at the mantissa part will have the {@link #MANTISSA} type and the
-	 * node at the exponent will have the {@link #UNIT} type.
+	 * If argument is signed then the head will be the the sign. Each digit is a node and adjacent digits are siblings. All the
+	 * nodes at integer part will the {@link #INTEGER} type, the decimal point will have the {@link #POINT} type, the nodes at the
+	 * mantissa part will have the {@link #MANTISSA} type and the node at the exponent will have the {@link #UNIT} type.
 	 * 
 	 * @param n         the value to be transformed into a {@code LinkedSegment}.
-	 * @param useSuffix a {@code boolean} value specifying whether to use
-	 *                  engineering suffixes such as &#x03bc;, M, y or use the
-	 *                  numerical exponent which are in factors of {@code 3}. Even
-	 *                  if this value is {@code true} the computed engineering
-	 *                  exponent value must fall into the range of [-24, 24] for the
-	 *                  suffixes to be appended.
-	 * @param dp        the punctuation options to apply to the generated number
-	 *                  tree.
-	 * @return a number tree whose nodes are digits in the given {@code BigDecimal}
-	 *         using the computed engineering suffix.
-	 * @see Utility#toEngineeringString(BigDecimal, boolean)
+	 * @param useSuffix a {@code boolean} value specifying whether to use engineering suffixes such as &#x03bc;, M, y or use the
+	 *                  numerical exponent which are in factors of {@code 3}. Even if this value is {@code true} the computed
+	 *                  engineering exponent value must fall into the range of [-24, 24] for the suffixes to be appended.
+	 * @param dp        the punctuation options to apply to the generated number tree.
+	 * @return a number tree whose nodes are digits in the given {@code BigDecimal} using the computed engineering suffix.
+	 * @see mathaid.calculator.base.util.Utility#toEngineeringString(BigDecimal, boolean)
 	 */
 	public static LinkedSegment toSegment(BigDecimal n, boolean useSuffix, DigitPunc dp) {
 		String s = toEngineeringString(n, useSuffix);
@@ -802,18 +726,15 @@ public final class Digits {
 	 * Time created: 16:59:45 ---------------------------------------------------
 	 */
 	/**
-	 * Computes the engineering exponent using the first argument and returning the
-	 * seconding argument only if the first is not a supported exponent value.
+	 * Computes the engineering exponent using the first argument and returning the seconding argument only if the first is not a
+	 * supported exponent value.
 	 * <p>
-	 * See {@link Utility#toEngineeringString(BigDecimal, boolean)} for supported
-	 * values.
+	 * See {@link mathaid.calculator.base.util.Utility#toEngineeringString(BigDecimal, boolean)} for supported values.
 	 * 
 	 * @param suffix the suffix whose exponent equivalent will be returned.
-	 * @param def    the default to be returned when the given suffix is not
-	 *               supported.
-	 * @return the corresponding exponent for the provided suffix or returns the
-	 *         second argument.
-	 * @see Utility#toEngineeringString(BigDecimal, boolean)
+	 * @param def    the default to be returned when the given suffix is not supported.
+	 * @return the corresponding exponent for the provided suffix or returns the second argument.
+	 * @see mathaid.calculator.base.util.Utility#toEngineeringString(BigDecimal, boolean)
 	 */
 	private static String getSuffixExpOrDefault(String suffix, String def) {
 		Map<String, String> suffixes = new HashMap<>();
@@ -845,16 +766,13 @@ public final class Digits {
 	 * Time created: 17:58:51 ---------------------------------------------------
 	 */
 	/**
-	 * Gets the suffix for the given exponent (first argument) or else return the
-	 * second argument. Please see
-	 * {@link Utility#toEngineeringString(BigDecimal, boolean)} for supported
-	 * values.
+	 * Gets the suffix for the given exponent (first argument) or else return the second argument. Please see
+	 * {@link mathaid.calculator.base.util.Utility#toEngineeringString(BigDecimal, boolean)} for supported values.
 	 * 
 	 * @param exp the exponent whose suffixed is to be computed and returned.
 	 * @param def the value to be returned if the first is not a supported exponent.
-	 * @return the corresponding suffix for the provided exponent if supported, else
-	 *         returns the second argument.
-	 * @see Utility#toEngineeringString(BigDecimal, boolean)
+	 * @return the corresponding suffix for the provided exponent if supported, else returns the second argument.
+	 * @see mathaid.calculator.base.util.Utility#toEngineeringString(BigDecimal, boolean)
 	 */
 	private static String getSuffix(String exp, String def) {
 		Map<String, String> suffixes = new HashMap<>();
@@ -886,15 +804,14 @@ public final class Digits {
 	 * Time created: 18:03:50 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms the {@code StringBuilder} into an unsigned decimal number tree,
-	 * then concatenates that number tree to the {@code LinkedSegment}.
+	 * Transforms the {@code StringBuilder} into an unsigned decimal number tree, then concatenates that number tree to the
+	 * {@code LinkedSegment}.
 	 * 
 	 * @param n  the value from which the number sub-tree will be generated.
 	 * @param s  the head of the returned tree
 	 * @param dp the punctuation options to apply to the generated number tree.
-	 * @return a tree with a number sub-tree where all integer nodes have the type
-	 *         {@link #INTEGER}, the point node has the type {@link #POINT} and the
-	 *         mantissa have the type {@link #MANTISSA}.
+	 * @return a tree with a number sub-tree where all integer nodes have the type {@link #INTEGER}, the point node has the type
+	 *         {@link #POINT} and the mantissa have the type {@link #MANTISSA}.
 	 */
 	private static LinkedSegment unsignedMantissa(StringBuilder n, LinkedSegment s, DigitPunc dp) {
 		LinkedSegment num = unsignedDigits(new StringBuilder(n.substring(0, n.indexOf("."))), INTEGER, s, dp);
@@ -907,15 +824,13 @@ public final class Digits {
 	 * Time created: 18:08:55 ---------------------------------------------------
 	 */
 	/**
-	 * Parses the {@code BigFraction} argument into a mathaid recurring number
-	 * expression. Please see {@link NumberAdapter} for the definition.
+	 * Parses the {@code BigFraction} argument into a mathaid recurring number expression. Please see {@link NumberAdapter} for the
+	 * definition.
 	 * 
 	 * @param f              the value to be transformed
-	 * @param exponentFactor the exponent factor to use. When greater than
-	 *                       {@code 0}, the resultant string will be in scientific
+	 * @param exponentFactor the exponent factor to use. When greater than {@code 0}, the resultant string will be in scientific
 	 *                       notation.
-	 * @return the mathaid recurring number expression for the {@code BigFraction}
-	 *         argument as a string.
+	 * @return the mathaid recurring number expression for the {@code BigFraction} argument as a string.
 	 */
 	// returns [integer].[mantissa]r[recurring digits]E[optional exponent
 	// sign][exponent magnitude]
@@ -961,12 +876,14 @@ public final class Digits {
 	 */
 	/**
 	 * Parses the argument into a {@link BigFraction}.
+	 * <p>
+	 * Please see {@link NumberAdapter} for definition on the type of format used for the argument.
 	 * 
-	 * @param s the mathaid recurring expression. This is the same format returned
-	 *          by {@link #toSegmentString(BigFraction, int)}. This should be in
-	 *          UPPER case.
+	 * @param s the mathaid recurring expression. This is the same format returned by {@link #toSegmentString(BigFraction, int)}.
+	 *          This should be in UPPER case.
 	 * @return a {@code BigFraction} from the argument.
-	 * @see Utility#fromDecimal(BigDecimal, String)
+	 * @see mathaid.calculator.base.util.Utility#fromDecimal(BigDecimal, String)
+	 * @see #toSegmentString(BigFraction, int)
 	 */
 	public static BigFraction fromSegmentString(String s) {
 		StringBuilder sb = new StringBuilder(s);
@@ -974,10 +891,10 @@ public final class Digits {
 		int e = sb.indexOf("E");
 		if (r >= 0) {
 			String rec = sb.substring(r + 1, e >= 0 ? e : sb.length());
-			BigDecimal nonRecur = new BigDecimal(sb.delete(r, e >= 0 ? e : sb.length()).toString());
+			BigDecimal nonRecur = d(sb.delete(r, e >= 0 ? e : sb.length()).toString());
 			return fromDecimal(nonRecur, rec);
 		}
-		return new BigFraction(new BigDecimal(s), null, null, new BigDecimal("1E-10"));
+		return new BigFraction(d(s), null, null, d("1E-10"));
 	}
 
 	/*
@@ -985,12 +902,11 @@ public final class Digits {
 	 * Time created: 01:48:13--------------------------------------------
 	 */
 	/**
-	 * Returns the number of digits in the numerical string argument. This only
-	 * counts the digits in the significand including the recurring ones.
+	 * Returns the number of digits in the numerical string argument. This only counts the digits in the significand including the
+	 * recurring ones.
 	 * 
-	 * @param exp note that exp must be in the same format as the result of
-	 *            {@link #toSegmentString(BigFraction, int)}. It must also be in
-	 *            upper case
+	 * @param exp note that exp must be in the same format as the result of {@link #toSegmentString(BigFraction, int)}. It must also
+	 *            be in upper case
 	 * @return the number of digits in the argument.
 	 */
 	public static int scale(String exp) {
@@ -1006,18 +922,14 @@ public final class Digits {
 	 * Time created: 22:20:04 ---------------------------------------------------
 	 */
 	/**
-	 * Truncates the number of digits in the significand of the {@code s} argument
-	 * to the {@code newScale} value. If the scale of the significand is less than
-	 * the specified {@code newScale}, then the string is returned as is.
-	 * 
+	 * Truncates the number of digits in the significand of the {@code s} argument to the {@code newScale} value. If the scale of
+	 * the significand is less than the specified {@code newScale}, then the string is returned as is.
 	 * <p>
 	 * Note that this does not truncate the digits in the exponent or repeatend.
 	 * 
-	 * @param s        must be in scientific notation. May or may not have recurring
-	 *                 digits.
+	 * @param s        must be in scientific notation. May or may not have recurring digits.
 	 * @param newScale an {@code int} greater than {@code 0}.
-	 * @return the string argument, truncating the significand if it's scale is
-	 *         greater than the {@code int} argument.
+	 * @return the string argument, truncating the significand if it's scale is greater than the {@code int} argument.
 	 */
 	// This method expects that 's' is in scientific form i.e there is an exponent
 	// field in 's'
@@ -1031,16 +943,16 @@ public final class Digits {
 			String sig = sb.substring(0, r);
 			String rec = sb.substring(r + 1, e);
 			if (rec.length() < newScale)
-				return sb.replace(0, r, new BigDecimal(sig, mc(newScale)).toPlainString()).toString();
+				return sb.replace(0, r, d(sig, mc(newScale)).toPlainString()).toString();
 			String newRec = rec.substring(0, newScale >= rec.length() ? newScale - rec.length() : newScale);
 			if (rec.compareTo(newRec) != 0)
 				sb.replace(r, e, String.format("R%s", newRec));
 //				sb.replace(r, e, newRec);
 		} else if (e > 0) {
 			String sig = sb.substring(0, e);
-			sb = sb.replace(0, e, new BigDecimal(sig, mc(newScale)).toPlainString());
+			sb = sb.replace(0, e, d(sig, mc(newScale)).toPlainString());
 		} else {
-			sb = sb.replace(0, sb.length(), new BigDecimal(sb.toString(), mc(newScale)).toPlainString());
+			sb = sb.replace(0, sb.length(), d(sb.toString(), mc(newScale)).toPlainString());
 		}
 		return sb.toString();
 	}
@@ -1050,11 +962,9 @@ public final class Digits {
 	 * Time created: 22:33:28 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms the {@code BigFraction} argument to a number tree where the head
-	 * is either the sign (if signed) or the first integer of the significand.
-	 * Subsequent nodes may include any following integer digits, any point,
-	 * mantissa digits, any recurring digits, any exponent sign and/or digits. An
-	 * example is:
+	 * Transforms the {@code BigFraction} argument to a number tree where the head is either the sign (if signed) or the first
+	 * integer of the significand. Subsequent nodes may include any following integer digits, any point, mantissa digits, any
+	 * recurring digits, any exponent sign and/or digits. An example is:
 	 * 
 	 * <pre>
 	 * <code>
@@ -1073,29 +983,22 @@ public final class Digits {
 	 * </code>
 	 * </pre>
 	 * 
-	 * This truncates the mantissa and the integer to fit the
-	 * {@linkplain java.math.MathContext#getPrecision() scale} given by
-	 * {@link BigFraction#getMathContext()} only when there is recurring digits (as
-	 * truncation can be done on non-terminating fractions through setting of the
-	 * {@code MathContext} object of the {@code BigDecimal} returned by
-	 * {@link BigFraction#getFraction()}, it then behooves the caller to properly
-	 * set the fraction's math-context's precision to allow for or prevent
-	 * truncation. Note that this does not truncate the digits in the exponent or
-	 * repeatend.
+	 * This truncates the mantissa and the integer to fit the {@linkplain java.math.MathContext#getPrecision() scale} given by
+	 * {@link BigFraction#getMathContext()} only when there is recurring digits (as truncation can be done on non-terminating
+	 * fractions through setting of the {@code MathContext} object of the {@code BigDecimal} returned by
+	 * {@link BigFraction#getFraction()}, it then behooves the caller to properly set the fraction's math-context's precision to
+	 * allow for or prevent truncation. Note that this does not truncate the digits in the exponent or repeatend.
 	 * <p>
-	 * This is the recommended way to create a decimal number sub-tree, because the
-	 * significand, recurring part and exponent are all accounted for.
+	 * This is the recommended way to create a decimal number sub-tree, because the significand, recurring part and exponent are all
+	 * accounted for.
 	 * 
 	 * @param n         the value to be transform.
 	 * @param recurType used for recurring digit nodes to specify the type.
-	 * @param exponent  used for specifying the exponent in a scientific notation.
-	 *                  Use a value less than {@code 1} to prevent formatting in
-	 *                  scientific notation.
-	 * @param dp        the punctuation options to apply to the generated number
-	 *                  tree.
-	 * @return a number tree whose nodes are the digits in the given
-	 *         {@code BigFraction}.
-	 * @see Utility#formatAsStandardForm(BigDecimal, int)
+	 * @param exponent  used for specifying the exponent in a scientific notation. Use a value less than {@code 1} to prevent
+	 *                  formatting in scientific notation.
+	 * @param dp        the punctuation options to apply to the generated number tree.
+	 * @return a number tree whose nodes are the digits in the given {@code BigFraction}.
+	 * @see mathaid.calculator.base.util.Utility#formatAsStandardForm(BigDecimal, int)
 	 */
 	// the scale (or precision) of the BigFraction.getMathContext() is what is used
 	// in this method
@@ -1163,8 +1066,8 @@ public final class Digits {
 	 * Time created: 16:19:18 ---------------------------------------------------
 	 */
 	/**
-	 * Converts the {@code BigFraction} argument to a {@code LinkedSegment} number
-	 * tree using the engineering notation. An example is:
+	 * Converts the {@code BigFraction} argument to a {@code LinkedSegment} number tree using the engineering notation. An example
+	 * is:
 	 * 
 	 * <pre>
 	 * <code>
@@ -1183,29 +1086,20 @@ public final class Digits {
 	 * </code>
 	 * </pre>
 	 * 
-	 * This truncates the mantissa and the integer to fit the
-	 * {@linkplain java.math.MathContext#getPrecision() scale} given by
-	 * {@link BigFraction#getMathContext()} only when there is recurring digits (as
-	 * truncation can be done on non-terminating fractions through setting of the
-	 * {@code MathContext} object of the {@code BigDecimal} returned by
-	 * {@link BigFraction#getFraction()}, it then behooves the caller to properly
-	 * set the fraction's math-context's precision to allow for or prevent
-	 * truncation. Note that this does not truncate the digits in the exponent or
-	 * repeatend.
+	 * This truncates the mantissa and the integer to fit the {@linkplain java.math.MathContext#getPrecision() scale} given by
+	 * {@link BigFraction#getMathContext()} only when there is recurring digits (as truncation can be done on non-terminating
+	 * fractions through setting of the {@code MathContext} object of the {@code BigDecimal} returned by
+	 * {@link BigFraction#getFraction()}, it then behooves the caller to properly set the fraction's math-context's precision to
+	 * allow for or prevent truncation. Note that this does not truncate the digits in the exponent or repeatend.
 	 * 
 	 * @param n         the value to be transformed into a {@code LinkedSegment}.
-	 * @param useSuffix a {@code boolean} value specifying whether to use
-	 *                  engineering suffixes such as &#x03bc;, M, y or use the
-	 *                  numerical exponent which are in factors of {@code 3}. Even
-	 *                  if this value is {@code true} the computed engineering
-	 *                  exponent value must fall into the range of [-24, 24] for the
-	 *                  suffixes to be appended.
+	 * @param useSuffix a {@code boolean} value specifying whether to use engineering suffixes such as &#x03bc;, M, y or use the
+	 *                  numerical exponent which are in factors of {@code 3}. Even if this value is {@code true} the computed
+	 *                  engineering exponent value must fall into the range of [-24, 24] for the suffixes to be appended.
 	 * @param recurType used for recurring digit nodes to specify the type.
-	 * @param dp        the punctuation options to apply to the generated number
-	 *                  tree.
-	 * @return a number tree whose nodes are digits in the given {@code BigFraction}
-	 *         using the computed engineering suffix.
-	 * @see Utility#toEngineeringString(BigDecimal, boolean)
+	 * @param dp        the punctuation options to apply to the generated number tree.
+	 * @return a number tree whose nodes are digits in the given {@code BigFraction} using the computed engineering suffix.
+	 * @see mathaid.calculator.base.util.Utility#toEngineeringString(BigDecimal, boolean)
 	 */
 	// TEST CASES
 //	BigFraction n = BigFraction.ONE_NINTH.add(123456789098765L).setMathContext(Utility.mc(4));
@@ -1278,7 +1172,7 @@ public final class Digits {
 				seg = seg.concat(
 						decimalExponent(unsignedDigits(new StringBuilder(exp.substring(1)), INTEGER, new Empty(), dp)));
 //			else if (exp.length() == 1 && FloatAid.isNumber(exp.charAt(exp.length() - 1), 10))
-			else if (FloatAid.isNumber(exp.charAt(exp.length() - 1), 10))
+			else if (isNumber(exp.charAt(exp.length() - 1), 10))
 				seg = seg.concat(decimalExponent(unsignedDigits(new StringBuilder(exp), INTEGER, new Empty(), dp)));
 			else {
 //				System.err.println(Map.of("exp", exp, "rec", rec, "mant", mant, "numericalExp", numericalExp));
@@ -1299,11 +1193,9 @@ public final class Digits {
 	 * Time created: 18:09:42 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms a {@code BigFraction} into a {@code LinkedSegment} tree which
-	 * represents a common fraction with a whole number (as a child if specified), a
-	 * numerator (superscript child) and a denominator (subscript child). The
-	 * whole/numerator/denominator are number sub-trees with only integer type
-	 * nodes. An example is:
+	 * Transforms a {@code BigFraction} into a {@code LinkedSegment} tree which represents a common fraction with a whole number (as
+	 * a child if specified), a numerator (superscript child) and a denominator (subscript child). The whole/numerator/denominator
+	 * are number sub-trees with only integer type nodes. An example is:
 	 * 
 	 * <pre>
 	 * <code>
@@ -1319,13 +1211,10 @@ public final class Digits {
 	 * </pre>
 	 * 
 	 * @param n     the value to be transformed
-	 * @param mixed {@code boolean} value to specify whether the returned tree is
-	 *              representative of a Mixed fraction ({@code true}) or not
-	 *              (<code>false</code>).
-	 * @param dp    the punctuation options to apply to the generated number
-	 *              sub-trees.
-	 * @return a tree whose are the whole number (if specified), numerator and
-	 *         denominator of the {@code BigFraction} argument.
+	 * @param mixed {@code boolean} value to specify whether the returned tree is representative of a Mixed fraction ({@code true})
+	 *              or not (<code>false</code>).
+	 * @param dp    the punctuation options to apply to the generated number sub-trees.
+	 * @return a tree whose are the whole number (if specified), numerator and denominator of the {@code BigFraction} argument.
 	 */
 	public static LinkedSegment toSegment(BigFraction n, boolean mixed, DigitPunc dp) {
 		if (n.isInteger())
@@ -1352,8 +1241,8 @@ public final class Digits {
 	 * Time created: 19:49:40 ---------------------------------------------------
 	 */
 	/**
-	 * Performs the same function as {@link #toSegment(BigInteger, int, DigitPunc)}
-	 * and then appends a node for the subscript base. An example is:
+	 * Performs the same function as {@link #toSegment(BigInteger, int, DigitPunc)} and then appends a node for the subscript base.
+	 * An example is:
 	 * 
 	 * <pre>
 	 * <code>
@@ -1368,17 +1257,14 @@ public final class Digits {
 	 * </code>
 	 * </pre>
 	 * 
-	 * Note that if the radix given is not 10, then the expression returned is
-	 * currently unsupported by SYMJA, and can only be evaluated by evaluators from
-	 * {@link mathaid.calculator.base.evaluator}.
+	 * Note that if the radix given is not 10, then the expression returned is currently unsupported by SYMJA, and can only be
+	 * evaluated by evaluators from {@link mathaid.calculator.base.evaluator}.
 	 * 
 	 * @param n     the value to be transformed
 	 * @param radix the radix of the final result.
 	 * @param dp    the punctuation options to apply to the generated number tree.
-	 * @return a number tree whose nodes are digits in the given {@code BigFraction}
-	 *         using the computed engineering suffix.
-	 * @return a number tree whose nodes are digits of the given {@code BigInteger}
-	 *         using the specified radix.
+	 * @return a number tree whose nodes are digits in the given {@code BigFraction} using the computed engineering suffix.
+	 * @return a number tree whose nodes are digits of the given {@code BigInteger} using the specified radix.
 	 */
 	public static LinkedSegment toRadixedSegment(BigInteger n, int radix, DigitPunc dp) {
 		return toSegment(n, radix, dp).concat(sub(radix, dp));
@@ -1389,13 +1275,11 @@ public final class Digits {
 	 * Time created: 20:28:02 ---------------------------------------------------
 	 */
 	/**
-	 * Creates a {@code LinkedSegment} that represents a subscript usually used in
-	 * Mathematics to describe the radix of a number.
+	 * Creates a {@code LinkedSegment} that represents a subscript usually used in Mathematics to describe the radix of a number.
 	 * 
 	 * @param radix the specified radix
 	 * @param dp    the punctuation options to apply to the generated number tree.
-	 * @return a tree that is meant as a sibling but never as a head, which
-	 *         represents the radix of a number tree.
+	 * @return a tree that is meant as a sibling but never as a head, which represents the radix of a number tree.
 	 */
 	private static LinkedSegment sub(int radix, DigitPunc dp) {
 		return new CompositeSegment(new String[] { " _{", " }" }, new String[] { " _", "" }, OBJECT,
@@ -1407,8 +1291,8 @@ public final class Digits {
 	 * Time created: 20:32:13 ---------------------------------------------------
 	 */
 	/**
-	 * Transforms the floating point number to a number tree, creating nodes that
-	 * specify the radix of the significand and exponent. An example is:
+	 * Transforms the floating point number to a number tree, creating nodes that specify the radix of the significand and exponent.
+	 * An example is:
 	 * 
 	 * <pre>
 	 * <code>
@@ -1423,22 +1307,18 @@ public final class Digits {
 	 * </code>
 	 * </pre>
 	 * 
-	 * Note that the expression returned is currently unsupported by SYMJA, and can
-	 * only be evaluated by evaluators from
+	 * Note that the expression returned is currently unsupported by SYMJA, and can only be evaluated by evaluators from
 	 * {@link mathaid.calculator.base.evaluator}.
 	 * 
 	 * @param n        the value to be transformed.
 	 * @param sigRadix the radix of the significand.
 	 * @param expRadix the radix of the exponent digits.
-	 * @param norm     {@code boolean} value that specifies whether to normalise the
-	 *                 value before the transformation is done. Please see
-	 *                 {@link BinaryFP#toNormalisedString(int)} for an explanation
-	 *                 on floating point normalisation.
-	 * @param dp       the punctuation options to apply to the generated number
-	 *                 tree.
+	 * @param norm     {@code boolean} value that specifies whether to normalise the value before the transformation is done. Please
+	 *                 see {@link BinaryFP#toNormalisedString(int)} for an explanation on floating point normalisation.
+	 * @param dp       the punctuation options to apply to the generated number tree.
 	 * @return a number tree that is representation of the given floating point.
 	 */
-	//TEST CASES
+	// TEST CASES
 //	BinaryFP n = FloatAid.IEEE754Double().createFP(Utility.d("12345.678901"));
 //	BinaryFP n = FloatAid.IEEE754Double().createFP(Utility.d("12345.678901e300"));
 //	BinaryFP n = FloatAid.IEEE754Double().createFP(Utility.d("-1234"));
@@ -1448,6 +1328,7 @@ public final class Digits {
 //	LinkedSegment num = Digits.toSegment(n, 16, 16, true, new DigitPunc());
 //	LinkedSegment num = Digits.toSegment(n, 16, 16, false, new DigitPunc());
 	List<Integer> l = new ArrayList<>(Arrays.asList(-1));
+
 //	num.toString(System.out, null, l);// prints: Rational[(169 *123456789098765 )+25 ,169 ]
 //	out.println();
 //	l.clear();
@@ -1520,25 +1401,20 @@ public final class Digits {
 	 * Time created: 20:44:18 ---------------------------------------------------
 	 */
 	/**
-	 * Generates a number tree from the given {@code StringBuilder} that comprises
-	 * of only alphanumeric (they are in a base other than 10) and appends it to the
-	 * given {@code LinkedSegment} argument.
+	 * Generates a number tree from the given {@code StringBuilder} that comprises of only alphanumeric (they are in a base other
+	 * than 10) and appends it to the given {@code LinkedSegment} argument.
 	 * <p>
-	 * This just the radix version of
-	 * {@link #unsignedDigits(StringBuilder, int, LinkedSegment, DigitPunc)}.
+	 * This just the radix version of {@link #unsignedDigits(StringBuilder, int, LinkedSegment, DigitPunc)}.
 	 * 
 	 * @param n  the value from which the tree will be generated.
 	 * @param t  the type of digits for each digit.
 	 * @param s  the head of the returned tree.
 	 * @param dp the punctuation options to apply to the generated number tree.
-	 * @return a tree whose head is {@code s} and the rest is a sub-tree
-	 *         representing {@code n}.
-	 * @implNote This method does not properly build number expressions because it
-	 *           coerces the digit using {@code \mathrm{digit}} to prevent
-	 *           non-decimal digit to be formatted in oblique font by MATHJAX. This
-	 *           poses a problem because the {@code Digit} constructor only allows
-	 *           for a single string representing both the MATHJAX display format
-	 *           and the expression string. Hence:
+	 * @return a tree whose head is {@code s} and the rest is a sub-tree representing {@code n}.
+	 * @implNote This method does not properly build number expressions because it coerces the digit using {@code \mathrm{digit}} to
+	 *           prevent non-decimal digit to be formatted in oblique font by MATHJAX. This poses a problem because the
+	 *           {@code Digit} constructor only allows for a single string representing both the MATHJAX display format and the
+	 *           expression string. Hence:
 	 * 
 	 *           <pre>
 	 * <code>
@@ -1548,10 +1424,9 @@ public final class Digits {
 	 * </code>
 	 *           </pre>
 	 * 
-	 *           From the above we can clearly see that the resultant expression is
-	 *           the same as the MATHJAX format which is a bug. This can be fixed by
-	 *           using the {@link Formatter} interface and specifying how a digit
-	 *           may be formatted by creating a {@link Marker} such as:
+	 *           From the above we can clearly see that the resultant expression is the same as the MATHJAX format which is a bug.
+	 *           This can be fixed by using the {@link Formatter} interface and specifying how a digit may be formatted by creating
+	 *           a {@link Marker} such as:
 	 * 
 	 *           <pre>
 	 *           <code>
@@ -1594,12 +1469,10 @@ public final class Digits {
 	 * Time created: 15:49:19 ---------------------------------------------------
 	 */
 	/**
-	 * Gets the {@code LinkedSegment} which is meant to represent the imaginary
-	 * value <em>i</em>. The value that this method returns, does not have a sibling
-	 * or child.
+	 * Gets the {@code LinkedSegment} which is meant to represent the imaginary value <em>i</em>. The value that this method
+	 * returns, does not have a sibling or child.
 	 * <p>
-	 * <strong>The TeX format</strong> (specified by
-	 * {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
+	 * <strong>The TeX format</strong> (specified by {@link LinkedSegment#format(Appendable, Formatter, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>\mathrm{i}</code>
@@ -1607,8 +1480,7 @@ public final class Digits {
 	 * 
 	 * This is also the image of {@code LinkedSegment} returned.
 	 * <p>
-	 * <strong>The expression value</strong> (specified by
-	 * {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
+	 * <strong>The expression value</strong> (specified by {@code LinkedSegment.toString(Appendable, Log, java.util.List)}) is:
 	 * 
 	 * <pre>
 	 * <code>i</code>
@@ -1618,19 +1490,19 @@ public final class Digits {
 	 * <p>
 	 * This uses the {@link #CONSTANT} type.
 	 * 
-	 * @return a {@code LinkedSegment} that is meant to represent the imaginary part
-	 *         of a complex number tree.
+	 * @return a {@code LinkedSegment} that is meant to represent the imaginary part of a complex number tree.
 	 */
 	public static LinkedSegment i() {
 		return new BasicSegment(" \\mathrm{i}", " i", Segment.Type.CONSTANT);
 	}
-	
+
 	/*
 	 * Date: 23 Nov 2023 -----------------------------------------------------------
 	 * Time created: 05:47:05 ---------------------------------------------------
 	 */
 	/**
 	 * Creates a childless segment with no sibling for the Mathematical '&infin;' constant.
+	 * 
 	 * @return the created segment representing the '&infin;' constant
 	 */
 	public static LinkedSegment inf() {

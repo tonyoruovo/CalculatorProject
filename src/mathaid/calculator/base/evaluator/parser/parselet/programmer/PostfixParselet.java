@@ -24,6 +24,7 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
  * Class name: PostfixParselet------------------------------------------------ 
  */
 /**
+ * A prefix {@code Parselet} for creating {@code Postfix} objects.
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -35,14 +36,15 @@ public class PostfixParselet implements Parselet<String, SegmentBuilder, Evaluat
 	 * Most recent time created: 15:03:43--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
-	 * @param alreadyParsedLeft
-	 * @param yetToBeParsedToken
-	 * @param parser
-	 * @param lexerReference
-	 * @param syntax
-	 * @param params
-	 * @return
+	 * Creates a new {@code Postfix} object.
+	 * 
+	 * @param alreadyParsedLeft  the value that is the operand.
+	 * @param yetToBeParsedToken the symbol of the postfix operator
+	 * @param parser {@inheritDoc}
+	 * @param lexerReference {@inheritDoc}
+	 * @param syntax {@inheritDoc}
+	 * @param params {@inheritDoc}
+	 * @return the new {@code Postfix} object.
 	 */
 	@Override
 	public PExpression parse(EvaluatableExpression<Params> alreadyParsedLeft,

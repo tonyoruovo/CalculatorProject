@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.scientific.Name.Params;
 import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.LinkedSegment;
@@ -76,37 +77,37 @@ class CompDetails {
 	public static LinkedSegment getReal(String str, Params p) {
 		Complex z = fromString(str, p.getScale());
 		return Digits.toSegment(z.real().round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-				Calculator.fromParams(p, p.getNumOfRepeats()));
+				EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getImaginary(String str, Params p) {
 		Complex z = fromString(str, p.getScale());
 		return Digits.toSegment(z.imaginary().round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-				Calculator.fromParams(p, p.getNumOfRepeats()));
+				EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getMagnitude(String str, Params p) {
 		Complex z = fromString(str, p.getScale());
 		return Digits.toSegment(z.magnitude().round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-				Calculator.fromParams(p, p.getNumOfRepeats()));
+				EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getXCoordinate(String str, Params p) {
 		Complex z = fromString(str, p.getScale());
 		return Digits.toSegment(z.toRectangularCoordinates()[0].round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-				Calculator.fromParams(p, p.getNumOfRepeats()));
+				EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getYCoordinate(String str, Params p) {
 		Complex z = fromString(str, p.getScale());
 		return Digits.toSegment(z.toRectangularCoordinates()[1].round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-				Calculator.fromParams(p, p.getNumOfRepeats()));
+				EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getArg(String str, Params p) {
 		Complex z = fromString(str, p.getScale());
 		return Digits.toSegment(z.argument().round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-				Calculator.fromParams(p, p.getNumOfRepeats()));
+				EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getExpression(String str, Params p) {
@@ -115,10 +116,10 @@ class CompDetails {
 		SegmentBuilder s = new SegmentBuilder();
 		if (z.real().signum() != 0)
 			s.append(Digits.toSegment(z.real().round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-					Calculator.fromParams(p, p.getNumOfRepeats())));
+					EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		if (z.imaginary().abs().compareTo(BigDecimal.ONE) != 0)
 			s.append(Digits.toSegment(z.imaginary().round(new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), getExp(p),
-					Calculator.fromParams(p, p.getNumOfRepeats())));
+					EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		else if (z.imaginary().signum() < 0) {
 			s.append(Segments.operator(" -", " -"));//.operator("-", "-", Segment.MINUS_OPERATOR_SEGMENT));
 			s.append(Digits.i());//Segments.constant("I", "i"));
@@ -135,13 +136,13 @@ class CompDetails {
 			BigFraction rf = new BigFraction(z.real(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
 					new BigDecimal("1E-10"));
 			String ss = fixedPoint(rf.getDecimalExpansion(p.getScale()), rf.signum(), p.getScale());
-			s.append(Digits.toSegment(new BigDecimal(ss), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(new BigDecimal(ss), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		}
 		if (z.imaginary().abs().compareTo(BigDecimal.ONE) != 0) {
 			BigFraction rf = new BigFraction(z.imaginary(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
 					new BigDecimal("1E-10"));
 			String ss = fixedPoint(rf.getDecimalExpansion(p.getScale()), rf.signum(), p.getScale());
-			s.append(Digits.toSegment(new BigDecimal(ss), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(new BigDecimal(ss), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 
 		} else if (z.imaginary().signum() < 0) {
 			s.append(Segments.operator(" -", " -"));
@@ -162,7 +163,7 @@ class CompDetails {
 			int scale = Digits.scale(ss);
 			if (scale <= p.getScale())
 				ss = Digits.truncateToScale(ss, p.getScale());
-			s.append(Digits.toSegment(Digits.fromSegmentString(ss), false, p.getRecurringType(), Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(Digits.fromSegmentString(ss), false, p.getRecurringType(), EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		}
 		if (z.imaginary().abs().compareTo(BigDecimal.ONE) != 0) {
 			BigFraction rf = new BigFraction(z.imaginary(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
@@ -171,7 +172,7 @@ class CompDetails {
 			int scale = Digits.scale(ss);
 			if (scale <= p.getScale())
 				ss = Digits.truncateToScale(ss, p.getScale());
-			s.append(Digits.toSegment(Digits.fromSegmentString(ss), false, p.getRecurringType(), Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(Digits.fromSegmentString(ss), false, p.getRecurringType(), EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 
 		} else if (z.imaginary().signum() < 0) {
 			s.append(Segments.operator(" -", " -"));
@@ -188,12 +189,12 @@ class CompDetails {
 		if (z.real().signum() != 0) {
 			BigFraction rf = new BigFraction(z.real(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
 					new BigDecimal("1E-10"));
-			s.append(Digits.toSegment(rf, false, Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(rf, false, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		}
 		if (z.imaginary().abs().compareTo(BigDecimal.ONE) != 0) {
 			BigFraction rf = new BigFraction(z.imaginary(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
 					new BigDecimal("1E-10"));
-			s.append(Digits.toSegment(rf, false, Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(rf, false, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 
 		} else if (z.imaginary().signum() < 0) {
 			s.append(Segments.operator(" -", " -"));
@@ -214,7 +215,7 @@ class CompDetails {
 			int scale = Digits.scale(ss);
 			if (scale <= p.getScale())
 				ss = Digits.truncateToScale(ss, p.getScale());
-			s.append(Digits.toSegment(Digits.fromSegmentString(ss), p.getRecurringType(), 1, Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(Digits.fromSegmentString(ss), p.getRecurringType(), 1, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		}
 		if (z.imaginary().abs().compareTo(BigDecimal.ONE) > 0) {
 			BigFraction rf = new BigFraction(z.imaginary(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
@@ -223,7 +224,7 @@ class CompDetails {
 			int scale = Digits.scale(ss);
 			if (scale <= p.getScale())
 				ss = Digits.truncateToScale(ss, p.getScale());
-			s.append(Digits.toSegment(Digits.fromSegmentString(ss), p.getRecurringType(), 1, Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(Digits.fromSegmentString(ss), p.getRecurringType(), 1, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 
 		} else if (z.imaginary().signum() < 0) {
 			s.append(Segments.operator(" -", " -"));
@@ -239,13 +240,13 @@ class CompDetails {
 		if (z.real().signum() != 0) {
 			BigFraction rf = new BigFraction(z.real(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
 					new BigDecimal("1E-10"));
-			s.append(Digits.toSegment(rf, true, p.getRecurringType(), Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(rf, true, p.getRecurringType(), EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //			String ss = Digits.toSegmentString(rf, 3);
 //			SegmentBuilder sb;
 
 //			int suffixIndex = ss.indexOf('E');
 //			if (suffixIndex < ss.length() - 1) {
-//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(ss.substring(0, suffixIndex)), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(ss.substring(0, suffixIndex)), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //			} else {
 //				Map<String, String> suffixes = new HashMap<>();
 //				suffixes.put("Y", "E24");
@@ -265,7 +266,7 @@ class CompDetails {
 //				suffixes.put("z", "E-21");
 //				suffixes.put("y", "E-24");
 //				String suffix = ss.substring(ss.length() - 1);
-//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //				sb.append(new BasicSegment(String.format("*10^(%s)", suffixes.get(suffix).substring(1)),
 //						suffix.compareTo("µ") == 0 ? "\\mu" : suffix, Segment.Type.EXPONENT));
 //			}
@@ -274,13 +275,13 @@ class CompDetails {
 		if (z.imaginary().abs().compareTo(BigDecimal.ONE) != 0) {
 			BigFraction rf = new BigFraction(z.imaginary(), new MathContext(p.getScale(), RoundingMode.HALF_EVEN), null,
 					new BigDecimal("1E-10"));
-			s.append(Digits.toSegment(rf, true, p.getRecurringType(), Calculator.fromParams(p, p.getNumOfRepeats())));
+			s.append(Digits.toSegment(rf, true, p.getRecurringType(), EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //			String ss = Digits.toSegmentString(rf, 3);
 //			SegmentBuilder sb;
 
 //			int suffixIndex = ss.indexOf('E');
 //			if (suffixIndex < ss.length() - 1) {
-//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(ss.substring(0, suffixIndex)), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(ss.substring(0, suffixIndex)), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //			} else {
 //				Map<String, String> suffixes = new HashMap<>();
 //				suffixes.put("Y", "E24");
@@ -300,7 +301,7 @@ class CompDetails {
 //				suffixes.put("z", "E-21");
 //				suffixes.put("y", "E-24");
 //				String suffix = ss.substring(ss.length() - 1);
-//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+//				sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //				sb.append(new BasicSegment(String.format("*10^(%s)", suffixes.get(suffix).substring(1)),
 //						suffix.compareTo("µ") == 0 ? "\\mu" : suffix, Segment.Type.EXPONENT));
 //			}

@@ -248,7 +248,7 @@ public class MathJaxSetup {
 		try {
 			a.append(String.format("%s = ", MATHJAX));
 			config.build().parseToScript(a, 0);
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 		}
 		return a;
 	}

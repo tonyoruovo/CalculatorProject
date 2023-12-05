@@ -22,6 +22,8 @@ import mathaid.calculator.base.typeset.Segments;
  * Class name: Array------------------------------------------------ 
  */
 /**
+ * A special expression representing lists in SYMJA.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -32,13 +34,25 @@ public class Array extends EvaluatableExpression<Params> {
 	 * Time created: 00:12:13---------------------------------------------------
 	 */
 	/**
-	 * @param params
+	 * Constructs an {@code Array} by specifying the elements, evaluation and format options.
+	 * 
+	 * @param array  the elements.
+	 * @param params the {@code ExpressionParams} representing options for the evaluation and format within this expression.
 	 */
 	public Array(List<EvaluatableExpression<Params>> array, Params params) {
 		super(params);
 		content = array;
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:45:56 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the elements of {@code this} as an unmodifiable {@code List}.
+	 * 
+	 * @return the elements of this {@code Array}.
+	 */
 	public List<EvaluatableExpression<Params>> getArray() {
 		return content;
 	}
@@ -48,15 +62,26 @@ public class Array extends EvaluatableExpression<Params> {
 	 * Most recent time created: 00:12:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Appends the {@code LinkedSegment} representation of this array expression and it's elements into the format builder.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @param formatBuilder
+	 * @param formatBuilder {@inheritDoc}
 	 */
 	@Override
 	public void format(SegmentBuilder formatBuilder) {
 		formatBuilder.append(Segments.array(listToSegments()));
 	}
-	
+
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:48:13 ---------------------------------------------------
+	 */
+	/**
+	 * Formats all the elements into array.
+	 * 
+	 * @return an array of the {@code LinkedSegment} representation of all elements.
+	 */
 	private LinkedSegment[] listToSegments() {
 		LinkedSegment[] s = new LinkedSegment[content.size()];
 		SegmentBuilder sb = new SegmentBuilder();
@@ -73,9 +98,15 @@ public class Array extends EvaluatableExpression<Params> {
 	 * Most recent time created: 00:12:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Evaluates this {@code Array} by calling {@link EvaluatableExpression#evaluate() evaluate} on it's elements and returning
+	 * {@code this} with all elements evaluated.
+	 * <p>
+	 * All calculations are done with a numerical precision of <code>{@linkplain Params#getScale() scale} + 5</code> and may throw
+	 * exceptions that indicate that the value were out of range.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @return
+	 * @return an {@code Array} expression where all elements have been evaluated.
 	 */
 	@Override
 	public EvaluatableExpression<Params> evaluate() {
@@ -90,9 +121,9 @@ public class Array extends EvaluatableExpression<Params> {
 	 * Most recent time created: 00:12:18--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Gets the empty string {@code ""} as an array does not have a name
 	 * 
-	 * @return
+	 * @return an empty string.
 	 */
 	@Override
 	public String getName() {
@@ -106,8 +137,8 @@ public class Array extends EvaluatableExpression<Params> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param o
-	 * @return
+	 * @param o {@inheritDoc}
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -124,13 +155,16 @@ public class Array extends EvaluatableExpression<Params> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(this, content);
 	}
 
+	/**
+	 * The elements of this array.
+	 */
 	private final List<EvaluatableExpression<Params>> content;
 
 }

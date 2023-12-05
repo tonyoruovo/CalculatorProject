@@ -125,7 +125,7 @@ public class JSRegex extends JSValue<JSRegex> {
 			parser.append('/');
 			if(global)
 				parser.append('g');
-		}catch(@SuppressWarnings("unused") IOException e) {}
+		}catch(IOException e) {}
 	}
 
 	/*

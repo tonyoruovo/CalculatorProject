@@ -102,7 +102,7 @@ public interface JSSnippet {
 				i += 1;
 			} while (isIdentifier == true && i < s.length());
 			return isIdentifier;
-		} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return false;
 		}
 	}

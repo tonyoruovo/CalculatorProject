@@ -93,6 +93,7 @@ public class LoopConfiguration {
 	 * @param start represents the first value recorded by the detection algorithm.
 	 * @return a {@code LoopConfiguration} object.
 	 */
+	@SuppressWarnings("null")
 	public static <T extends Comparable<T>> LoopConfiguration detectPrefixLength(Function<T, T> f, T start) {
 		if (f == null)
 			new NullException(Function.class);

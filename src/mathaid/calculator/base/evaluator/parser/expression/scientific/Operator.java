@@ -3,17 +3,24 @@
  */
 package mathaid.calculator.base.evaluator.parser.expression.scientific;
 
+import static java.util.Arrays.asList;
+import static mathaid.calculator.base.typeset.Segments.fraction;
+import static mathaid.calculator.base.typeset.Segments.logxy;
+import static mathaid.calculator.base.typeset.Segments.operator;
+import static mathaid.calculator.base.typeset.Segments.pow;
+import static mathaid.calculator.base.typeset.Segments.root;
+import static mathaid.calculator.base.typeset.Segments.sqrt;
+import static mathaid.calculator.base.util.Arith.pow;
+import static mathaid.calculator.base.util.Utility.d;
+import static mathaid.calculator.base.util.Utility.mc;
+import static mathaid.calculator.base.util.Utility.rm;
+
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.Arrays;
 
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.Segment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
-import mathaid.calculator.base.typeset.Segments;
-import mathaid.calculator.base.util.Arith;
 import mathaid.calculator.base.util.Utility;
 
 /*
@@ -25,6 +32,10 @@ import mathaid.calculator.base.util.Utility;
  * Class name: Operator------------------------------------------------ 
  */
 /**
+ * An expression that represents binary arithmetic operators such as {@code +}, {@code -}, {@code /}, {@code *}.
+ * <p>
+ * It consists of an identifier specified by {@link #getName()} and it's ordered operands.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -35,8 +46,12 @@ public class Operator extends Name {
 	 * Time created: 01:59:48---------------------------------------------------
 	 */
 	/**
-	 * @param name
-	 * @param params
+	 * Constructs an {@code Operator} from the arguments.
+	 * 
+	 * @param left   the left operand expression
+	 * @param op     the symbol/identifier of this {@code Operator}.
+	 * @param right  the right operand expression.
+	 * @param params the {@code ExpressionParams} representing options for the evaluation and format within this expression.
 	 */
 	public Operator(EvaluatableExpression<Params> left, String op, EvaluatableExpression<Params> right, Params params) {
 		super(op, params);
@@ -44,10 +59,28 @@ public class Operator extends Name {
 		this.right = right;
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 10:21:05 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the left operand.
+	 * 
+	 * @return the left operand.
+	 */
 	public EvaluatableExpression<Params> getLeft() {
 		return left;
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 10:22:58 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the right operand.
+	 * 
+	 * @return the right operand.
+	 */
 	public EvaluatableExpression<Params> getRight() {
 		return right;
 	}
@@ -57,9 +90,13 @@ public class Operator extends Name {
 	 * Most recent time created: 02:08:54--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Appends the {@code LinkedSegment} representation of this operator and it's operands into the format builder.
+	 * <p>
+	 * The format is ordered so: left-operand, symbol, right-operand.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @param formatBuilder
+	 * @param formatBuilder {@inheritDoc}
 	 */
 	@Override
 	public void format(SegmentBuilder formatBuilder) {
@@ -78,7 +115,7 @@ public class Operator extends Name {
 						LinkedSegment arg1 = sb.toSegment();
 						fy.getArguments().get(0).format(sb.deleteAll());
 						LinkedSegment arg2 = sb.toSegment();
-						formatBuilder.append(Segments.logxy(arg1, arg2));
+						formatBuilder.append(logxy(arg1, arg2));
 						return;
 					}
 				}
@@ -97,12 +134,12 @@ public class Operator extends Name {
 				LinkedSegment arg1 = sb.toSegment();
 				right.format(sb.deleteAll());
 				LinkedSegment arg2 = sb.toSegment();
-				formatBuilder.append(Segments.fraction(arg1, arg2));
+				formatBuilder.append(fraction(arg1, arg2));
 				return;
 			}
 			left.format(formatBuilder);
 			String[] div = p.getDivisionString();
-			formatBuilder.append(Segments.operator(div[0], div[1]));
+			formatBuilder.append(operator(div[1], div[0]));
 			return;
 		}
 		case "+":
@@ -132,7 +169,7 @@ public class Operator extends Name {
 			}
 			left.format(formatBuilder);
 			String[] mul = p.getMultiplicationString();
-			formatBuilder.append(Segments.operator(mul[0], mul[1]));
+			formatBuilder.append(operator(mul[1], mul[0]));
 			right.format(formatBuilder);
 			return;
 		}
@@ -144,11 +181,11 @@ public class Operator extends Name {
 				Operator div = (Operator) right;
 				if (div.getName().compareTo(p.getDivisionString()[0]) == 0) {
 					if (div.right instanceof Name && Utility.isNumber(div.right.getName())) {
-						BigDecimal num = new BigDecimal(div.right.getName());
+						BigDecimal num = d(div.right.getName());
 						BigDecimal num2;
 						try {
-							num2 = new BigDecimal(div.left.getName());
-						} catch (@SuppressWarnings("unused") ClassCastException | NumberFormatException e) {
+							num2 = d(div.left.getName());
+						} catch (ClassCastException | NumberFormatException e) {
 							num2 = null;
 						}
 						boolean rightIsInteger = Utility.isInteger(num);
@@ -162,15 +199,15 @@ public class Operator extends Name {
 							if (num2 != null && num2.compareTo(BigDecimal.ONE) == 0)
 								radicand = base;
 							else
-								radicand = Segments.pow(base, exponent);
+								radicand = pow(base, exponent);
 							if (num.compareTo(BigDecimal.valueOf(2L)) == 0) {
-								formatBuilder.append(Segments.sqrt(radicand));
+								formatBuilder.append(sqrt(radicand));
 								return;
 							}
 							div.right.format(sb.deleteAll());
 							LinkedSegment index = sb.toSegment();
-							formatBuilder.append(Segments.root(index, radicand));
-//							formatBuilder.append(Segments.sq)
+							formatBuilder.append(root(index, radicand));
+//							formatBuilder.append(sq)
 							return;
 						}
 					}
@@ -181,15 +218,19 @@ public class Operator extends Name {
 			LinkedSegment base = sb.toSegment();
 			right.format(sb.deleteAll());
 			LinkedSegment exponent = sb.toSegment();
-			formatBuilder.append(Segments.pow(base, exponent));
+			formatBuilder.append(pow(base, exponent));
 			return;
 		}
 		default:
 		}
 		left.format(formatBuilder);
-		formatBuilder.append(Segments.operator(getName(), getName()));
+		formatBuilder.append(operator(getName(), getName()));
 		right.format(formatBuilder);
 
+	}
+	
+	public String toString() {
+		return new StringBuilder(left.toString()).append(getName()).append(right.toString()).toString();
 	}
 
 	/*
@@ -197,9 +238,18 @@ public class Operator extends Name {
 	 * Most recent time created: 02:08:54--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Computes the result of applying both operand to this operator.
+	 * <p>
+	 * Both operands will have their {@link EvaluatableExpression#evaluate() evaluate()} methods called before the final evaluation
+	 * is done and all computation will use the values from {@link #getParams()}.
+	 * <p>
+	 * All calculations are done with a numerical precision of <code>{@linkplain Params#getScale() scale} + 5</code> and may throw
+	 * exceptions that indicate that value(s) were out of range.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @return
+	 * @return a new {@code EvaluatableExpression} that is the result of evaluating this operator. May return the same object
+	 *         especially if called more than once.
 	 */
 	@Override
 	public EvaluatableExpression<Params> evaluate() {
@@ -214,35 +264,35 @@ public class Operator extends Name {
 		case "+":
 			if (isNumber(left))
 				if (isNumber(right))
-					return new Name(new BigDecimal(left.getName())
-							.add(new BigDecimal(right.getName()), new MathContext(p.getScale(), RoundingMode.HALF_EVEN))
+					return new Name(d(left.getName())
+							.add(d(right.getName()), mc(p.getScale(), rm("HALF_EVEN")))
 							.toPlainString(), p);
 			break;
 		case "-":
 			if (isNumber(left))
 				if (isNumber(right))
-					return new Name(new BigDecimal(left.getName()).subtract(new BigDecimal(right.getName()),
-							new MathContext(p.getScale(), RoundingMode.HALF_EVEN)).toPlainString(), p);
+					return new Name(d(left.getName()).subtract(d(right.getName()),
+							mc(p.getScale(), rm("HALF_EVEN"))).toPlainString(), p);
 			break;
 		case "/":
 			if (isNumber(left))
 				if (isNumber(right))
-					return new Name(new BigDecimal(left.getName()).divide(new BigDecimal(right.getName()),
-							new MathContext(p.getScale(), RoundingMode.HALF_EVEN)).toPlainString(), p);
+					return new Name(d(left.getName()).divide(d(right.getName()),
+							mc(p.getScale(), rm("HALF_EVEN"))).toPlainString(), p);
 			// Log[5]/Log[2]
 			if (left instanceof Function && right instanceof Function) {
 				if (left.getName().equals(p.getLog()) && right.getName().equals(p.getLog())) {
 					Function fx = (Function) left;
 					Function fy = (Function) right;
-					return new Function(new Name(p.getLog(), p), Arrays.asList(fx, fy), p).evaluate();
+					return new Function(new Name(p.getLog(), p), asList(fx, fy), p).evaluate();
 				}
 			}
 			break;
 		case "*":
 			if (isNumber(left))
 				if (isNumber(right))
-					return new Name(new BigDecimal(left.getName()).multiply(new BigDecimal(right.getName()),
-							new MathContext(p.getScale(), RoundingMode.HALF_EVEN)).toPlainString(), p);
+					return new Name(d(left.getName()).multiply(d(right.getName()),
+							mc(p.getScale(), rm("HALF_EVEN"))).toPlainString(), p);
 			break;
 		case "^":
 			if (isNumber(left))
@@ -253,9 +303,9 @@ public class Operator extends Name {
 					 */
 //					Apfloat n1 = new Apfloat(left.name()), n2 = new Apfloat(right.name());
 //					n1 = ApfloatMath.pow(n1, n2);
-//					return new Name(new BigDecimal(n1.toString(true)).toPlainString());
-					return new Name(Arith.pow(new BigDecimal(left.getName()), new BigDecimal(right.getName()),
-							new MathContext(p.getScale(), RoundingMode.HALF_EVEN)).toPlainString(), p);
+//					return new Name(d(n1.toString(true)).toPlainString());
+					return new Name(pow(d(left.getName()), d(right.getName()),
+							mc(p.getScale(), rm("HALF_EVEN"))).toPlainString(), p);
 			break;
 		case ".":
 			/*
@@ -275,7 +325,13 @@ public class Operator extends Name {
 		return new Operator(left, getName(), right, p);
 	}
 
+	/**
+	 * The left operand.
+	 */
 	private final EvaluatableExpression<Params> left;
+	/**
+	 * The right operand.
+	 */
 	private final EvaluatableExpression<Params> right;
 
 }

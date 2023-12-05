@@ -21,6 +21,15 @@ package mathaid.calculator.base.evaluator.parser;
  */
 public class Token<T> {
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 12:10:15 ---------------------------------------------------
+	 */
+	/**
+	 * Constructor for creating a {@code Token} object.
+	 * @param type the type information for the token
+	 * @param name the value of the token. This is the literal value.
+	 */
 	public Token(Type<T> type, String name) {
 		this.type = type;
 		this.name = name;
@@ -47,7 +56,7 @@ public class Token<T> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public int hashCode() {
@@ -61,8 +70,8 @@ public class Token<T> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @param obj
-	 * @return
+	 * @param obj {@inheritDoc}
+	 * @return {@inheritDoc}h
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -80,11 +89,11 @@ public class Token<T> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @return
+	 * @return {@inheritDoc}
 	 */
 	@Override
 	public String toString() {
-		return name;
+		return name  + ":" + getType().getName() + ":" + getType().getPrecedence();
 	}
 
 	/*
@@ -100,7 +109,13 @@ public class Token<T> {
 		return name;
 	}
 
+	/**
+	 * Holds the given type information.
+	 */
 	private final Type<T> type;
+	/**
+	 * Holds the value
+	 */
 	private final String name;
 
 }

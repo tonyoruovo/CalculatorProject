@@ -722,7 +722,7 @@ public class FloatPoint implements java.io.Serializable {
 			StringBuilder sb;
 			try {
 				sb = new StringBuilder("1.0").append(s.substring(s.indexOf("E"))).append("9");
-			} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+			} catch (IndexOutOfBoundsException e) {
 				sb = new StringBuilder("1.0").append("E").append(p.getMaxExponent()).append("9");
 			}
 			sb.insert(0, value.signum() < 0 ? "-" : "+");
@@ -735,7 +735,7 @@ public class FloatPoint implements java.io.Serializable {
 			StringBuilder sb;
 			try {
 				sb = new StringBuilder("0.0").append(s.substring(s.indexOf("E"))).append("9");
-			} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+			} catch (IndexOutOfBoundsException e) {
 				sb = new StringBuilder("0.0").append("E").append(p.getMinExponent()).append("9");
 			}
 			return sb.toString();

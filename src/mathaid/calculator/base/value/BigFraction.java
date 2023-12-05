@@ -657,6 +657,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	public BigFraction(final String fraction) {
 		if (fraction == null)
 			new NullException(ExceptionMessage.OBJECT_IS_NULL, new NullPointerException(), "fraction");
+		@SuppressWarnings("null")
 		String ff = fraction.replaceAll(" ", "");
 		boolean hasDiv = ff.contains("/");
 		final BigFraction f;
@@ -836,6 +837,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 * @throws ArithmeticException if the given maximum denominator is exceeded or
 	 *                             if the accuracy is outside the domain [0, 1].
 	 */
+	@SuppressWarnings("null")
 	private BigFraction(BigDecimal decimalFraction, MathContext context, BigInteger maxDenominator,
 			final BigDecimal accuracy, int algorithm) throws ArithmeticException {
 		if (decimalFraction == null)
@@ -991,6 +993,7 @@ public class BigFraction implements Comparable<BigFraction>, java.io.Serializabl
 	 *                    denominator of this {@code BigFraction}
 	 * @throws ArithmeticException if the denominator == 0
 	 */
+	@SuppressWarnings("null")
 	public BigFraction(BigInteger numerator, BigInteger denominator) throws ArithmeticException {
 		if (numerator == null)
 			new NullException(ExceptionMessage.OBJECT_IS_NULL, new NullPointerException(), "numerator");

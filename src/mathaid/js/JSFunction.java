@@ -128,7 +128,7 @@ public class JSFunction extends JSValue<JSFunction> {
 					char endOfLineChar;
 					try {
 						endOfLineChar = line.charAt(line.length() - 1);
-					} catch (@SuppressWarnings("unused") IndexOutOfBoundsException e) {
+					} catch (IndexOutOfBoundsException e) {
 						endOfLineChar = '\0';
 					}
 					if (endOfLineChar == '}')
@@ -143,7 +143,7 @@ public class JSFunction extends JSValue<JSFunction> {
 				parser.append('}');
 //				parser.append(LS);
 			}
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 		}
 	}
 

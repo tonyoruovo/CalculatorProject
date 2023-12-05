@@ -175,7 +175,7 @@ public final class JSMemberName implements JSSnippet, CharSequence, Comparable<J
 	public void parseToScript(Appendable parser, int tabs) {
 		try {
 			parser.append(value);
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 		}
 	}
 

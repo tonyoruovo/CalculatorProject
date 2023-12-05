@@ -21,6 +21,7 @@ import static mathaid.calculator.base.evaluator.parser.expression.programmer.Fun
 
 import java.math.BigInteger;
 
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpression.Params.ResultType;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.typeset.Segments;
@@ -42,28 +43,68 @@ import mathaid.calculator.base.value.US;
  * Class name: Operator------------------------------------------------ 
  */
 /**
+ * An expression that represents binary operators such as {@code +}, {@code &}, {@code |}, {@code *}.
+ * <p>
+ * It consists of an identifier specified by {@link #getName()} and it's ordered operands.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
 public class Operator extends Name {
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:02:27 ---------------------------------------------------
+	 */
+	/**
+	 * Constructs an {@code Operator} from the arguments.
+	 * 
+	 * @param left   the left operand expression
+	 * @param right  the right operand expression.
+	 * @param op     the symbol/identifier of this {@code Operator}.
+	 * @param params the {@code Params} representing options for the evaluation and format within this expression.
+	 */
 	public Operator(PExpression left, String name, PExpression right, Params params) {
 		super(name, params, String.class);
 		this.left = left;
 		this.right = right;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:03:05 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the left operand.
+	 * 
+	 * @return the left operand.
+	 */
 	public PExpression getLeft() {
 		return left;
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:03:34 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the right operand.
+	 * 
+	 * @return the right operand.
+	 */
 	public PExpression getRight() {
 		return right;
 	}
 
-	/*
-	 * This requires the amssymb package in LaTeX. Whether mathJax has such a
-	 * package remains to be seen.
+	/**
+	 * Appends the {@code LinkedSegment} representation of this operator and it's operands into the format builder.
+	 * <p>
+	 * The format is ordered so: left-operand, symbol, right-operand.
+	 * <p>
+	 * This has no side-effects.
+	 * 
+	 * @param formatBuilder {@inheritDoc}
+	 * @implNote This requires the amssymb package in LaTeX. Whether mathJax has such a package remains to be seen.
 	 */
 	@Override
 	public void format(SegmentBuilder sb) {
@@ -112,6 +153,21 @@ public class Operator extends Name {
 		right.format(sb);
 	}
 
+	/*
+	 * Date: 1 Dec 2023 -----------------------------------------------------------
+	 * Time created: 09:04:27 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the result of applying both operand to this operator.
+	 * <p>
+	 * Both operands will have their {@link EvaluatableExpression#evaluate() evaluate()} methods called before the final evaluation
+	 * is done.
+	 * <p>
+	 * This has no side-effects.
+	 * 
+	 * @return a new {@code PExpression} that is the result of evaluating this operator. May return the same object especially if
+	 *         called more than once.
+	 */
 	@Override
 	public PExpression evaluate() {
 		PExpression left = this.left.evaluate();
@@ -236,7 +292,7 @@ public class Operator extends Name {
 				int shift;
 				try {
 					shift = right.toDecimal().getInteger().intValueExact();
-				} catch (@SuppressWarnings("unused") ArithmeticException e) {
+				} catch (ArithmeticException e) {
 					throw new ArithmeticException("right side is too big.");
 				}
 				switch (p.getShift()) {
@@ -372,7 +428,7 @@ public class Operator extends Name {
 				int shift;
 				try {
 					shift = right.getInteger().intValueExact();
-				} catch (@SuppressWarnings("unused") ArithmeticException e) {
+				} catch (ArithmeticException e) {
 					throw new ArithmeticException("right side is too big.");
 				}
 				switch (p.getShift()) {
@@ -561,6 +617,12 @@ public class Operator extends Name {
 		return new Operator(left, getName(), right, getParams());
 	}
 
+	/**
+	 * The left operand.
+	 */
 	private final PExpression left;
+	/**
+	 * The right operand.
+	 */
 	private final PExpression right;
 }

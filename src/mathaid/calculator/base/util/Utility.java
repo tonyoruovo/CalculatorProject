@@ -163,7 +163,7 @@ public final class Utility {
 
 		try {
 			n.toBigIntegerExact();
-		} catch (@SuppressWarnings("unused") ArithmeticException e) {
+		} catch (ArithmeticException e) {
 			return false;
 		}
 		return true;
@@ -1536,7 +1536,7 @@ public final class Utility {
 	public static boolean isFraction(String s) {
 		try {
 			return Digits.fromSegmentString(s).isRational();
-		} catch (@SuppressWarnings("unused") NumberFormatException e) {
+		} catch (NumberFormatException e) {
 		}
 		return false;
 	}
@@ -1920,10 +1920,10 @@ public final class Utility {
 	public static boolean isNumber(String s, int radix) {
 		try {
 			i(s, radix);
-		} catch (@SuppressWarnings("unused") NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			try {
 				new Apfloat(s, s.length(), radix);
-			} catch (@SuppressWarnings("unused") NumberFormatException ex) {
+			} catch (NumberFormatException ex) {
 //				System.err.println(ex);
 				return false;
 			}
@@ -1947,7 +1947,7 @@ public final class Utility {
 	public static boolean isImaginaryPart(String s) {
 		try {
 			return s.equals("i") ? true : new Complex("0", s.substring(0, s.length() - 1)).isImaginary();
-		} catch (@SuppressWarnings("unused") NumberFormatException e) {
+		} catch (NumberFormatException e) {
 		}
 		return false;
 	}
@@ -2186,7 +2186,7 @@ public final class Utility {
 			checkType(type1, cast);
 			checkType(type2, cast);
 			return true;
-		} catch (@SuppressWarnings("unused") ClassCastException e) {
+		} catch (ClassCastException e) {
 			return false;
 		}
 	}
@@ -3372,7 +3372,7 @@ public final class Utility {
 	 */
 	/**
 	 * A short hand for
-	 * {@code new BigFraction(f, null, null, d("1E-10"))} for
+	 * {@code new BigFraction(f, null, null, new BigDecimal("1E-10"))} for
 	 * the purpose of convenience.
 	 * 
 	 * @param f a {@code BigDecimal} value

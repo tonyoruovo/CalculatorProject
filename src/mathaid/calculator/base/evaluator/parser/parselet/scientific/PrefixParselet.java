@@ -23,6 +23,8 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
  * Class name: PrefixParselet------------------------------------------------ 
  */
 /**
+ * A prefix {@code Parselet} for creating {@code Prefix} objects.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -34,15 +36,18 @@ public class PrefixParselet implements
 	 * Most recent time created: 12:14:07--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Creates a new {@code Prefix} object after parsing the operand.
+	 * <p>
+	 * This calls the {@link PrattParser#parse(int) parse} method with the given token's precedence as it's argument and returns a
+	 * {@link Prefix} object.
 	 * 
-	 * @param alreadyParsedLeft
-	 * @param yetToBeParsedToken
-	 * @param parser
-	 * @param lexerReference
-	 * @param syntax
-	 * @param params
-	 * @return
+	 * @param alreadyParsedLeft  unused. Can be left as <code>null</code>.
+	 * @param yetToBeParsedToken the value that is (or part of) the operand.
+	 * @param parser             {@inheritDoc}
+	 * @param lexerReference     {@inheritDoc}
+	 * @param syntax             {@inheritDoc}
+	 * @param params             {@inheritDoc}
+	 * @return a new {@code Prefix} object.
 	 */
 	@Override
 	public EvaluatableExpression<Params> parse(EvaluatableExpression<Params> alreadyParsedLeft,

@@ -804,7 +804,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 	 * radix as the number. For example:
 	 * 
 	 * <pre>
-	 * <code>String s = 1a.00d5p-14;
+	 * <code>String s = "1a.00d5p-14";
 	 * BinaryFPPrecision p = ...
 	 * BinaryFP f = p.createFP(s, 16);//the exponent "-14" is assumed to be in base-16
 	 * </code>
@@ -4405,4 +4405,5 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 		 */
 		private final int exception;
 	}
+
 }

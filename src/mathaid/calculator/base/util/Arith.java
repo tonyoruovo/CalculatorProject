@@ -3,16 +3,14 @@
  */
 package mathaid.calculator.base.util;
 
-import static java.lang.System.out;
-//import static java.lang.System.out;
 import static mathaid.calculator.base.util.Constants.HALF;
 import static mathaid.calculator.base.util.Constants.ONE;
 import static mathaid.calculator.base.util.Constants.TWO;
 import static mathaid.calculator.base.util.Constants.ZERO;
 import static mathaid.calculator.base.util.Constants.pi;
-import static mathaid.calculator.base.util.Utility.i;
 import static mathaid.calculator.base.util.Utility.d;
 import static mathaid.calculator.base.util.Utility.f;
+import static mathaid.calculator.base.util.Utility.i;
 import static mathaid.calculator.base.util.Utility.mc;
 import static mathaid.calculator.base.util.Utility.rm;
 
@@ -68,7 +66,7 @@ public final class Arith {
 	 * @return the result of the square root of {@code n}.
 	 */
 	public static BigInteger sqrt(BigInteger n) {
-		return sqrt(new BigDecimal(n), Constants.DEFAULT_ROUND).toBigInteger();
+		return sqrt(d(n), Constants.DEFAULT_ROUND).toBigInteger();
 	}
 
 	/*
@@ -137,7 +135,7 @@ public final class Arith {
 	 * @return a non-negative representing the lcm of both argument.
 	 */
 	public static BigInteger lcm(BigInteger a, BigInteger b) {
-		return new BigFraction(BigInteger.ONE, a).lcm(new BigFraction(BigInteger.ONE, b));
+		return f(BigInteger.ONE, a).lcm(f(BigInteger.ONE, b));
 	}
 
 	/*
@@ -365,14 +363,14 @@ public final class Arith {
 	 */
 	/**
 	 * Wraps {@code n} to a {@code org.apfloat.Apfloat} rounding to the given
-	 * {@code precision} using {@code RoundingMode.HALF_EVEN}.
+	 * {@code precision} using {@code rm("HALF_EVEN")}.
 	 * 
 	 * @param n         the value to be wrapped.
 	 * @param precision the precision of the returned object.
 	 * @return the {@code org.apfloat.Apfloat} value of {@code n}.
 	 */
-	private static Apfloat asApfloat(BigDecimal n, int precision) {
-		return ApfloatMath.round(new Apfloat(n), precision, RoundingMode.HALF_EVEN);
+	static Apfloat asApfloat(BigDecimal n, int precision) {
+		return ApfloatMath.round(new Apfloat(n), precision, rm("HALF_EVEN"));
 	}
 
 	/*
@@ -398,13 +396,13 @@ public final class Arith {
 	 */
 	private static BigDecimal sinRad(Apfloat n) {
 //		if (n.compareTo(asApfloat(q2((int) n.precision()).divide(SIX,
-//				new MathContext((int) n.precision(), RoundingMode.HALF_EVEN)), (int) n.precision())) == 0) {
+//				mc((int) n.precision(), rm("HALF_EVEN"))), (int) n.precision())) == 0) {
 //			return HALF;
 //		} else if (n.compareTo(asApfloat(q2((int) n.precision()).divide(FOUR,
-//				new MathContext((int) n.precision(), RoundingMode.HALF_EVEN)), (int) n.precision())) == 0) {
+//				mc((int) n.precision(), rm("HALF_EVEN"))), (int) n.precision())) == 0) {
 //			return sqrt2Div2((int) n.precision());
 //		}
-		return new BigDecimal(ApfloatMath.sin(n).toString());
+		return d(ApfloatMath.sin(n).toString());
 	}
 
 	/*
@@ -454,13 +452,13 @@ public final class Arith {
 	private static BigDecimal cosRad(Apfloat x) {
 
 //		if (x.compareTo(asApfloat(q2((int) x.precision()).divide(SIX,
-//				new MathContext((int) x.precision(), RoundingMode.HALF_EVEN)), (int) x.precision())) == 0)
+//				mc((int) x.precision(), rm("HALF_EVEN"))), (int) x.precision())) == 0)
 //			return sqrt3Div2((int) x.precision());
 //		else if (x.compareTo(asApfloat(q2((int) x.precision()).divide(FOUR,
-//				new MathContext((int) x.precision(), RoundingMode.HALF_EVEN)), (int) x.precision())) == 0)
+//				mc((int) x.precision(), rm("HALF_EVEN"))), (int) x.precision())) == 0)
 //			return sqrt2Div2((int) x.precision());
 
-		return new BigDecimal(ApfloatMath.cos(x).toString());
+		return d(ApfloatMath.cos(x).toString());
 	}
 
 	/*
@@ -513,11 +511,11 @@ public final class Arith {
 //		int xp = (int) x.precision();
 //		System.out.println(x.precision(x.precision()));
 //		System.err.println(asApfloat(q2((int) x.precision()).divide(FOUR,
-//				new MathContext((int) x.precision(), RoundingMode.HALF_EVEN)), (int) x.precision()));
+//				mc((int) x.precision(), rm("HALF_EVEN"))), (int) x.precision()));
 //		if (x.precision(x.precision()-2).compareTo(asApfloat(q2((int) x.precision()).divide(FOUR,
-//				new MathContext((int) x.precision(), RoundingMode.HALF_EVEN)), (int) x.precision() - 2)) == 0)
+//				mc((int) x.precision(), rm("HALF_EVEN"))), (int) x.precision() - 2)) == 0)
 //			return ONE;
-		return new BigDecimal(ApfloatMath.tan(x).toString());
+		return d(ApfloatMath.tan(x).toString());
 	}
 
 	/*
@@ -537,7 +535,7 @@ public final class Arith {
 	 */
 	public static BigDecimal atan(BigDecimal x, AngleUnit trig, MathContext c) {
 		if (x.abs().compareTo(ONE) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(45 * x.signum()), trig, c);
+			return AngleUnit.DEG.convert(d(45 * x.signum()), trig, c);
 		x = aTanRad(asApfloat(x, c.getPrecision()));
 		return AngleUnit.RAD.convert(x, trig, c);
 	}
@@ -598,7 +596,7 @@ public final class Arith {
 	 * @return the arc tangent of x in radians.
 	 */
 	private static BigDecimal aTanRad(Apfloat x) {
-		return new BigDecimal(ApfloatMath.atan(x).toString());
+		return d(ApfloatMath.atan(x).toString());
 	}
 
 	/*
@@ -624,9 +622,9 @@ public final class Arith {
 		if (x.abs().compareTo(ZERO) == 0)
 			return Constants.ZERO;
 		else if (x.abs().compareTo(HALF) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(30 * x.signum()), trig, c);
+			return AngleUnit.DEG.convert(d(30 * x.signum()), trig, c);
 		else if (x.abs().compareTo(ONE) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(90 * x.signum()), trig, c);
+			return AngleUnit.DEG.convert(d(90 * x.signum()), trig, c);
 		else if (x.abs().compareTo(ONE) > 0)
 			throw new ArithmeticException("asin undefined");
 
@@ -649,7 +647,7 @@ public final class Arith {
 	 * @return the arc tangent of x in the specified angular unit
 	 */
 	private static BigDecimal aSin(Apfloat x) {
-		return new BigDecimal(ApfloatMath.asin(x).toString());
+		return d(ApfloatMath.asin(x).toString());
 	}
 
 	/*
@@ -672,19 +670,19 @@ public final class Arith {
 	 */
 	public static BigDecimal acos(BigDecimal x, AngleUnit trig, MathContext c) throws ArithmeticException {
 		if (x.abs().compareTo(Constants.ZERO) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(90), trig, c);
+			return AngleUnit.DEG.convert(d(90), trig, c);
 		else if (x.compareTo(Constants.HALF) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(60), trig, c);
+			return AngleUnit.DEG.convert(d(60), trig, c);
 		else if (x.compareTo(Constants.ONE) == 0)
 			return Constants.ZERO;
 		else if (x.compareTo(Constants.HALF.negate()) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(120), trig, c);
+			return AngleUnit.DEG.convert(d(120), trig, c);
 		else if (x.compareTo(Constants.ONE.negate()) == 0)
-			return AngleUnit.DEG.convert(new BigDecimal(180), trig, c);
+			return AngleUnit.DEG.convert(d(180), trig, c);
 		else if (x.abs().compareTo(Constants.ONE) > 0)
 			throw new ArithmeticException("acos undefined");
 
-		x = AngleUnit.RAD.convert(new BigDecimal(ApfloatMath.acos(asApfloat(x, c.getPrecision())).toString()), trig, c);
+		x = AngleUnit.RAD.convert(d(ApfloatMath.acos(asApfloat(x, c.getPrecision())).toString()), trig, c);
 		return x;
 	}
 
@@ -704,7 +702,7 @@ public final class Arith {
 	 * @throws ArithmeticException if |x| > 99,999
 	 */
 	public static BigDecimal sinh(final BigDecimal x, MathContext c) throws ArithmeticException {
-		return new BigDecimal(ApfloatMath.sinh(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.sinh(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -740,7 +738,7 @@ public final class Arith {
 			int n = (2 * i) + 1;
 			BigDecimal numer = x.pow(n);
 			try {
-				y = y.add(numer.divide(factorial(new BigDecimal(n)), c));
+				y = y.add(numer.divide(factorial(d(n)), c));
 			} catch (StackOverflowError e) {
 				e.printStackTrace();
 				break;
@@ -765,7 +763,7 @@ public final class Arith {
 	 * @throws ArithmeticException if |x| > 99,999
 	 */
 	public static BigDecimal cosh(BigDecimal x, MathContext c) throws ArithmeticException {
-		return new BigDecimal(ApfloatMath.cosh(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.cosh(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -801,7 +799,7 @@ public final class Arith {
 			int n = (2 * i);
 			BigDecimal numer = x.pow(n);
 			try {
-				y = y.add(numer.divide(factorial(new BigDecimal(n)), c));
+				y = y.add(numer.divide(factorial(d(n)), c));
 			} catch (StackOverflowError e) {
 				e.printStackTrace();
 				break;
@@ -824,7 +822,7 @@ public final class Arith {
 	 * @return sinh(x)/cosh(x).
 	 */
 	public static BigDecimal tanh(BigDecimal x, MathContext c) {
-		return new BigDecimal(ApfloatMath.tanh(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.tanh(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -840,7 +838,7 @@ public final class Arith {
 	 * @return the inverse hyperbolic sine of x.
 	 */
 	public static BigDecimal asinh(BigDecimal x, MathContext c) {
-		return new BigDecimal(ApfloatMath.asinh(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.asinh(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -856,7 +854,7 @@ public final class Arith {
 	 * @return the inverse hyperbolic cosine of x.
 	 */
 	public static BigDecimal acosh(BigDecimal x, MathContext c) {
-		return new BigDecimal(ApfloatMath.acosh(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.acosh(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -873,7 +871,7 @@ public final class Arith {
 	 * @throws ArithmeticException if |x| &#x2265 1
 	 */
 	public static BigDecimal atanh(BigDecimal x, MathContext c) throws ArithmeticException {
-		return new BigDecimal(ApfloatMath.atanh(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.atanh(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -896,7 +894,7 @@ public final class Arith {
 	 * @throws ArithmeticException if x <= 0
 	 */
 	public static BigDecimal log(BigDecimal x, MathContext c) throws ArithmeticException {
-		return new BigDecimal(ApfloatMath.log(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.log(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -915,7 +913,7 @@ public final class Arith {
 	 * @throws ArithmeticException if x <= 0
 	 */
 	public static BigDecimal exp(BigDecimal x, MathContext c) {
-		return new BigDecimal(ApfloatMath.exp(asApfloat(x, c.getPrecision())).toString());
+		return d(ApfloatMath.exp(asApfloat(x, c.getPrecision())).toString());
 	}
 
 	/*
@@ -933,7 +931,7 @@ public final class Arith {
 	 * @throws ArithmeticException if x <= 0
 	 */
 	public static BigDecimal log10(BigDecimal x, MathContext c) throws ArithmeticException {
-		return new BigDecimal(ApfloatMath
+		return d(ApfloatMath
 				.log(asApfloat(x, c.getPrecision()), asApfloat(BigDecimal.TEN, c.getPrecision())).toString());
 	}
 
@@ -952,7 +950,7 @@ public final class Arith {
 	 * @throws ArithmeticException if x <= 0
 	 */
 	public static BigDecimal log2(BigDecimal x, MathContext c) {
-		return new BigDecimal(
+		return d(
 				ApfloatMath.log(asApfloat(x, c.getPrecision()), asApfloat(TWO, c.getPrecision())).toString());
 	}
 
@@ -972,7 +970,7 @@ public final class Arith {
 	 * @throws ArithmeticException if x <= 0 or if base <= 0
 	 */
 	public static BigDecimal log(BigDecimal x, BigDecimal base, MathContext c) {
-		return new BigDecimal(
+		return d(
 				ApfloatMath.log(asApfloat(x, c.getPrecision()), asApfloat(base, c.getPrecision())).toString());
 	}
 
@@ -994,7 +992,7 @@ public final class Arith {
 	 * @return a randomly generated decimal.
 	 */
 	public static BigDecimal random(long digits, boolean gaussian) {
-		return new BigDecimal(
+		return d(
 				gaussian ? ApfloatMath.randomGaussian(digits).toString() : ApfloatMath.random(digits).toString());
 	}
 
@@ -1011,7 +1009,7 @@ public final class Arith {
 	 * @return the result of the the cube root of {@code x}.
 	 */
 	public static BigDecimal cbrt(BigDecimal x, int precision) {
-		return new BigDecimal(ApfloatMath.cbrt(asApfloat(x, precision)).toString());
+		return d(ApfloatMath.cbrt(asApfloat(x, precision)).toString());
 	}
 
 	/*
@@ -1126,7 +1124,7 @@ public final class Arith {
 			// low-enough precision, the post-Newton rounding logic
 			// could be applied directly.)
 
-			BigDecimal guess = new BigDecimal(Math.sqrt(working.doubleValue()));
+			BigDecimal guess = d(Math.sqrt(working.doubleValue()));
 			int guessPrecision = 15;
 			int originalPrecision = c.getPrecision();
 			int targetPrecision;
@@ -1149,7 +1147,7 @@ public final class Arith {
 			int workingPrecision = working.precision();
 			do {
 				int tmpPrecision = Math.max(Math.max(guessPrecision, targetPrecision + 2), workingPrecision);
-				MathContext mcTmp = new MathContext(tmpPrecision, RoundingMode.HALF_EVEN);
+				MathContext mcTmp = mc(tmpPrecision, rm("HALF_EVEN"));
 				// approx = 0.5 * (approx + fraction / approx)
 				approx = Constants.ONE_HALF.multiply(approx.add(working.divide(approx, mcTmp), mcTmp));
 				guessPrecision *= 2;
@@ -1157,9 +1155,9 @@ public final class Arith {
 
 			BigDecimal result;
 			RoundingMode targetRm = c.getRoundingMode();
-			if (targetRm == RoundingMode.UNNECESSARY || originalPrecision == 0) {
-				RoundingMode tmpRm = (targetRm == RoundingMode.UNNECESSARY) ? RoundingMode.DOWN : targetRm;
-				MathContext mcTmp = new MathContext(targetPrecision, tmpRm);
+			if (targetRm == rm("UNNECESSARY") || originalPrecision == 0) {
+				RoundingMode tmpRm = (targetRm == rm("UNNECESSARY")) ? rm("DOWN") : targetRm;
+				MathContext mcTmp = mc(targetPrecision, tmpRm);
 				result = approx.scaleByPowerOfTen(-scaleAdjust / 2).round(mcTmp);
 
 				// If result*result != this numerically, the square
@@ -1179,7 +1177,7 @@ public final class Arith {
 				// preferred scale rounding the correct precision will
 				// perform the proper scale vs precision tradeoffs.
 				result = result.stripTrailingZeros().add(zeroWithFinalPreferredScale,
-						new MathContext(originalPrecision, RoundingMode.UNNECESSARY));
+						mc(originalPrecision, rm("UNNECESSARY")));
 			}
 			assert squareRootResultAssertions(x, result, c);
 			return result;
@@ -1301,12 +1299,12 @@ public final class Arith {
 	public static BigDecimal pow(BigDecimal x, BigDecimal p, MathContext c) {
 		if (Utility.isInteger(p)) {
 			try {
-				return new BigDecimal(ApfloatMath.pow(asApfloat(x, c.getPrecision()), p.longValueExact()).toString());
+				return d(ApfloatMath.pow(asApfloat(x, c.getPrecision()), p.longValueExact()).toString());
 			} catch (ArithmeticException e) {
 				e.printStackTrace();
 			}
 		}
-		return new BigDecimal(
+		return d(
 				ApfloatMath.pow(asApfloat(x, c.getPrecision()), asApfloat(p, c.getPrecision())).toString());
 	}
 
@@ -1325,7 +1323,7 @@ public final class Arith {
 	 * @return the result of the root of {@code x} to the power of {@code index}.
 	 */
 	public static BigDecimal root(BigDecimal x, long index, int scale) {
-		return new BigDecimal(ApfloatMath.root(asApfloat(x, scale), index).toString());
+		return d(ApfloatMath.root(asApfloat(x, scale), index).toString());
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -1351,7 +1349,7 @@ public final class Arith {
 			return n.multiply(recurse);
 		}
 		String x = ApfloatMath.gamma(new Apfloat(n.add(BigDecimal.ONE))).toString();
-		return new BigDecimal(x);
+		return d(x);
 	}
 
 	/*
@@ -1377,7 +1375,7 @@ public final class Arith {
 			return n.multiply(recurse).round(c);
 		}
 		String x = ApfloatMath.gamma(new Apfloat(n.add(BigDecimal.ONE), c.getPrecision())).toString();
-		return new BigDecimal(x);
+		return d(x);
 	}
 
 	/*
@@ -1393,7 +1391,7 @@ public final class Arith {
 	 * @return the result of applying the gamma function to {@code n}
 	 */
 	public static BigDecimal gamma(BigDecimal n, int precision) {
-		return new BigDecimal(ApfloatMath.gamma(asApfloat(n, precision)).toString());
+		return d(ApfloatMath.gamma(asApfloat(n, precision)).toString());
 	}
 
 	/*
@@ -1420,14 +1418,14 @@ public final class Arith {
 		else if (n == 0)
 			return BigDecimal.ONE;
 		else if (n == 1)
-			return new BigDecimal("0.5");
+			return d("0.5");
 		else if (n > 1 && n % 2 != 0)
 			return BigDecimal.ZERO;
 		final BigDecimal[] b = new BigDecimal[n + 1];
 		for (int m = 0; m <= n; m++) {
-			b[m] = BigDecimal.ONE.divide(new BigDecimal(m + 1), c);
+			b[m] = BigDecimal.ONE.divide(d(m + 1), c);
 			for (int j = m; j >= 1; j--) {
-				b[j - 1] = b[j - 1].subtract(b[j], c).multiply(new BigDecimal(j), c);
+				b[j - 1] = b[j - 1].subtract(b[j], c).multiply(d(j), c);
 			}
 		}
 		return b[0];
@@ -1445,7 +1443,7 @@ public final class Arith {
 	 */
 	static BigDecimal getBern(int n) {
 		if (n == 1)
-			return Arith.sqrt(new BigDecimal(0.25), Constants.DEFAULT_ROUND);
+			return Arith.sqrt(d(0.25), Constants.DEFAULT_ROUND);
 		try {
 			return n % 2 == 0 ? Constants.BERNOULLI[n / 2] : Constants.ZERO;
 		} catch (IndexOutOfBoundsException e) {
@@ -1467,10 +1465,10 @@ public final class Arith {
 	public static boolean isWithinJava(BigDecimal x) {
 		Double minD = Double.MIN_VALUE;
 		String minString = minD.toString();
-		BigDecimal javaMinDouble = new BigDecimal(minString);
+		BigDecimal javaMinDouble = d(minString);
 		Double maxD = Double.MAX_VALUE;
 		String maxString = maxD.toString();
-		BigDecimal javaMaxDouble = new BigDecimal(maxString);
+		BigDecimal javaMaxDouble = d(maxString);
 		boolean isWithinJava = x.abs().compareTo(javaMinDouble) >= 0;
 		isWithinJava = isWithinJava && x.abs().compareTo(javaMaxDouble) <= 0;
 		return isWithinJava;
@@ -1503,7 +1501,7 @@ public final class Arith {
 			b = null;
 		}
 		if (a == null) {
-			BigFraction br = new BigFraction(n);
+			BigFraction br = f(n);
 			BigInteger numerator = br.getNumerator();
 			BigInteger denominator = br.getDenominator();
 			if (b != null) {
@@ -1513,14 +1511,14 @@ public final class Arith {
 				if (num.compareTo(BigInteger.ZERO) == 0) {
 					numerator = numerator.divide(denominator);
 					numerator = numerator.mod(b);
-					return new BigDecimal(numerator, Constants.DEFAULT_ROUND);
+					return d(numerator, Constants.DEFAULT_ROUND);
 				} /* else */
 				return n;
 			}
 			a = n.toBigInteger();
 		}
 		if (b != null)
-			return new BigDecimal(a.mod(b));
+			return d(a.mod(b));
 		BigDecimal num = n.divideAndRemainder(mod, Constants.DEFAULT_ROUND)[1];
 		return num;
 //		}
@@ -1543,9 +1541,9 @@ public final class Arith {
 	 */
 	public static BigDecimal floor(BigDecimal x) {
 		try {
-			return new BigDecimal(x.toBigIntegerExact());
+			return d(x.toBigIntegerExact());
 		} catch (ArithmeticException e) {
-			return new BigDecimal(x.setScale(0, RoundingMode.FLOOR).toBigIntegerExact());
+			return d(x.setScale(0, rm("FLOOR")).toBigIntegerExact());
 		}
 	}
 
@@ -1565,9 +1563,9 @@ public final class Arith {
 	 */
 	public static BigDecimal ceil(BigDecimal x) {
 		try {
-			return new BigDecimal(x.toBigIntegerExact());
+			return d(x.toBigIntegerExact());
 		} catch (ArithmeticException e) {
-			return new BigDecimal(x.setScale(0, RoundingMode.CEILING).toBigIntegerExact());
+			return d(x.setScale(0, rm("CEILING")).toBigIntegerExact());
 		}
 	}
 
@@ -1584,7 +1582,7 @@ public final class Arith {
 	 * @see Math#copySign(double, double)
 	 */
 	public static BigDecimal copySign(BigDecimal mag, BigDecimal sign) {
-		return mag.multiply(new BigDecimal(sign.signum()));
+		return mag.multiply(d(sign.signum()));
 	}
 
 	/*
@@ -1600,7 +1598,12 @@ public final class Arith {
 	 * 4&Sqrt;5 where {@code x = 21}, {@code radicand = 2}, {@code root-result = 4}
 	 * and {@code unrooted-remainder = 5}.
 	 * 
-	 * <p>The result is in the format: <ol><li>The root of x in the radicand</li><li>The result of the subtraction of of (1) from x. </li></ol>
+	 * <p>
+	 * The result is in the format:
+	 * <ol>
+	 * <li>The root of x in the radicand</li>
+	 * <li>The result of the subtraction of of (1) from x.</li>
+	 * </ol>
 	 *
 	 * @param x        the value whose root is to be found
 	 * @param radicand the radicand i.e 2 for square root, 3 for cube root, 4 for
@@ -1619,7 +1622,8 @@ public final class Arith {
 	 * Time created: 07:17:57 ---------------------------------------------------
 	 */
 	/**
-	 * Calculates the max perfect root (square, cube, quad etc depending on the {@code radicand}).
+	 * Calculates the max perfect root (square, cube, quad etc depending on the
+	 * {@code radicand}).
 	 * <p>
 	 * Performs <span style="font-weight:bold">surd</span> algebra on {@code x} to
 	 * the power of {@code radicand}. e.g calling {@code roootAndFactor(20, 2)}
@@ -1635,6 +1639,20 @@ public final class Arith {
 //		return rootAndIdentity(x, radicand, false);
 //	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:16:19 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the root of {@code x} in the given {@code radicand} returning the
+	 * result and it's remainder.
+	 * 
+	 * @param x          the value whose root is to be calculated. Must be positive.
+	 * @param radicand   the power of the root
+	 * @param isAdditive can only be <code>true</code>.
+	 * @return a 2-length array with the root of x and the remainder
+	 * @see BigInteger#sqrtAndRemainder()
+	 */
 	private static BigInteger[] rootAndIdentity(final BigInteger x, int radicand, boolean isAdditive) {
 		if (radicand <= 0)
 			throw new ArithmeticException("Zero radicand not computable");
@@ -1650,7 +1668,7 @@ public final class Arith {
 			}
 			for (int i = 2; i <= x.intValueExact(); i++) {
 				try {
-					BigInteger y = tryDivide(x, BigInteger.valueOf(i));
+					BigInteger y = tryDivide(x, i(i));
 					BigInteger x1 = trySqrt(y);
 					y = x1.pow(radicand);
 					y = x.divide(y);
@@ -1662,9 +1680,9 @@ public final class Arith {
 		}
 		if (isAdditive) {
 			MathContext c = MathContext.DECIMAL32;
-			BigDecimal radica = BigDecimal.ONE.divide(new BigDecimal(radicand), Constants.DEFAULT_ROUND);
+			BigDecimal radica = BigDecimal.ONE.divide(d(radicand), Constants.DEFAULT_ROUND);
 			BigInteger rt, remainder;
-			rt = pow(new BigDecimal(x), radica, c).round(c).toBigInteger();
+			rt = pow(d(x), radica, c).round(c).toBigInteger();
 
 			remainder = x.subtract(rt.pow(radicand));
 
@@ -1680,7 +1698,7 @@ public final class Arith {
 
 		for (int i = 2; i <= x.intValueExact(); i++) {
 			try {
-				BigInteger y = tryDivide(x, BigInteger.valueOf(i));
+				BigInteger y = tryDivide(x, i(i));
 				BigInteger x1 = tryRoot(y, radicand, c);
 				y = x1.pow(radicand);
 				y = x.divide(y);
@@ -1692,6 +1710,19 @@ public final class Arith {
 		return new BigInteger[] { BigInteger.ONE, x };
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 11:56:18 ---------------------------------------------------
+	 */
+	/**
+	 * Returns {@link BigInteger#divideAndRemainder(BigInteger)} if, and only if,
+	 * {@code dividend} is fully divisible by {@code divisor}.
+	 * 
+	 * @param dividend the dividend
+	 * @param divisor  the divisor.
+	 * @return the first element of
+	 *         {@link BigInteger#divideAndRemainder(BigInteger)}.
+	 */
 	private static BigInteger tryDivide(BigInteger dividend, BigInteger divisor) {
 		BigInteger[] b = dividend.divideAndRemainder(divisor);
 		if (b[1].signum() != 0)
@@ -1699,6 +1730,18 @@ public final class Arith {
 		return b[0];
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:00:19 ---------------------------------------------------
+	 */
+	/**
+	 * Returns the first element of {@link BigInteger#sqrtAndRemainder(BigInteger)}
+	 * if, and only if, {@code x} is can be 'square-rooted' to an integral value
+	 * without a remainder.
+	 * 
+	 * @param x the <code>sqrt</code> argument.
+	 * @return the first element of {@link BigInteger#sqrtAndRemainder(BigInteger)}.
+	 */
 	private static BigInteger trySqrt(BigInteger x) {
 		BigInteger[] b = x.sqrtAndRemainder();
 		if (b[1].signum() != 0)
@@ -1706,8 +1749,20 @@ public final class Arith {
 		return b[0];
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:00:19 ---------------------------------------------------
+	 */
+	/**
+	 * Returns the root of {@code x}
+	 * if, and only if, {@code x} is can be 'rooted' to an integral value
+	 * without a remainder.
+	 * 
+	 * @param x the argument.
+	 * @return the root of {@code x}.
+	 */
 	private static BigInteger tryRoot(BigInteger x, int r, MathContext c) {
-		return pow(new BigDecimal(x), BigDecimal.ONE.divide(new BigDecimal(r), c), c).toBigIntegerExact();
+		return pow(d(x), BigDecimal.ONE.divide(d(r), c), c).toBigIntegerExact();
 	}
 
 }

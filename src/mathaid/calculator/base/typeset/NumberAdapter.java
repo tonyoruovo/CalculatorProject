@@ -66,7 +66,7 @@ import mathaid.calculator.base.value.BigFraction;
  *          and the {@code '_'} will be used as radix specifier, the parenthesis
  *          will be used as repeatend specifier and the {@code @} will be used
  *          as exponent specifier (to prevent collision with alphanumeric
- *          characters in radixes other than 10).
+ *          characters in radixes greater than 10).
  */
 public class NumberAdapter implements Appendable, CharSequence {
 

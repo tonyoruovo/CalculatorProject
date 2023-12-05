@@ -110,7 +110,7 @@ public class JSArray<T extends JSValue<?>> extends JSValue<JSArray<T>> {
 			}
 
 			parser.append(']');
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 		}
 	}
 

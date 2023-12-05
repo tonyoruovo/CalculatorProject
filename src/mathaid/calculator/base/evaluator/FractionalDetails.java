@@ -9,6 +9,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.scientific.Name;
 import mathaid.calculator.base.evaluator.parser.expression.scientific.Name.Params;
 import mathaid.calculator.base.typeset.Digits;
@@ -44,7 +45,7 @@ class FractionalDetails {
 			try {
 				f = new BigFraction(str.substring(str.indexOf('[') + 1, str.indexOf(',')).trim(),
 						str.substring(str.indexOf(',') + 1, str.indexOf(']')).trim());
-			} catch (@SuppressWarnings("unused") StringIndexOutOfBoundsException | NumberFormatException e) {
+			} catch (StringIndexOutOfBoundsException | NumberFormatException e) {
 				f = new BigFraction(str);
 			}
 		}
@@ -53,16 +54,16 @@ class FractionalDetails {
 
 	public static LinkedSegment toMixedFraction(String str, Name.Params p) {
 		BigFraction f = fromString(str);
-		return Digits.toSegment(f, true, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(f, true, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment toLowestTerm(String str, Name.Params p) {
 		BigFraction f = fromString(str).toLowestTerms();
-		return Digits.toSegment(f, false, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(f, false, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	static LinkedSegment integer(BigInteger num, Name.Params p) {
-		return Digits.toSegment(num, 10, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(num, 10, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	static BigInteger i(String s) {
@@ -90,11 +91,11 @@ class FractionalDetails {
 	public static LinkedSegment getEgyptianFraction(String str, Params p) {
 		BigFraction f = fromString(str);
 		List<BigFraction> l = f.toEgyptianFractions();
-		SegmentBuilder sb = new SegmentBuilder(Digits.toSegment(l.get(0), false, Calculator.fromParams(p, p.getNumOfRepeats())));
+		SegmentBuilder sb = new SegmentBuilder(Digits.toSegment(l.get(0), false, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		for (int i = 1; i < l.size(); i++) {
 			BigFraction fr = l.get(i);
 			sb.append(Segments.operator("+", "+"));
-			sb.append(Digits.toSegment(fr, false, Calculator.fromParams(p, p.getNumOfRepeats())));
+			sb.append(Digits.toSegment(fr, false, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 		}
 		return sb.toSegment();
 	}
@@ -136,7 +137,7 @@ class FractionalDetails {
 	public static LinkedSegment getFractionAsDecimal(String str, Params p) {
 		BigFraction f = fromString(str);
 //		String s = Digits.toSegmentString(f, 0);
-		return Digits.toSegment(f, p.getRecurringType(), 0, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(f, p.getRecurringType(), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment getPeriod(String str, Params p) {
@@ -154,7 +155,7 @@ class FractionalDetails {
 		BigFraction f = fromString(str);
 		BigDecimal percent = f.percent();
 		return Digits
-				.toSegment(percent, 0, Calculator.fromParams(p, p.getNumOfRepeats()))
+				.toSegment(percent, 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()))
 				.concat(Segments.operator("%", "*Rational[1, 100]"));
 	}
 
@@ -170,18 +171,18 @@ class FractionalDetails {
 		int scale = Digits.scale(s);
 		if (scale > p.getScale())
 			s = Digits.truncateToScale(s, p.getScale());
-		return Digits.toSegment(Digits.fromSegmentString(s), p.getRecurringType(), 3, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(Digits.fromSegmentString(s), p.getRecurringType(), 3, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment inEngineeringSuffix(String str, Params p) {
 		BigFraction f = fromString(str);
-		return Digits.toSegment(f, true, p.getRecurringType(), Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(f, true, p.getRecurringType(), EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 //		String s = Utility.toEngineeringString(f.getDecimalExpansion(p.getScale()), true);
 //		SegmentBuilder sb;
 
 //		int suffixIndex = s.indexOf('E');
 //		if (suffixIndex != s.length() - 1) {
-//			sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(s.substring(0, suffixIndex)), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+//			sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(s.substring(0, suffixIndex)), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //		} else {
 //			Map<String, String> suffixes = new HashMap<>();
 //			suffixes.put("Y", "E24");
@@ -201,7 +202,7 @@ class FractionalDetails {
 //			suffixes.put("z", "E-21");
 //			suffixes.put("y", "E-24");
 //			String suffix = s.substring(s.length() - 1);
-//			sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0, Calculator.fromParams(p, p.getNumOfRepeats())));
+//			sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //			sb.append(new BasicSegment(String.format("*10^(%s)", suffixes.get(suffix).substring(1)),
 //					suffix.compareTo("µ") == 0 ? "\\mu" : suffix, Segment.Type.EXPONENT));
 //		}
@@ -239,12 +240,12 @@ class FractionalDetails {
 //				p.getNumOfRepeats()).toSegment();
 		if (scale > p.getScale())
 			s = Digits.truncateToScale(s, p.getScale());
-		return Digits.toSegment(f, true, p.getRecurringType(), Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(f, true, p.getRecurringType(), EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment inFixed(String str, Params p) {
 		BigFraction f = fromString(str);
 		String s = fixedPoint(f.getDecimalExpansion(p.getScale()), f.signum(), p.getScale());
-		return Digits.toSegment(new BigDecimal(s), 0, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(new BigDecimal(s), 0, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 }

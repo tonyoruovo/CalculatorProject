@@ -66,6 +66,7 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
  *
  * @param <E> a type of {@code NameExpression}.
  * @param <P> A concrete {@code Parser} type which parses strings.
+ * @param <A> the expression parameter type for parselets.
  */
 public interface CommonSyntax<E extends EvaluatableExpression<A>, P extends Parser<String, SegmentBuilder, E, P, CommonSyntax<E, P, A>, A>, A extends ExpressionParams<A>>
 		extends Syntax<String, SegmentBuilder, E, P, CommonSyntax<E, P, A>, A> {

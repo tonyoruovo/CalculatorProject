@@ -298,6 +298,7 @@ public class SDetails implements Result.Details {
 		return java.util.Collections.unmodifiableNavigableMap(details);
 	}
 	
+	@SuppressWarnings("null")
 	private void computeDetails(final Scientific evaluator, LinkedSegment src) {
 		/*
 		 * Since we already know that this is a result it is either one of the
@@ -347,7 +348,7 @@ public class SDetails implements Result.Details {
 				} else if (isFrac) {
 					if (Utility.isFraction(s)) {
 						BigFraction f = Digits.fromSegmentString(s);
-						LinkedSegment sg = Digits.toSegment(f, false, Calculator.fromParams(evaluator, evaluator.getNumOfRepeats()));
+						LinkedSegment sg = Digits.toSegment(f, false, EvaluatableExpression.fromParams(evaluator, evaluator.getNumOfRepeats()));
 						details.put(new MomentString("Expression"), sg);
 					} else {
 						details.put(new MomentString("Expression"), src);

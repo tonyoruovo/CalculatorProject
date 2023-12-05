@@ -3,12 +3,23 @@
  */
 package mathaid.calculator.base.util;
 
+import static java.util.Arrays.copyOfRange;
+import static mathaid.Device.getProjectPath;
+import static mathaid.calculator.base.util.Utility.*;
+import static mathaid.calculator.base.util.Arith.*;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
+
+import mathaid.calculator.base.value.BigFraction;
 
 /*
  * Date: 25 Aug 2020----------------------------------------------------------- 
@@ -22,16 +33,14 @@ import org.apfloat.ApfloatMath;
  * Class containing utility constants such as pi and e.
  * 
  * @author Oruovo Anthony Etineakpopha
- * 
  */
 public class Constants {
 	/*
 	 * new MathContext(1024 * 4, RoundingMode.HALF_EVEN);
 	 */
 	/**
-	 * The rounding object employed by this class to keep the reputation of this api
-	 * as 'high-precision'. It includes a precision of over 150 digits in its
-	 * mantissa.
+	 * The rounding object employed by this class to keep the reputation of this api as 'high-precision'. It includes a precision of
+	 * over 150 digits in its mantissa.
 	 */
 	public static final MathContext DEFAULT_ROUND = new MathContext(251, RoundingMode.HALF_EVEN);
 	/**
@@ -43,8 +52,7 @@ public class Constants {
 	 */
 	public static final BigDecimal ONE_HALF = BigDecimal.valueOf(5L, 1);
 	/**
-	 * The real number that is closest to the base of the natural logarithms
-	 * (Napier's constant e) than any other number.
+	 * The real number that is closest to the base of the natural logarithms (Napier's constant e) than any other number.
 	 */
 //	public static final BigDecimal E;
 	/**
@@ -56,90 +64,100 @@ public class Constants {
 	 * generating them on the fly
 	 */
 	/**
-	 * The constant 0, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 0, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal ZERO = BigDecimal.ZERO;
 	/**
-	 * The constant 1, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 1, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal ONE = BigDecimal.ONE;
 	/**
-	 * The constant 2, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 2, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal TWO = new BigDecimal("2");
 	/**
-	 * The constant 3, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 3, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal THREE = new BigDecimal("3");
 	/**
-	 * The constant 4, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 4, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal FOUR = new BigDecimal("4");
 	/**
-	 * The constant 5, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 5, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal FIVE = new BigDecimal("5");
 	/**
-	 * The constant 6, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 6, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal SIX = new BigDecimal("6");
 	/**
-	 * The constant 0.5, used by methods in this class, especially for identity
-	 * functions.
+	 * The constant 0.5, used by methods in this class, especially for identity functions.
 	 */
 	public static final BigDecimal HALF = new BigDecimal("0.5");
 
 	/**
-	 * The real number that is closest to the definition of pi (Archimedes constant
-	 * for the ratio of a circumference of a circle to it's diameter) than any other
-	 * number in mathaid. This definition has up to 2,000 digits in its mantissa.
+	 * Holds the euler-macheroni constant
+	 */
+	static BigDecimal em = null;
+	/**
+	 * Holds the Khinchin constant
+	 */
+	static BigDecimal kh = null;
+	/**
+	 * Holds the Mill's constant
+	 */
+	static BigDecimal mil = null;
+	/**
+	 * Holds the Catalan's constant
+	 */
+	static BigDecimal cat = null;
+	/**
+	 * Holds the Omega's constant
+	 */
+	static BigDecimal om = null;
+
+	/**
+	 * The real number that is closest to the definition of pi (Archimedes constant for the ratio of a circumference of a circle to
+	 * it's diameter) than any other number in mathaid. This definition has up to 2,000 digits in its mantissa.
 	 */
 //	public static final BigDecimal PI;
 	/**
-	 * Constant factor for converting radians to degrees. This is done by
-	 * multiplying a value that is in radians by this value.
+	 * Constant factor for converting radians to degrees. This is done by multiplying a value that is in radians by this value.
 	 */
 //	static final BigDecimal RADIANS_TO_DEGREES;
 	/**
-	 * Constant factor for converting degrees to radians. This is done by
-	 * multiplying a value that is in degrees by this value.
+	 * Constant factor for converting degrees to radians. This is done by multiplying a value that is in degrees by this value.
 	 */
 //	static final BigDecimal DEGREES_TO_RADIANS;
 	/**
-	 * The constant for the square root of 2 divided by 2. Its use in trigonometry
-	 * (in sine and cosine) is ubiquitous, hence its handiness is very useful.
+	 * The constant for the square root of 2 divided by 2. Its use in trigonometry (in sine and cosine) is ubiquitous, hence its
+	 * handiness is very useful.
 	 */
 //	static final BigDecimal SQRT_2_DIV_2;
 	/**
-	 * The constant for the square root of 3 divided by 2. Its use in trigonometry
-	 * is ubiquitous, hence its handiness is very useful.
+	 * The constant for the square root of 3 divided by 2. Its use in trigonometry is ubiquitous, hence its handiness is very
+	 * useful.
 	 */
 //	static final BigDecimal SQRT_3_DIV_2;
 	/**
-	 * The positive maximum of the first quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 90 (degrees) or pi/2 (radians).
+	 * The positive maximum of the first quadrant in the unit circle (a circle of radius 1) which is equal to 90 (degrees) or pi/2
+	 * (radians).
 	 */
 //	static final BigDecimal Q1;
 	/**
-	 * The positive maximum of the second quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 180 (degrees) or pi (radians).
+	 * The positive maximum of the second quadrant in the unit circle (a circle of radius 1) which is equal to 180 (degrees) or pi
+	 * (radians).
 	 */
 //	static final BigDecimal Q2;
 	/**
-	 * The positive maximum of the third quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 270 (degrees) or 3pi/2 (radians).
+	 * The positive maximum of the third quadrant in the unit circle (a circle of radius 1) which is equal to 270 (degrees) or 3pi/2
+	 * (radians).
 	 */
 //	static final BigDecimal Q3;
 	/**
-	 * The positive maximum of the fourth quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 360 (degrees) or 2pi (radians).
+	 * The positive maximum of the fourth quadrant in the unit circle (a circle of radius 1) which is equal to 360 (degrees) or 2pi
+	 * (radians).
 	 */
 //	static final BigDecimal Q4;
 
@@ -152,12 +170,14 @@ public class Constants {
 	}
 
 	/**
-	 * Look-up table for the first 50 even bernoullli numbers. To access a certain
-	 * index in this table one can simply just do the following:
+	 * Look-up table for the first 50 even bernoullli numbers. To access a certain index in this table one can simply just do the
+	 * following:
 	 * 
 	 * <pre>
-	 * index == 1 ? Arith.sqrt(new BigDecimal(0.25), DEFAULT_ROUND).negate()
+	 * <code>
+	 * index == 1 ? sqrt(new BigDecimal(0.25), DEFAULT_ROUND).negate()
 	 * 		: index % 2 == 0 ? BERNOULLI[index / 2] : ZERO
+	 * </code>
 	 * </pre>
 	 * 
 	 * since with the exception of 1 all odd bernoulli indices are equal to zero
@@ -217,6 +237,9 @@ public class Constants {
 			new BigDecimal("1.13180434454842492706751862577339342678903659547507479181789E76"),
 			new BigDecimal("-2.838224957069370695926415633648176473828468092801288212822E78"), };
 
+	/**
+	 * Lookup table for the first 201 integer factorials.
+	 */
 	public static final BigDecimal[] FACTORIAL = { new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("2"),
 			new BigDecimal("6"), new BigDecimal("24"), new BigDecimal("120"), new BigDecimal("720"),
 			new BigDecimal("5040"), new BigDecimal("40320"), new BigDecimal("362880"), new BigDecimal("3628800"),
@@ -537,70 +560,621 @@ public class Constants {
 					"788657867364790503552363213932185062295135977687173263294742533244359449963403342920304284011984623904177212138919638830257642790242637105061926624952829931113462857270763317237396988943922445621451664240254033291864131227428294853277524242407573903240321257405579568660226031904170324062351700858796178922222789623703897374720000000000000000000000000000000000000000000000000"), };
 
 	/**
-	 * The positive maximum of the first quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 90 (degrees) or pi/2 (radians).
+	 * The positive maximum of the first quadrant in the unit circle (a circle of radius 1) which is equal to 90 (degrees) or pi/2
+	 * (radians).
 	 */
 	static BigDecimal q1(int precision) {
 		return pi(precision).divide(TWO, new MathContext(precision, RoundingMode.HALF_EVEN));
 	}
 
 	/**
-	 * The positive maximum of the second quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 180 (degrees) or pi (radians).
+	 * The positive maximum of the second quadrant in the unit circle (a circle of radius 1) which is equal to 180 (degrees) or pi
+	 * (radians).
 	 */
 	static BigDecimal q2(int precision) {
 		return pi(precision);
 	}
 
 	/**
-	 * The positive maximum of the third quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 270 (degrees) or 3pi/2 (radians).
+	 * The positive maximum of the third quadrant in the unit circle (a circle of radius 1) which is equal to 270 (degrees) or 3pi/2
+	 * (radians).
 	 */
 	static BigDecimal q3(int precision) {
 		return THREE.multiply(pi(precision)).divide(TWO, new MathContext(precision, RoundingMode.HALF_EVEN));
 	}
 
 	/**
-	 * The positive maximum of the fourth quadrant in the unit circle (a circle of
-	 * radius 1) which is equal to 360 (degrees) or 2pi (radians).
+	 * The positive maximum of the fourth quadrant in the unit circle (a circle of radius 1) which is equal to 360 (degrees) or 2pi
+	 * (radians).
 	 */
 	static BigDecimal q4(int precision) {
 		return TWO.multiply(pi(precision));
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:36 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the square root of 3, divides it by 2 and then returns the result.
+	 * 
+	 * @param precision the max number of significant digits in the result.
+	 * @return the <code>sqrt(3) / 2</code>.
+	 */
 	static BigDecimal sqrt3Div2(int precision) {
 		final MathContext c = new MathContext(precision, RoundingMode.HALF_EVEN);
-		return Arith.sqrt(THREE, c).divide(TWO, c);
+		return sqrt(THREE, c).divide(TWO, c);
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:36 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the square root of 2, divides it by 2 and then returns the result.
+	 * 
+	 * @param precision the max number of significant digits in the result.
+	 * @return the <code>sqrt(2) / 2</code>.
+	 */
 	static BigDecimal sqrt2Div2(int precision) {
 		final MathContext c = new MathContext(precision, RoundingMode.HALF_EVEN);
-		return Arith.sqrt(TWO, c).divide(TWO, c);
+		return sqrt(TWO, c).divide(TWO, c);
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:36 ---------------------------------------------------
+	 */
+	/**
+	 * Computes e as a {@code BigDecimal}.
+	 * 
+	 * @param precision the max number of significant digits in the result.
+	 * @return e to the given precision.
+	 * @see Math#E
+	 */
 	public static BigDecimal e(int precision) {
-		precision = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64.getPrecision()
-				: precision;
+//		precision = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64.getPrecision()
+//				: precision;
 		Apfloat n = ApfloatMath.exp(new Apfloat(BigDecimal.ONE, precision));
 		return new BigDecimal(n.toString());
+//		MathContext p = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64
+//				: mc(precision);
+//		Apfloat n = ApfloatMath.exp(new Apfloat(BigDecimal.ONE, p.getPrecision()));
+//		return new BigDecimal(n.toString(), p);
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:36 ---------------------------------------------------
+	 */
+	/**
+	 * Computes pi as a {@code BigDecimal}.
+	 * 
+	 * @param precision the max number of significant digits in the result.
+	 * @return pi to the given precision.
+	 * @see Math#PI
+	 */
 	public static BigDecimal pi(int precision) {
-		precision = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64.getPrecision()
-				: precision;
+//		precision = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64.getPrecision()
+//				: precision;
 		Apfloat n = ApfloatMath.pi(precision);
 		return new BigDecimal(n.toString());
+//		MathContext p = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64
+//				: mc(precision);
+//		Apfloat n = ApfloatMath.pi(p.getPrecision());
+//		return new BigDecimal(n.toString(), p);
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:36 ---------------------------------------------------
+	 */
+	/**
+	 * Computes <code>180 / pi</code> as a {@code BigDecimal}.
+	 * 
+	 * @param precision the max number of significant digits in the result.
+	 * @return <code>180 / pi</code> to the given precision.
+	 * @see Math#toDegrees(double)
+	 */
 	public static BigDecimal radiansToDegrees(int precision) {
 		precision = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64.getPrecision()
 				: precision;
 		return ONE_EIGHTY.divide(pi(precision), new MathContext(precision, RoundingMode.HALF_EVEN));
 	}
 
+	/*
+	 * Date: 27 Nov 2023 -----------------------------------------------------------
+	 * Time created: 12:30:36 ---------------------------------------------------
+	 */
+	/**
+	 * Computes <code>pi / 180</code> as a {@code BigDecimal}.
+	 * 
+	 * @param precision the max number of significant digits in the result.
+	 * @return <code>pi / 180</code> to the given precision.
+	 * @see Math#toRadians(double)
+	 */
 	public static BigDecimal degreesToRadians(int precision) {
 		precision = precision <= MathContext.DECIMAL64.getPrecision() ? MathContext.DECIMAL64.getPrecision()
 				: precision;
 		return pi(precision).divide(ONE_EIGHTY, new MathContext(precision, RoundingMode.HALF_EVEN));
 	}
+
+	/*
+	 * Date: 2 Dec 2023 -----------------------------------------------------------
+	 * Time created: 18:59:07 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the <a href="https://en.wikipedia.org/wiki/Ap%C3%A9ry%27s_constant">apery constant &#x03B6;(3)</a>.
+	 * 
+	 * @param n the max index in the series to halt the computation
+	 * @return the apery number truncated to the index within the apery series.
+	 */
+	public static BigFraction apery(int n) {
+		BigFraction x = BigFraction.ZERO;
+		while (n-- > 0)
+			x = x.add(f(i(1), i(n).pow(3)));
+		return x;
+	}
+
+	/*
+	 * Date: 2 Dec 2023 -----------------------------------------------------------
+	 * Time created: 20:02:52 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the euler-mascheroni constant &#x03B3;
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the mathematical constant &#x03B3; to the given precision.
+	 * @implNote Can return a significand with up to 20 million digits. This reads from a pre-constructed table. The initial call
+	 *           will be buffered so that consecutive calls will be in constant time.
+	 */
+	public static BigDecimal em(int precision) {
+		if (em == null || Utility.numOfFractionalDigits(em) < precision) {
+			InputStream i;
+			precision += 2;
+			byte[] b = new byte[precision + 2];
+			int l = -1;
+			try {
+				i = new FileInputStream(getProjectPath() + "/res/em.txt");
+				b[0] = (byte) '0';
+				b[1] = (byte) '.';
+				l = i.read(b, 2, precision);
+				em = new BigDecimal(new String(b));
+			} catch (IOException e1) {
+				em = d("0.915965594177219", mc(precision));
+			} catch (NumberFormatException e1) {
+				em = new BigDecimal(new String(copyOfRange(b, 0, l)));
+			}
+		}
+		return em.round(mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the sum of the conjugate of a fibonacci sequence.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the conjugate fibonacci constant.
+	 */
+	public static BigDecimal conf(int precision) {
+		return d(1).subtract(sqrt(d(5), mc(precision))).divide(d(2), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes levy's constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the levy's constant.
+	 */
+	public static BigDecimal levy(int precision) {
+		BigDecimal x = pi(precision).multiply(pi(precision), mc(precision))
+				.divide(d(12).multiply(log(d(2), mc(precision))), mc(precision));
+		return exp(x, mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes lemniscate constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return &#x03D6; to the given significant digits.
+	 */
+	public static BigDecimal lemniscate(int precision) {
+		String agm = ApfloatMath.agm(Apfloat.ONE, asApfloat(sqrt(d(2), mc(precision + 5)), precision + 5))
+				.toString(true);
+		return pi(precision).divide(d(agm), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Gauss' constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the Gauss' constant.
+	 */
+	public static BigDecimal gauss(int precision) {
+		String agm = ApfloatMath.agm(Apfloat.ONE, asApfloat(sqrt(d(2), mc(precision + 5)), precision + 5))
+				.toString(true);
+		return d(1).divide(d(agm), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes <sup>&#x03D6;</sup>/<sub>2</sub>
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return <sup>&#x03D6;</sup>/<sub>2</sub>
+	 */
+	public static BigDecimal lemniscate2(int precision) {
+		return lemniscate(precision).divide(d(2), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes <sup>&pi;</sup>/<sub>2&#x03D6;</sub>
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return <sup>&pi;</sup>/<sub>2&#x03D6;</sub>
+	 */
+	public static BigDecimal piDiv2lemniscate(int precision) {
+		return pi(precision).divide(lemniscate(precision).multiply(d(2), mc(precision)), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Sierpinski's constant
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Sierpinski's constant to the given significant digits.
+	 * @implNote This is quite slow.
+	 */
+	public static BigDecimal sierpinski(int precision) {
+		BigDecimal num = exp(d(2).multiply(em(precision), mc(precision)), mc(precision));// numerator
+		BigDecimal dnm = d(2).multiply(gauss(precision).pow(2, mc(precision)), mc(precision));// denominator
+		return pi(precision).multiply(log(num.divide(dnm, mc(precision)), mc(precision)), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Khinchin's constant
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Khinchin's constant to the given significant digits.
+	 * @implNote Can only return a significand with 110,000 digits. This reads from a pre-constructed table. The initial call will
+	 *           be buffered so that consecutive calls will be in constant time.
+	 */
+	public static BigDecimal khinchin(int precision) {
+		if (kh == null || Utility.numOfFractionalDigits(kh) < precision) {
+			InputStream i;
+			precision += 2;
+			byte[] b = new byte[precision + 2];
+			int l = -1;
+			try {
+				i = new FileInputStream(getProjectPath() + "/res/kh.txt");
+				b[0] = (byte) '2';
+				b[1] = (byte) '.';
+				l = i.read(b, 2, precision);
+				kh = new BigDecimal(new String(b));
+			} catch (IOException e1) {
+				kh = d("2.685452001065306", mc(precision));
+			} catch (NumberFormatException e1) {
+				kh = new BigDecimal(new String(copyOfRange(b, 0, l)));
+			}
+		}
+		return kh.round(mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes universal parabolic constant.
+	 * <p>
+	 * This is the ration of the length of the arc (formed by the curved section -- latus rectum -- parabola) to the focal
+	 * parameter.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return universal parabolic constant to the given significant digits.
+	 */
+	public static BigDecimal uniParabola(int precision) {
+//		BigDecimal s2 = sqrt(d(2), mc(precision));
+//		return log(d(1).add(s2), mc(precision)).add(s2);
+		return asinh(d(1), mc(precision)).add(sqrt(d(2), mc(precision)));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Erdos–Borwein constant.
+	 * 
+	 * @param n         the number of sums (iterations) to carry out.
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Erdos–Borwein constant to the given significant digits.
+	 */
+	public static BigDecimal eb(int n, int precision) {
+		if (n <= 0)
+			throw new ArithmeticException("n was less than or equal to 0");
+		BigDecimal x = d(0);
+		int i = 0;
+		while (++i <= n) {
+			x = x.add(d(1).divide(d(2).pow(i).subtract(d(1)), mc(precision + 5)));
+		}
+		return x.round(mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Lieb's square ice constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Lieb's square ice constant to the given significant digits.
+	 */
+	public static BigDecimal lieb(int precision) {
+		return d(8).multiply(sqrt(d(3), mc(precision + 5)), mc(precision + 5)).divide(d(9), mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes plastic constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return plastic constant to the given significant digits.
+	 */
+	public static BigDecimal plastic(int precision) {
+		BigDecimal lhs = cbrt(d(9).add(sqrt(d(69), mc(precision + 5))).divide(d(18), mc(precision + 5)),
+				precision + 5);
+		BigDecimal rhs = cbrt(
+				d(9).subtract(sqrt(d(69), mc(precision + 5))).divide(d(18), mc(precision + 5)), precision + 5);
+		return lhs.add(rhs, mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Mill's constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Mill's constant to the given significant digits.
+	 */
+	public static BigDecimal mills(int precision) {
+		if (mil == null || Utility.numOfFractionalDigits(mil) < precision) {
+			InputStream i;
+			precision += 2;
+			byte[] b = new byte[precision + 2];
+			int l = -1;
+			try {
+				i = new FileInputStream(getProjectPath() + "/res/mil.txt");
+				b[0] = (byte) '1';
+				b[1] = (byte) '.';
+				l = i.read(b, 2, precision);
+				mil = new BigDecimal(new String(b));
+			} catch (IOException e1) {
+				mil = d("1.30637788386308069046861449260260571", mc(precision));
+			} catch (NumberFormatException e1) {
+				mil = new BigDecimal(new String(copyOfRange(b, 0, l)));
+			}
+		}
+		return mil.round(mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Conway's constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Conway's constant to the given significant digits.
+	 * @implNote Only up to 1000 digits is available.
+	 */
+	public static BigDecimal conway(int precision) {
+		String k = "1.303577269034296391257099112152551890730702504659404875754861390628550887852461557126815766864425225553471393047094902683962849893551554347375824856691088977770216576006666613618195758149971416211747767923132429932572014304627713295388016925275316311212416027897445563112211928917659454428442210503483984430484350365978861636568696122933005217967812127420727428338418585389780462975362111332571315596114284164636493065068518274292491575080760471655487328990314067962627752109823018500980486768041711270369282770455569925410472532552960023967416151761300757699523941470920962729779652528381289529239984214664697006362808718598473764324259637537786148714918041779438825645496296126726763170341399892386838001749933916383255041973874337640464423096341637734299996402795347781231503693811136196919310110551222432806533487294985163535018000861898004426956962039089496396041059389452626289748480572004989520589408315451152746418415125180247302001937967778366214066091104752932287588363858876956961994205165";
+		return d(k, mc(precision));
+	}
+
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes Catalan's constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return Catalan's constant to the given significant digits.
+	 */
+	public static BigDecimal catalan(int precision) {
+		if (cat == null || Utility.numOfFractionalDigits(cat) < precision) {
+			InputStream i;
+			precision += 2;
+			byte[] b = new byte[precision + 2];
+			int l = -1;
+			try {
+				i = new FileInputStream(getProjectPath() + "/res/cat.txt");
+				b[0] = (byte) '0';
+				b[1] = (byte) '.';
+				l = i.read(b, 2, precision);
+				cat = new BigDecimal(new String(b));
+			} catch (IOException e1) {
+				cat = d("0.91596559417721901505460351493238411", mc(precision));
+			} catch (NumberFormatException e1) {
+				cat = new BigDecimal(new String(copyOfRange(b, 0, l)));
+			}
+		}
+		return cat.round(mc(precision));
+	}
+	
+	/*
+	 * Date: 4 Dec 2023 -----------------------------------------------------------
+	 * Time created: 10:58:33 ---------------------------------------------------
+	 */
+	/**
+	 * Iterative Omega constant computation using hailey's method.
+	 * @param iterations the number of iterations
+	 * @param precision the number of significant digits in the result.
+	 * @return the Omega constant to the given precision.
+	 */
+	public static BigDecimal omega(int iterations, int precision) {
+		BigDecimal om = d("0.4");
+//		BigDecimal e = e(precision);
+		BigDecimal x1 = d(1);
+		BigDecimal x2 = d(2);
+		MathContext m = mc(precision + 5);
+		
+		for(int n = 0; n < iterations; n++) {
+			BigDecimal e = exp(om, m);
+			BigDecimal ome = om.multiply(e, m);
+			BigDecimal num = ome.subtract(x1);
+			BigDecimal den_lhs = e.multiply(om.add(x1), m);
+			BigDecimal den_rhs_num = om.add(x2).multiply(num, m);
+			BigDecimal den_rhs_den = x2.multiply(om, m).add(x2);
+			om = om.subtract(num.divide(den_lhs.subtract(den_rhs_num.divide(den_rhs_den, m)), m));
+		}
+		
+		return om;
+	}
+	/*
+	 * Date: 3 Dec 2023 -----------------------------------------------------------
+	 * Time created: 07:22:15 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the Omega constant.
+	 * 
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the Omega constant to the given significant digits.
+	 * @implNote Can return a significand with up to 1 million digits. This reads from a pre-constructed table. The initial call
+	 *           will be buffered so that consecutive calls will be in constant time.
+	 */
+	public static BigDecimal omega(int precision) {
+		if (om == null || Utility.numOfFractionalDigits(om) < precision) {
+			InputStream i;
+			precision += 2;
+			byte[] b = new byte[precision + 2];
+			int l = -1;
+			try {
+				i = new FileInputStream(getProjectPath() + "/res/om.txt");
+				b[0] = (byte) '0';
+				b[1] = (byte) '.';
+				l = i.read(b, 2, precision);
+				om = new BigDecimal(new String(b));
+			} catch (IOException e1) {
+				om = d("0.56714329040978387299", mc(precision));
+			} catch (NumberFormatException e1) {
+				om = new BigDecimal(new String(copyOfRange(b, 0, l)));
+			}
+		}
+		return om.round(mc(precision));
+	}
+
+	/*
+	 * Date: 4 Dec 2023 -----------------------------------------------------------
+	 * Time created: 13:40:12 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the Fibonacci number at <em>n</em>.
+	 * @param n the index of the result in the Fibonacci set.
+	 * @return the Fibonacci number at the given index.
+	 */
+	public static BigInteger fibonacci(int n) {
+		MathContext m = mc(100);
+		BigDecimal s5 = sqrt(d(5), m);
+		BigDecimal gr = d(1).add(s5).divide(d(2), m);//golden ratio
+		BigDecimal cr = d(1).divide(gr, m).negate();//conjugate of the golden ratio
+		
+		BigInteger fb = gr.pow(n).subtract(cr.pow(n)).divide(s5, m).toBigInteger();
+		return fb;
+	}
+	
+	/*
+	 * Date: 4 Dec 2023 -----------------------------------------------------------
+	 * Time created: 13:41:41 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the reciprocal of the Fibonacci set using an iterative algorithm.
+	 * @param n the number of iteration to perform.
+	 * @return the reciprocal of the fibonacci set as a fraction.
+	 */
+	public static BigFraction recFib(int n) {
+		BigFraction f = f(0);
+		for(int i = 1; i <= n; i++) {
+			f = f.add(f(fibonacci(i)).getReciprocal());
+		}
+		return f;
+	}
+
+	/*
+	 * Date: 4 Dec 2023 -----------------------------------------------------------
+	 * Time created: 13:41:41 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the reciprocal of the Fibonacci set using an iterative algorithm.
+	 * @param n the number of iteration to perform.
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the reciprocal of the fibonacci set as a fraction.
+	 */
+	public static BigDecimal recFib(int n, int precision) {
+		BigDecimal f = d(0);
+		for(int i = 1; i <= n; i++) {
+			f = f.add(d(1).divide(d(fibonacci(i)), mc(precision + 5)));
+		}
+		return f.round(mc(precision));
+	}
+	
+	/*
+	 * Date: 4 Dec 2023 -----------------------------------------------------------
+	 * Time created: 13:45:41 ---------------------------------------------------
+	 */
+	/**
+	 * Computes the super golden ratio constant.
+	 * @param precision the number of digits in the significand to be returned.
+	 * @return the super golden ratio constant.
+	 */
+	public static BigDecimal superGR(int precision) {
+		MathContext m = mc(precision + 5);
+		BigDecimal x1 = d(1);
+		BigDecimal x2 = d(2);
+		BigDecimal x3 = d(3);
+		BigDecimal x29 = d(29);
+		BigDecimal x93 = d(93);
+		BigDecimal r1 = cbrt(x29.add(x3.multiply(sqrt(x93, m), m)).divide(x2, m), m.getPrecision());
+		BigDecimal r2 = cbrt(x29.subtract(x3.multiply(sqrt(x93, m), m)).divide(x2, m), m.getPrecision());
+		return x1.add(r1).add(r2).divide(x3, m);
+	}
+	
 }

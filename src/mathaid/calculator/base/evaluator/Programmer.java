@@ -42,8 +42,6 @@ public class Programmer implements Evaluator<LinkedSegment>, PExpression.Params 
 	 * Most recent time created: 09:03:56--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
-	 * 
 	 * @return
 	 */
 	public int getModifier() {

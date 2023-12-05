@@ -3,26 +3,110 @@
  */
 package mathaid.calculator.base.evaluator.parser.expression.scientific;
 
-import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.List.of;
+import static mathaid.calculator.base.converter.AngleUnit.DEG;
+import static mathaid.calculator.base.converter.AngleUnit.GRAD;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ABS;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ACOS;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ACOSH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ACOT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ACOTH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ACSC;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ACSCH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ASEC;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ASECH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ASIN;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ASINH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ATAN;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ATANH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.CBRT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.COS;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.COSH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.COT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.COTH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.CSC;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.CSCH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.DIFF;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.ERF;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.EXP;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.GAMMA;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.GCD;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.INT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.LCM;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.LIMIT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.LOG;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.LOG10;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.LOG2;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.MAX;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.MIN;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.MOD;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.NCR;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.NPR;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.POLYGAMMA;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.PRODUCT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.RATIONAL;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SEC;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SECH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SIGN;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SIN;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SINH;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SQRT;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.SUM;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.TAN;
+import static mathaid.calculator.base.evaluator.parser.expression.scientific.FunctionName.TANH;
+import static mathaid.calculator.base.typeset.Digits.toSegment;
+import static mathaid.calculator.base.typeset.Segments.abs;
+import static mathaid.calculator.base.typeset.Segments.ceil;
+import static mathaid.calculator.base.typeset.Segments.diff;
+import static mathaid.calculator.base.typeset.Segments.floor;
+import static mathaid.calculator.base.typeset.Segments.fraction;
+import static mathaid.calculator.base.typeset.Segments.genericFunction;
+import static mathaid.calculator.base.typeset.Segments.integral;
+import static mathaid.calculator.base.typeset.Segments.limit;
+import static mathaid.calculator.base.typeset.Segments.logxy;
+import static mathaid.calculator.base.typeset.Segments.pow;
+import static mathaid.calculator.base.typeset.Segments.product;
+import static mathaid.calculator.base.typeset.Segments.root;
+import static mathaid.calculator.base.typeset.Segments.sqrt;
+import static mathaid.calculator.base.typeset.Segments.sum;
+import static mathaid.calculator.base.util.Arith.acos;
+import static mathaid.calculator.base.util.Arith.acosh;
+import static mathaid.calculator.base.util.Arith.asin;
+import static mathaid.calculator.base.util.Arith.asinh;
+import static mathaid.calculator.base.util.Arith.atan;
+import static mathaid.calculator.base.util.Arith.atanh;
+import static mathaid.calculator.base.util.Arith.cbrt;
+import static mathaid.calculator.base.util.Arith.cos;
+import static mathaid.calculator.base.util.Arith.cosh;
+import static mathaid.calculator.base.util.Arith.exp;
+import static mathaid.calculator.base.util.Arith.factorial;
+import static mathaid.calculator.base.util.Arith.gamma;
+import static mathaid.calculator.base.util.Arith.log;
+import static mathaid.calculator.base.util.Arith.log10;
+import static mathaid.calculator.base.util.Arith.log2;
+import static mathaid.calculator.base.util.Arith.mod;
+import static mathaid.calculator.base.util.Arith.sin;
+import static mathaid.calculator.base.util.Arith.sinh;
+import static mathaid.calculator.base.util.Arith.sqrt;
+import static mathaid.calculator.base.util.Arith.tan;
+import static mathaid.calculator.base.util.Arith.tanh;
+import static mathaid.calculator.base.util.Utility.d;
+import static mathaid.calculator.base.util.Utility.f;
+import static mathaid.calculator.base.util.Utility.i;
+import static mathaid.calculator.base.util.Utility.mc;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
-import mathaid.calculator.base.converter.AngleUnit;
-import mathaid.calculator.base.evaluator.Calculator;
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
-import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
-import mathaid.calculator.base.typeset.Segments;
-import mathaid.calculator.base.util.Arith;
-import mathaid.calculator.base.util.Utility;
 import mathaid.calculator.base.value.BigFraction;
 
 /*
@@ -34,18 +118,78 @@ import mathaid.calculator.base.value.BigFraction;
  * Class name: Function------------------------------------------------ 
  */
 /**
+ * An expression that is a mathematical function such as (sine, tangent, logarithm).
+ * <p>
+ * It consists of an identifier and a parameter list whose elements are other expression objects. e.g {@code sin(30)} is a
+ * function expression where {@code sin} is the identifier of the function and {@code 30} is it's parameter. Some functions have
+ * multiple parameters such as {@code pow(x, y)}.
+ * 
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
 public class Function extends Name {
 
 	/*
+	 * Date: 12 Sep 2022-----------------------------------------------------------
+	 * Time created: 09:23:15--------------------------------------------
+	 */
+	/**
+	 * Gets a list of all the strings used in the evaluator to represent cos, tan, sin, cot, csc, sec.
+	 * <p>
+	 * This used for special cases during evaluation and formatting.
+	 * 
+	 * @return a list of strings used by the underlying CAS to represent elementary trig functions.
+	 */
+	private static Collection<String> getTrigStrings() {
+		return of("Sin", "Cos", "Tan", "Sec", "Csc", "Cot");
+	}
+
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 08:55:17 ---------------------------------------------------
+	 */
+	/**
+	 * Asserts that the argument is a representation of the number {@code 2}.
+	 * 
+	 * @param x the value to be checked
+	 * @return {@code x == 2}.
+	 */
+	private static boolean isTwo(EvaluatableExpression<Params> x) {
+		if (isNumber(x)) {
+			BigDecimal n = d(x.getName());
+			return n.compareTo(d(2L)) == 0;
+		}
+		return false;
+	}
+
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 08:55:17 ---------------------------------------------------
+	 */
+	/**
+	 * Asserts that the argument is a representation of the number {@code 1}.
+	 * 
+	 * @param x the value to be checked
+	 * @return {@code x == 1}.
+	 */
+	private static boolean isOne(EvaluatableExpression<Params> x) {
+		if (isNumber(x)) {
+			BigDecimal n = d(x.getName());
+			return n.compareTo(BigDecimal.ONE) == 0;
+		}
+		return false;
+	}
+
+	/*
 	 * Date: 11 Sep 2022-----------------------------------------------------------
 	 * Time created: 18:09:50---------------------------------------------------
 	 */
 	/**
-	 * @param name
-	 * @param params
+	 * Constructs a {@code Function} with a given name, argument list and params object.
+	 * 
+	 * @param name   an {@code EvaluatableExpression} that is the identifier of this {@code Function}.
+	 * @param args the argument(s)/parameter(s) to this function.
+	 * @param params the {@code ExpressionParams} representing options for the evaluation and format within this expression.
 	 */
 	public Function(EvaluatableExpression<Params> name, List<EvaluatableExpression<Params>> args, Params params) {
 		super(name.getName(), params);
@@ -53,57 +197,81 @@ public class Function extends Name {
 		this.name = name;
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 08:51:59 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the arguments given at the constructor.
+	 * 
+	 * @return an unmodifiable list of all the arguments of this function.
+	 */
 	public List<EvaluatableExpression<Params>> getArguments() {
-		return Collections.unmodifiableList(args);
+		return unmodifiableList(args);
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 09:03:00 ---------------------------------------------------
+	 */
+	/**
+	 * Converts all the arguments into {@code LinkedSegment} nodes and returns them in the same order .
+	 * 
+	 * @return an array of the formatted arguments.
+	 */
 	private LinkedSegment[] argsToSegments() {
 		LinkedSegment[] s = new LinkedSegment[args.size()];
 		SegmentBuilder sb = new SegmentBuilder();
 		for (int i = 0; i < args.size(); i++) {
 			EvaluatableExpression<Params> x = args.get(i);
-			x.format(sb.deleteAll());
+			x.format(sb);
 			s[i] = sb.toSegment();
+			sb.deleteAll();
 		}
 		return s;
 	}
 
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 09:09:26 ---------------------------------------------------
+	 */
+	/**
+	 * Checks if the argument is a representation of a common fraction (with a numerator and denominator).
+	 * 
+	 * @param x the value to be checked.
+	 * @return <code>true</code> if {@code x} is a common fraction. Returns <code>false</code> if otherwise.
+	 */
 	private boolean isFraction(EvaluatableExpression<Params> x) {
 		return (x instanceof Operator && x.getName().equals("/"))
 				|| (x instanceof Function && x.getName().equals(getParams().getFractionFunction()));
 	}
 
-	private boolean isTwo(EvaluatableExpression<Params> x) {
-		if (isNumber(x)) {
-			BigDecimal n = new BigDecimal(x.getName());
-			return n.compareTo(BigDecimal.valueOf(2L)) == 0;
-		}
-		return false;
-	}
-
-	private boolean isOne(EvaluatableExpression<Params> x) {
-		if (isNumber(x)) {
-			BigDecimal n = new BigDecimal(x.getName());
-			return n.compareTo(BigDecimal.ONE) == 0;
-		}
-		return false;
-	}
-
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 09:13:48 ---------------------------------------------------
+	 */
+	/**
+	 * Converts an {@code EvaluatableExpression} that is obviously a value (such as a decimal or common fraction) into a
+	 * {@code BigDecimal} equivalent.
+	 * 
+	 * @param x the value to be converted. it is expected that this is a number or a common integer fraction.
+	 * @return the {@code BigDecimal} equivalent of {@code x}.
+	 */
 	// Note that the argument must already be checked by isNumber(x) || is
 	// IntegerFraction
 	private BigDecimal asDecimal(EvaluatableExpression<Params> x) {
 		if (x instanceof Function) {
 			Function frac = (Function) x;
-			BigInteger num = new BigInteger(frac.getArguments().get(0).getName());
-			BigInteger denom = new BigInteger(frac.getArguments().get(1).getName());
-			return new BigFraction(num, denom).getDecimalExpansion(getParams().getScale() + 5);
+			BigInteger num = i(frac.getArguments().get(0).getName());
+			BigInteger denom = i(frac.getArguments().get(1).getName());
+			return f(num, denom).getDecimalExpansion(getParams().getScale() + 5);
 		} else if (x instanceof Operator) {
 			Operator frac = (Operator) x;
-			BigInteger num = new BigInteger(frac.getLeft().getName());
-			BigInteger denom = new BigInteger(frac.getRight().getName());
-			return new BigFraction(num, denom).getDecimalExpansion(getParams().getScale() + 5);
+			BigInteger num = i(frac.getLeft().getName());
+			BigInteger denom = i(frac.getRight().getName());
+			return f(num, denom).getDecimalExpansion(getParams().getScale() + 5);
 		} else if (x instanceof Name) {
-			return new BigDecimal(x.getName());
+			return d(x.getName());
 		}
 		return null;
 	}
@@ -113,9 +281,13 @@ public class Function extends Name {
 	 * Most recent time created: 18:09:47--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Appends the {@code LinkedSegment} representation of this function into the format builder.
+	 * <p>
+	 * The name is first formatted and appended to the given builder, after which the arguments are formatted and appended.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @param formatBuilder
+	 * @param formatBuilder {@inheritDoc}
 	 */
 	@Override
 	public void format(SegmentBuilder formatBuilder) {
@@ -123,18 +295,18 @@ public class Function extends Name {
 		// differential, integral, summation, product,
 		// floor, ceil, fraction/rational,
 		if (getParams().getInverseTrigFunctions().containsKey(getName())) {
-			formatBuilder.append(Segments.genericFunction(
+			formatBuilder.append(genericFunction(
 					String.format("\\mathrm{%s}^{-1}", getParams().getInverseTrigFunctions().get(getName())), getName(),
-					argsToSegments(), getParams().getTrig() == AngleUnit.DEG, getParams().getTrig() == AngleUnit.GRAD));
+					argsToSegments(), getParams().getTrig() == DEG, getParams().getTrig() == GRAD));
 			return;
 		} else if (getParams().getSqrt().compareTo(getName()) == 0) {
-			formatBuilder.append(Segments.sqrt(argsToSegments()[0]));
+			formatBuilder.append(sqrt(argsToSegments()[0]));
 			return;
 		} else if (getParams().getAbs().compareTo(getName()) == 0) {
-			formatBuilder.append(Segments.abs(argsToSegments()[0]));
+			formatBuilder.append(abs(argsToSegments()[0]));
 			return;
 		} else if (getParams().getGamma().compareTo(getName()) == 0) {
-			formatBuilder.append(Segments.genericFunction("\\Gamma", getName(), argsToSegments(), false, false));
+			formatBuilder.append(genericFunction("\\Gamma", getName(), argsToSegments(), false, false));
 			return;
 		} else if (getParams().getPow().compareTo(getName()) == 0) {
 			LinkedSegment[] s = argsToSegments();
@@ -157,33 +329,35 @@ public class Function extends Name {
 				if (exponentLeft != null && exponentRight != null) {
 					if (isTwo(exponentRight)) {
 						if (isOne(exponentLeft)) {
-							formatBuilder.append(Segments.sqrt(s[0]));
+							formatBuilder.append(sqrt(s[0]));
 							return;
 						}
 						SegmentBuilder sb = new SegmentBuilder();
 						exponentLeft.format(sb);
-						formatBuilder.append(Segments.sqrt(Segments.pow(s[0], sb.toSegment())));
+						formatBuilder.append(sqrt(pow(s[0], sb.toSegment())));
 						return;
 					}
 					SegmentBuilder sb = new SegmentBuilder();
 					exponentLeft.format(sb);
 					LinkedSegment exponent = sb.toSegment();
 					exponentRight.format(sb.deleteAll());
-					formatBuilder.append(Segments.root(sb.toSegment(), Segments.pow(s[0], exponent)));
+					formatBuilder.append(root(sb.toSegment(), pow(s[0], exponent)));
 					return;
 				}
 			}
-			formatBuilder.append(Segments.pow(s[0], s[1]));
+			formatBuilder.append(pow(s[0], s[1]));
 			return;
 		} else if (getParams().getSignum().compareTo(getName()) == 0) {
-			formatBuilder.append(Segments.genericFunction("\\mathrm{sgn}", getName(), argsToSegments(), false, false));
+			formatBuilder.append(genericFunction("\\mathrm{sgn}", getName(), argsToSegments(), false, false));
 			return;
 		} else if (getParams().getNaturalLog().compareTo(getName()) == 0) {
-			if (args.size() > 1)
-				formatBuilder.append(Segments.genericFunction("\\mathrm{ln}", getName(), argsToSegments(), false, false));
+			if (args.size() < 2) {
+				formatBuilder
+				.append(genericFunction("\\mathrm{ln}", getName(), argsToSegments(), false, false));
+			}
 			else {
 				LinkedSegment[] args = argsToSegments();
-				formatBuilder.append(Segments.logxy(args[1], args[0]));
+				formatBuilder.append(logxy(args[1], args[0]));
 			}
 			return;
 		}
@@ -235,9 +409,9 @@ public class Function extends Name {
 				x.getLeft().format(sb.deleteAll());
 				LinkedSegment i = sb.toSegment();
 				x.getRight().format(sb.deleteAll());
-//				formatBuilder.append(Segments.limit(i, sb.toSegment(),
-//						Segments.operator("+", "+", LinkedSegment.PLUS_OPERATOR_SEGMENT), f));
-				formatBuilder.append(Segments.limit(i, sb.toSegment(), f));
+//				formatBuilder.append(limit(i, sb.toSegment(),
+//						operator("+", "+", LinkedSegment.PLUS_OPERATOR_SEGMENT), f));
+				formatBuilder.append(limit(i, sb.toSegment(), f));
 				return;
 			}
 		} else if (getParams().getDifferential().compareTo(getName()) == 0) {
@@ -246,7 +420,7 @@ public class Function extends Name {
 			LinkedSegment f = sb.toSegment();
 			args.get(1).format(sb.deleteAll());
 			LinkedSegment i = sb.toSegment();
-			formatBuilder.append(Segments.diff(i, f));
+			formatBuilder.append(diff(i, f));
 			return;
 		} else if (getParams().getIntegral().compareTo(getName()) == 0) {
 			SegmentBuilder sb = new SegmentBuilder();
@@ -260,12 +434,12 @@ public class Function extends Name {
 					a.getArray().get(1).format(sb.deleteAll());
 					LinkedSegment lower = sb.toSegment();
 					a.getArray().get(2).format(sb.deleteAll());
-					formatBuilder.append(Segments.integral(index, lower, sb.toSegment(), f));
+					formatBuilder.append(integral(index, lower, sb.toSegment(), f));
 					return;
 				}
 			}
 			args.get(1).format(sb.deleteAll());
-			formatBuilder.append(Segments.integral(sb.toSegment(), null, null, f));
+			formatBuilder.append(integral(sb.toSegment(), null, null, f));
 			return;
 		} else if (getParams().getSummation().compareTo(getName()) == 0) {
 			if (args.get(1) instanceof Array) {
@@ -279,7 +453,7 @@ public class Function extends Name {
 					a.getArray().get(1).format(sb.deleteAll());
 					LinkedSegment lower = sb.toSegment();
 					a.getArray().get(2).format(sb.deleteAll());
-					formatBuilder.append(Segments.sum(index, lower, sb.toSegment(), f));
+					formatBuilder.append(sum(index, lower, sb.toSegment(), f));
 					return;
 				}
 			}
@@ -295,40 +469,40 @@ public class Function extends Name {
 					a.getArray().get(1).format(sb.deleteAll());
 					LinkedSegment lower = sb.toSegment();
 					a.getArray().get(2).format(sb.deleteAll());
-					formatBuilder.append(Segments.product(index, lower, sb.toSegment(), f));
+					formatBuilder.append(product(index, lower, sb.toSegment(), f));
 					return;
 				}
 			}
 		} else if (getParams().getFloor().compareTo(getName()) == 0) {
-			formatBuilder.append(Segments.floor(argsToSegments()[0]));
+			formatBuilder.append(floor(argsToSegments()[0]));
 		} else if (getParams().getCeil().compareTo(getName()) == 0) {
-			formatBuilder.append(Segments.ceil(argsToSegments()[0]));
+			formatBuilder.append(ceil(argsToSegments()[0]));
 		} else if (getParams().getFractionFunction().compareTo(getName()) == 0) {
 			if (getParams().getResultType() == Params.ResultType.MFRAC && isNumber(args.get(0)) && isNumber(args.get(1))
-					&& Utility.isInteger(new BigDecimal(args.get(0).getName()))
-					&& Utility.isInteger(new BigDecimal(args.get(1).getName()))) {
-				BigFraction f = new BigFraction(new BigInteger(args.get(0).getName()),
-						new BigInteger(args.get(1).getName()));
+					&& mathaid.calculator.base.util.Utility.isInteger(d(args.get(0).getName()))
+					&& mathaid.calculator.base.util.Utility.isInteger(d(args.get(1).getName()))) {
+				BigFraction f = f(i(args.get(0).getName()), i(args.get(1).getName()));
 //				BigInteger[] mf = f.toMixed();
 //				if (mf[0].signum() != 0) {
-//					formatBuilder.append(Segments.toSegment(mf, 10, getParams().getIntSeparator(),
+//					formatBuilder.append(toSegment(mf, 10, getParams().getIntSeparator(),
 //							getParams().getMantSeparator(), getParams().getIntGroupSize(),
 //							getParams().getMantGroupSize(), getParams().getNumOfRepeats()));
 //					return;
 //				}
-				formatBuilder.append(Digits.toSegment(f, true, Calculator.fromParams(getParams(), getParams().getNumOfRepeats())));
+				formatBuilder.append(
+						toSegment(f, true, fromParams(getParams(), getParams().getNumOfRepeats())));
 				return;
 			}
 			LinkedSegment[] s = argsToSegments();
-			formatBuilder.append(Segments.fraction(s[0], s[1]));
+			formatBuilder.append(fraction(s[0], s[1]));
 			return;
 		}
-		boolean isTrig = getParams().getTrigStrings().contains(getName());
-		formatBuilder.append(Segments.genericFunction(
+		boolean isTrig = getTrigStrings().contains(getName());
+		formatBuilder.append(genericFunction(
 				isTrig ? String.format("\\%s", getName().toLowerCase())
 						: String.format("\\mathrm{%s}", getName().toLowerCase()),
-				getName(), argsToSegments(), isTrig && getParams().getTrig() == AngleUnit.DEG,
-				isTrig && getParams().getTrig() == AngleUnit.GRAD));
+				getName(), argsToSegments(), isTrig && getParams().getTrig() == DEG,
+				isTrig && getParams().getTrig() == GRAD));
 	}
 
 	/*
@@ -336,13 +510,23 @@ public class Function extends Name {
 	 * Most recent time created: 18:09:47--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
+	 * Performs computations on the arguments and returns the result as an {@code EvaluatableExpression}.
+	 * <p>
+	 * All arguments given will have their {@link EvaluatableExpression#evaluate() evaluate()} method called on them, then their
+	 * results will be applied to this function. The result itself depends on the type of function, it's arguments, as well as the
+	 * {@linkplain Params#getResultType() result type}.
+	 * <p>
+	 * All calculations are done with a numerical precision of <code>{@linkplain Params#getScale() scale} + 5</code> and may throw
+	 * exceptions that indicate that value(s) were out of range.
+	 * <p>
+	 * This has no side-effects.
 	 * 
-	 * @return
+	 * @return a new {@code EvaluatableExpression} that is the result of evaluating this function. May return the same object
+	 *         especially if called more than once.
 	 */
 	@Override
 	public EvaluatableExpression<Params> evaluate() {
-		final MathContext mc = new MathContext(getParams().getScale() + 5, RoundingMode.HALF_EVEN);
+		final MathContext mc = mc(getParams().getScale() + 5);
 		EvaluatableExpression<Params> firstArg = args.get(0).evaluate();
 
 		if (isNumber(firstArg) || isIntegerFraction(firstArg))
@@ -351,13 +535,11 @@ public class Function extends Name {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
 				if (getParams().getResultType() == Params.ResultType.FRAC
 						|| getParams().getResultType() == Params.ResultType.MFRAC)
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				if (isNumber(firstArg) && isNumber(secondArg))
-					return new Name(
-							new BigFraction(new BigInteger(firstArg.getName()), new BigInteger(secondArg.getName()))
-									.getDecimalExpansion(getParams().getScale() + 5).toString(),
-							getParams());
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Name(f(i(firstArg.getName()), i(secondArg.getName()))
+							.getDecimalExpansion(getParams().getScale() + 5).toString(), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			/*
 			 * Make sure all numeric arguments are defered here using symja's
@@ -366,65 +548,65 @@ public class Function extends Name {
 			case SIN: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.sin(n, getParams().getTrig(), mc).toString(), getParams());
+					return new Name(sin(n, getParams().getTrig(), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ASIN: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.asin(n, getParams().getTrig(), mc).toString(), getParams());
+					return new Name(asin(n, getParams().getTrig(), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case SINH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.sinh(n, mc).toString(), getParams());
+					return new Name(sinh(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ASINH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.asinh(n, mc).toString(), getParams());
+					return new Name(asinh(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case COS: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.cos(n, getParams().getTrig(), mc).toString(), getParams());
+					return new Name(cos(n, getParams().getTrig(), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ACOS: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.acos(n, getParams().getTrig(), mc).toString(), getParams());
+					return new Name(acos(n, getParams().getTrig(), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case COSH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.cosh(n, mc).toString(), getParams());
+					return new Name(cosh(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ACOSH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.acosh(n, mc).toString(), getParams());
+					return new Name(acosh(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case TAN: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.tan(n, getParams().getTrig(), mc).toString(), getParams());
+					return new Name(tan(n, getParams().getTrig(), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ATAN: {
 				if (args.size() == 2) {
@@ -433,120 +615,120 @@ public class Function extends Name {
 						BigDecimal x = asDecimal(firstArg);
 						BigDecimal y = asDecimal(secondArg);
 						if (x != null && y != null)
-							return new Name(Arith.atan(x, y, getParams().getTrig(), mc).toString(), getParams());
-						return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+							return new Name(atan(x, y, getParams().getTrig(), mc).toString(), getParams());
+						return new Function(name, asList(firstArg, secondArg), getParams());
 					}
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.atan(n, getParams().getTrig(), mc).toString(), getParams());
+					return new Name(atan(n, getParams().getTrig(), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case TANH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.tanh(n, mc).toString(), getParams());
+					return new Name(tanh(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ATANH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.atanh(n, mc).toString(), getParams());
+					return new Name(atanh(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case COT: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.tan(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
+					return new Name(tan(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
 							getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ACOT: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.atan(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
+					return new Name(atan(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
 							getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case COTH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.tanh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
+					return new Name(tanh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ACOTH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.atanh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
+					return new Name(atanh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case CSC: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.sin(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
+					return new Name(sin(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
 							getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ACSC: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.asin(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
+					return new Name(asin(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
 							getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case CSCH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.sinh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
+					return new Name(sinh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ACSCH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.asinh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
+					return new Name(asinh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case SEC: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.cos(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
+					return new Name(cos(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
 							getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ASEC: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.acos(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
+					return new Name(acos(BigDecimal.ONE.divide(n, mc), getParams().getTrig(), mc).toString(),
 							getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case SECH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.cosh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
+					return new Name(cosh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ASECH: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.acosh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
+					return new Name(acosh(BigDecimal.ONE.divide(n, mc), mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case LOG: {
 				if (args.size() == 2) {
@@ -555,89 +737,90 @@ public class Function extends Name {
 						BigDecimal x = asDecimal(firstArg);
 						BigDecimal y = asDecimal(secondArg);
 						if (x != null && y != null)
-							return new Name(Arith.log(x, y, mc).toString(), getParams());
-						return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+							return new Name(log(x, y, mc).toString(), getParams());
+						return new Function(name, asList(firstArg, secondArg), getParams());
 					}
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.log(n, mc).toString(), getParams());
+					return new Name(log(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 //			case LN:
-//				return new Name(Arith.log(new BigDecimal(name.name()), mc).toString());
+//				return return new Name(log(new BigDecimal(name.name()), mc).toString());
 			case LOG10: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.log10(n, mc).toString(), getParams());
+					return new Name(log10(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case LOG2: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.log2(n, mc).toString(), getParams());
+					return new Name(log2(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case EXP: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.exp(n, mc).toString(), getParams());
+					return new Name(exp(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case SQRT: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.sqrt(n, mc).toString(), getParams());
+					return new Name(sqrt(n, mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case CBRT: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.cbrt(n, getParams().getScale()).toString(), getParams());
+					return new Name(cbrt(n, getParams().getScale()).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case ABS: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(n.abs(mc).toString(), getParams());
+					return new Name(n.abs(mc).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case SIGN: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(String.valueOf(n.signum()), getParams());
+					return new Name(String.valueOf(n.signum()), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case GCD: {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
 				if ((isNumber(secondArg) || isIntegerFraction(secondArg))) {
 					BigDecimal x = asDecimal(firstArg);
 					BigDecimal y = asDecimal(secondArg);
-					if (x != null && y != null && Utility.isInteger(x) && Utility.isInteger(y))
+					if (x != null && y != null && mathaid.calculator.base.util.Utility.isInteger(x)
+							&& mathaid.calculator.base.util.Utility.isInteger(y))
 						return new Name(x.toBigInteger().gcd(y.toBigInteger()).toString(), getParams());
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			case LCM: {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
 				if ((isNumber(secondArg) || isIntegerFraction(secondArg))) {
-					BigFraction x = new BigFraction(asDecimal(firstArg));
-					BigFraction y = new BigFraction(asDecimal(secondArg));
+					BigFraction x = f(asDecimal(firstArg));
+					BigFraction y = f(asDecimal(secondArg));
 					if (x != null && y != null)
 						return new Name(x.lcm(y).toString(), getParams());
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			case MOD: {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
@@ -645,46 +828,48 @@ public class Function extends Name {
 					BigDecimal x = asDecimal(firstArg);
 					BigDecimal y = asDecimal(secondArg);
 					if (x != null && y != null)
-						return new Name(Arith.mod(x, y).toString(), getParams());
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+						return new Name(mod(x, y).toString(), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			case NPR: {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
 				if ((isNumber(secondArg) || isIntegerFraction(secondArg))) {
 					BigDecimal x = asDecimal(firstArg);
 					BigDecimal y = asDecimal(secondArg);
-					if (x != null && y != null && Utility.isInteger(x) && Utility.isInteger(y)) {
-						BigDecimal n = Arith.factorial(x.abs()).divide(Arith.factorial(x.abs().subtract(y.abs())));
-						return new Name(n.multiply(new BigDecimal(x.min(y).signum())).toString(), getParams());
+					if (x != null && y != null && mathaid.calculator.base.util.Utility.isInteger(x)
+							&& mathaid.calculator.base.util.Utility.isInteger(y)) {
+						BigDecimal n = factorial(x.abs()).divide(factorial(x.abs().subtract(y.abs())));
+						return new Name(n.multiply(d(x.min(y).signum())).toString(), getParams());
 					}
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			case NCR: {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
 				if ((isNumber(secondArg) || isIntegerFraction(secondArg))) {
 					BigDecimal x = asDecimal(firstArg);
 					BigDecimal y = asDecimal(secondArg);
-					if (x != null && y != null && Utility.isInteger(x) && Utility.isInteger(y)) {
-						BigDecimal c = Arith.factorial(x.abs());
-						BigDecimal d = Arith.factorial(y.abs());
-						BigDecimal e = Arith.factorial(x.abs().subtract(y.abs()));
+					if (x != null && y != null && mathaid.calculator.base.util.Utility.isInteger(x)
+							&& mathaid.calculator.base.util.Utility.isInteger(y)) {
+						BigDecimal c = factorial(x.abs());
+						BigDecimal d = factorial(y.abs());
+						BigDecimal e = factorial(x.abs().subtract(y.abs()));
 						BigDecimal f = c.divide(d.multiply(e));
-						return new Name(f.multiply(new BigDecimal(x.min(y).signum())).toString(), getParams());
+						return new Name(f.multiply(d(x.min(y).signum())).toString(), getParams());
 					}
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			case GAMMA: {
 				BigDecimal n = asDecimal(firstArg);
 				if (n != null) {
-					new Name(Arith.gamma(n, getParams().getScale()).toString(), getParams());
+					new Name(gamma(n, getParams().getScale()).toString(), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg), getParams());
+				return new Function(name, asList(firstArg), getParams());
 			}
 			case POLYGAMMA:
 				break;
@@ -696,9 +881,9 @@ public class Function extends Name {
 					if (x != null && y != null) {
 						return new Name(x.min(y).toString(), getParams());
 					}
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			case MAX: {
 				EvaluatableExpression<Params> secondArg = args.get(1).evaluate();
@@ -708,9 +893,9 @@ public class Function extends Name {
 					if (x != null && y != null) {
 						return new Name(x.max(y).toString(), getParams());
 					}
-					return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+					return new Function(name, asList(firstArg, secondArg), getParams());
 				}
-				return new Function(name, Arrays.asList(firstArg, secondArg), getParams());
+				return new Function(name, asList(firstArg, secondArg), getParams());
 			}
 			// Symbolic functions
 			case SUM:
@@ -735,7 +920,30 @@ public class Function extends Name {
 		return new Function(this.name, arg, getParams());
 	}
 
+	public String toString() {
+		return new StringBuilder(getName()).append(args).toString();
+	}
+	
+	/**
+	 * *.The arguments of this function
+	 */
 	private final List<EvaluatableExpression<Params>> args;
+	/**
+	 * The name of this function stored as an {@code Expression} for formatting purposes.
+	 */
 	private final EvaluatableExpression<Params> name;
+
+	// A fun implementation of java.util.function.Function interface
+//	@Override
+//	public String apply(String[] t) {
+//		List<EvaluatableExpression<Params>> l = new ArrayList<>();
+//		for(String s : t) l.add(new Name(s, getParams()));
+//		Function f = new Function(name, l, getParams());
+//		StringBuilder sb = new StringBuilder();
+//		SegmentBuilder seb = new SegmentBuilder();
+//		f.evaluate().format(seb);
+//		seb.toSegment().toString(sb, null, new ArrayList<>(java.util.Arrays.asList(-1)));
+//		return sb.toString();
+//	}
 
 }

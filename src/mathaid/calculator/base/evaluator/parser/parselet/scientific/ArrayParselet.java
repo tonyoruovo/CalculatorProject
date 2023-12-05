@@ -26,6 +26,7 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
  * Class name: ArrayParselet------------------------------------------------ 
  */
 /**
+ * A prefix {@code Parselet} for creating {@code Array} objects.
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -37,14 +38,15 @@ Parselet<String, SegmentBuilder, EvaluatableExpression<Params>, PrattParser<Eval
 	 * Most recent time created: 00:56:24--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
-	 * @param alreadyParsedLeft
-	 * @param yetToBeParsedToken
-	 * @param parser
-	 * @param lexerReference
-	 * @param syntax
-	 * @param params
-	 * @return
+	 * Creates a new {@code Array} object.
+	 *
+	 * @param alreadyParsedLeft {@inheritDoc}
+	 * @param yetToBeParsedToken {@inheritDoc}
+	 * @param parser {@inheritDoc}
+	 * @param lexerReference {@inheritDoc}
+	 * @param syntax {@inheritDoc}
+	 * @param params {@inheritDoc}
+	 * @return the new {@code Array} object.
 	 */
 	@Override
 	public EvaluatableExpression<Params> parse(EvaluatableExpression<Params> alreadyParsedLeft,

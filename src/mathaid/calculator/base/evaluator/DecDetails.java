@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.scientific.Name.Params;
 import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.LinkedSegment;
@@ -29,25 +30,25 @@ class DecDetails {
 	public static LinkedSegment inScientific(String str, Params p) {
 		String n = Utility
 				.toScientificString(new BigDecimal(str, new MathContext(p.getScale(), RoundingMode.HALF_EVEN)));
-		return Digits.toSegment(new BigDecimal(n), 1, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(new BigDecimal(n), 1, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment inEngineering(String str, Params p) {
 		String n = Utility
 				.toEngineeringString(new BigDecimal(str, new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), false);
-		return Digits.toSegment(new BigDecimal(n), 3, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(new BigDecimal(n), 3, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 	}
 
 	public static LinkedSegment inEngineeringSI(String str, Params p) {
 		String s = Utility
 				.toEngineeringString(new BigDecimal(str, new MathContext(p.getScale(), RoundingMode.HALF_EVEN)), true);
-		return Digits.toSegment(new BigDecimal(s), true, Calculator.fromParams(p, p.getNumOfRepeats()));
+		return Digits.toSegment(new BigDecimal(s), true, EvaluatableExpression.fromParams(p, p.getNumOfRepeats()));
 //		SegmentBuilder sb;
 
 //		int suffixIndex = s.indexOf('E');
 //		if (suffixIndex != s.length() - 1) {
 //			sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(s.substring(0, suffixIndex)), 0,
-//					Calculator.fromParams(p, p.getNumOfRepeats())));
+//					EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //		} else {
 //			Map<String, String> suffixes = new HashMap<>();
 //			suffixes.put("Y", "E24");
@@ -68,7 +69,7 @@ class DecDetails {
 //			suffixes.put("y", "E-24");
 //			String suffix = s.substring(s.length() - 1);
 //			sb = new SegmentBuilder(Digits.toSegment(new BigDecimal(str.substring(0, str.length())), 0,
-//					Calculator.fromParams(p, p.getNumOfRepeats())));
+//					EvaluatableExpression.fromParams(p, p.getNumOfRepeats())));
 //			sb.append(new BasicSegment(String.format("*10^(%s)", suffixes.get(suffix).substring(1)),
 //					suffix.compareTo("µ") == 0 ? "\\mu" : suffix, Segment.Type.EXPONENT));
 //		}

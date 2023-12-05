@@ -24,6 +24,7 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
  * Class name: GroupParselet------------------------------------------------ 
  */
 /**
+ * A prefix {@code Parselet} for creating {@code Group} objects.
  * @author Oruovo Anthony Etineakpopha
  * @email tonyoruovo@gmail.com
  */
@@ -35,14 +36,18 @@ public class GroupParselet implements
 	 * Most recent time created: 15:39:46--------------------------------------
 	 */
 	/**
-	 * {@inheritDoc}
-	 * @param alreadyParsedLeft
-	 * @param yetToBeParsedToken
-	 * @param parser
-	 * @param lexerReference
-	 * @param syntax
-	 * @param params
-	 * @return
+	 * Creates a new {@code Group} object.
+	 * <p>
+	 * This calls the given {@code PrattParser} object's parse no-arg method then consumes the closing symbol specified by
+	 * {@link CommonSyntax#precedenceDirector2()} and returns a {@code Group} object.
+	 *
+	 * @param alreadyParsedLeft  {@inheritDoc}
+	 * @param yetToBeParsedToken {@inheritDoc}
+	 * @param parser             {@inheritDoc}
+	 * @param lexerReference     {@inheritDoc}
+	 * @param syntax             {@inheritDoc}
+	 * @param params             {@inheritDoc}
+	 * @return the new {@code Group} object.
 	 */
 	@Override
 	public PExpression parse(EvaluatableExpression<Params> alreadyParsedLeft,

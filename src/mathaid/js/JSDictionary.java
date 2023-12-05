@@ -130,7 +130,7 @@ public class JSDictionary<K extends JSValue<?>, V extends JSValue<?>> extends JS
 
 			JSSnippet.appendTabs(parser, tabs - 1);
 			parser.append('}');
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 		}
 	}
 

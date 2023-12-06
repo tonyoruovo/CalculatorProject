@@ -7,6 +7,8 @@
  */
 package mathaid.calculator.base.evaluator;
 
+import static mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.fromParams;
+
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +19,68 @@ import mathaid.calculator.base.evaluator.parser.ProgrammerLexer;
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
 import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpression;
 import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpression.Params;
+import mathaid.calculator.base.typeset.DigitPunc;
+import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
+import mathaid.calculator.base.util.Tuple;
 import mathaid.calculator.base.util.Tuple.Couple;
+import mathaid.calculator.base.value.BinaryFPPrecision;
+import mathaid.calculator.base.value.FloatAid;
 import mathaid.functional.Supplier.Function;
 
 public class Programmer implements Evaluator<LinkedSegment>, PExpression.Params {
-	
+	/*
+	 * Date: 30 Nov 2023 -----------------------------------------------------------
+	 * Time created: 18:04:51 ---------------------------------------------------
+	 */
+	/**
+	 * Gets the current precision used for working with floating point.
+	 * 
+	 * @param p the params object to use.
+	 * @return the precision used for working with floating point values.
+	 */
+	public static BinaryFPPrecision getPrecision(Params p) {
+		switch (p.getBitLength()) {
+		case 8:
+		default:
+			return FloatAid.IEEE754Bit8(p.getRoundingMode());
+		case 16:
+			return FloatAid.IEEE754Half(p.getRoundingMode());
+		case 32:
+			return FloatAid.IEEE754Single(p.getRoundingMode());
+		case 64:
+			return FloatAid.IEEE754Double(p.getRoundingMode());
+		case 80:
+			return FloatAid.IEEE754x86Extended(p.getRoundingMode());
+		case 128:
+			return FloatAid.IEEE754Quadruple(p.getRoundingMode());
+		case 256:
+			return FloatAid.IEEE754Octuple(p.getRoundingMode());
+
+		}
+	}
+
+	static DigitPunc fp(Params p) {
+		return fromParams(p, 0);
+	}
+
+	static void initConstants(Map<String, Couple<String, Function<Params, SegmentBuilder>>> c) {
+		//Pi
+		Function<Params, SegmentBuilder> f = p -> new SegmentBuilder(Digits.toSegment(getPrecision(p).pi(),
+				p.getRadix(), p.getRadix(), p.getBitRepresentation() == ResultType.NORMALISED, fp(p)));
+		c.put("pi", Tuple.of("\\pi", f));
+		
+		//E
+		f = p -> {
+			if(p.getBitRepresentation() == ResultType.NORMALISED || p.getBitRepresentation() == ResultType.REP_FLOATING_POINT)
+				return new SegmentBuilder(Digits.toSegment(getPrecision(p).e(),
+					p.getRadix(), p.getRadix(), p.getBitRepresentation() == ResultType.NORMALISED, fp(p)));
+			return new SegmentBuilder(Digits.toSegment(getPrecision(p).e().toBigInteger(), p.getRadix(), fp(p)));
+		};
+		c.put("e", Tuple.of("e", f));
+	}
+
 	/*
 	 * Date: 11 Nov 2023 -----------------------------------------------------------
 	 * Time created: 09:01:42 ---------------------------------------------------
@@ -36,7 +93,7 @@ public class Programmer implements Evaluator<LinkedSegment>, PExpression.Params 
 		this.constants = new HashMap<>();
 		this.boundVariables = new HashMap<>();
 	}
-	
+
 	/*
 	 * Most Recent Date: 8 Oct 2022-----------------------------------------------
 	 * Most recent time created: 09:03:56--------------------------------------
@@ -354,6 +411,7 @@ public class Programmer implements Evaluator<LinkedSegment>, PExpression.Params 
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
 	 * @param expression
 	 * @return
 	 * @throws RuntimeException
@@ -366,7 +424,7 @@ public class Programmer implements Evaluator<LinkedSegment>, PExpression.Params 
 		f.format(sb);
 		return sb.toSegment();
 	}
-	
+
 	private int modifier;
 
 	private final ProgrammerLexer lexer;

@@ -162,9 +162,9 @@ public class Name extends PExpression {
 			}
 			}
 		else if (getParams().getConstants().containsKey(getName())) {
-			formatBuilder.append(Segments.constant(getParams().getConstants().get(getName()).get(), name));
+			formatBuilder.append(Segments.constant(getParams().getConstants().get(getName()).get(), getName()));
 		} else if(getParams().getBoundVariables().containsKey(getName()))
-			formatBuilder.append(Segments.boundVariable(getParams().getBoundVariables().get(getName()).get(), name));// NaN, +-Infinity, -0.0
+			formatBuilder.append(Segments.boundVariable(getParams().getBoundVariables().get(getName()).get(), getName()));// NaN, +-Infinity, -0.0
 	}
 
 	/*
@@ -201,7 +201,7 @@ public class Name extends PExpression {
 				a.add(-1);
 				sb.toSegment().toString(prs, null, a);
 				return new Name(prs.toString(), p,
-						p.getResultType() == ResultType.NORMALISED ? BinaryFP.class : BigInteger.class);
+						p.getResultType() == ResultType.NORMALISED ? BinaryFP.class : BigInteger.class).evaluate();
 			} else if (p.getBoundVariables().containsKey(name)) {
 				SegmentBuilder sb = p.getBoundVariables().get(name).get2nd().call(p);
 				StringBuilder prs = new StringBuilder();
@@ -209,7 +209,7 @@ public class Name extends PExpression {
 				a.add(-1);
 				sb.toSegment().toString(prs, null, a);
 				return new Name(prs.toString(), p,
-						p.getResultType() == ResultType.NORMALISED ? BinaryFP.class : BigInteger.class);
+						p.getResultType() == ResultType.NORMALISED ? BinaryFP.class : BigInteger.class).evaluate();
 			}
 		return this;
 	}

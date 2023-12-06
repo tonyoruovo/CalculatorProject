@@ -14,6 +14,8 @@ import static mathaid.calculator.base.typeset.Segments.*;
 import static mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.*;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +36,7 @@ import mathaid.calculator.base.util.Arith;
 import mathaid.calculator.base.util.Constants;
 import mathaid.calculator.base.util.Tuple;
 import mathaid.calculator.base.util.Utility;
+import mathaid.calculator.base.value.FloatAid;
 import mathaid.functional.Supplier;
 
 /*
@@ -168,11 +171,18 @@ public class Main {
 	// the same using segment-builder.
 
 	public static void main(String[] args) throws InterruptedException {
-		out.println(new Object[] { err, in });
-
-		Scientific s = new Scientific();
+		out.println(Arrays.toString(new Object[] { err, in, out }));
 		
-		eval(s);
+		BigDecimal n = new BigDecimal("-123567890.0123456789");
+		int fracDig = Utility.numOfFractionalDigits(n);//store the number of digits to the left of the decimal point
+		//the value below will return 0 for small mantissaDigits arguments!
+		int binDig = FloatAid.calculateSignificandDigits(10, fracDig, 2);//convert decimal fractional digits to number of binary fractional digits
+		BigInteger[] b = FloatAid.fromDecimal(n, 2, binDig);
+		String lz = Utility.string('0', b[3].abs().intValue() - b[2].bitLength());//leading zeros
+		//-111010111010111111100010010.0000001100101001000101100001111100
+		System.out.println(String.format("%1$s%2$s.%3$s%4$s", b[0].compareTo(BigInteger.valueOf(0L)) > 0 ? "-" : "", b[1].toString(2), lz, b[2].toString(2)));
+		
+//		eval(new Scientific());
 
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;

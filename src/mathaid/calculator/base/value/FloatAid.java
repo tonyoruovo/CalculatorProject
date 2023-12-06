@@ -32,14 +32,11 @@ import mathaid.calculator.base.util.Tuple.Quadruple;
  * Class name: FloatAid------------------------------------------------ 
  */
 /**
- * The {@code FloatAid} class is to the {@code Precision}, {@code FloatPoint},
- * {@code BinaryFPPrecision} and {@code BinaryFP} what {@code Math} is to java's
- * value types ({@code int}, {@code long}, {@code float} and {@code double}). It
- * also has utility methods for manipulating bits (using {@code BigInteger}),
- * fast conversion between radixes etc.
+ * The {@code FloatAid} class is to the {@code Precision}, {@code FloatPoint}, {@code BinaryFPPrecision} and {@code BinaryFP}
+ * what {@code Math} is to java's value types ({@code int}, {@code long}, {@code float} and {@code double}). It also has utility
+ * methods for manipulating bits (using {@code BigInteger}), fast conversion between radixes etc.
  * 
  * @author Oruovo Anthony Etineakpopha
- * 
  */
 public final class FloatAid {
 
@@ -58,17 +55,15 @@ public final class FloatAid {
 	 * Time created: 20:26:43--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 4 bits for
-	 * the exponent field and 4 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}.
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 4 bits for the exponent field and 4 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}.
 	 * <p>
-	 * Note that this is not standard in IEEE754, but the method is given this name
-	 * for ease of reference and grouping with other methods that return a
-	 * {@code BinaryFPPrecision}.
+	 * Note that this is not standard in IEEE754, but the method is given this name for ease of reference and grouping with other
+	 * methods that return a {@code BinaryFPPrecision}.
 	 * 
-	 * @return a {@code BinaryFPPrecision} object with 4 bits for the exponent and 4
-	 *         bits for the significand (including the implicit bit)
+	 * @return a {@code BinaryFPPrecision} object with 4 bits for the exponent and 4 bits for the significand (including the
+	 *         implicit bit)
 	 */
 	public static BinaryFPPrecision IEEE754Bit8() {
 		return IEEE754Bit8(rm("HALF_UP"));
@@ -79,17 +74,15 @@ public final class FloatAid {
 	 * Time created: 02:37:49--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 4 bits for
-	 * the exponent field and 4 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding.
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 4 bits for the exponent field and 4 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding.
 	 * <p>
-	 * Note that this is not standard in IEEE754, but the method is given this name
-	 * for ease of reference and grouping with other methods that return a
-	 * {@code BinaryFPPrecision}.
+	 * Note that this is not standard in IEEE754, but the method is given this name for ease of reference and grouping with other
+	 * methods that return a {@code BinaryFPPrecision}.
 	 * 
-	 * @return a {@code BinaryFPPrecision} object with 4 bits for the exponent and 4
-	 *         bits for the significand (including the implicit bit)
+	 * @return a {@code BinaryFPPrecision} object with 4 bits for the exponent and 4 bits for the significand (including the
+	 *         implicit bit)
 	 * @param rm a given rounding mode of the precision
 	 */
 	public static BinaryFPPrecision IEEE754Bit8(RoundingMode rm) {
@@ -101,14 +94,11 @@ public final class FloatAid {
 	 * Time created: 20:47:01--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 5 bits for
-	 * the exponent field and 11 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
-	 * half precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 5 bits for the exponent field and 11 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}. This is the same as the standard half precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's half
-	 *         precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's half precision
 	 * @see Precision#HALF
 	 */
 	public static BinaryFPPrecision IEEE754Half() {
@@ -120,14 +110,11 @@ public final class FloatAid {
 	 * Time created: 02:38:42--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 5 bits for
-	 * the exponent field and 11 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding. This is the same
-	 * as the standard half precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 5 bits for the exponent field and 11 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding. This is the same as the standard half precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's half
-	 *         precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's half precision
 	 * @see Precision#HALF
 	 * @param rm a given rounding mode of the precision
 	 */
@@ -140,14 +127,11 @@ public final class FloatAid {
 	 * Time created: 20:49:38--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 8 bits for
-	 * the exponent field and 24 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
-	 * single (or 32 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 8 bits for the exponent field and 24 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}. This is the same as the standard single (or 32 bit) precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's single (32
-	 *         bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's single (32 bit) precision
 	 * @see Precision#SINGLE
 	 */
 	public static BinaryFPPrecision IEEE754Single() {
@@ -159,14 +143,12 @@ public final class FloatAid {
 	 * Time created: 02:39:32--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 8 bits for
-	 * the exponent field and 24 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding. This is the same
-	 * as the standard single (or 32 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 8 bits for the exponent field and 24 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding. This is the same as the standard single (or 32 bit) precision in IEEE754 (hence the
+	 * name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's single (32
-	 *         bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's single (32 bit) precision
 	 * @see Precision#SINGLE
 	 * @param rm a given rounding mode of the precision
 	 */
@@ -179,14 +161,11 @@ public final class FloatAid {
 	 * Time created: 20:50:55--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 11 bits for
-	 * the exponent field and 53 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
-	 * double (or 64 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 11 bits for the exponent field and 53 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}. This is the same as the standard double (or 64 bit) precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double (64
-	 *         bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double (64 bit) precision
 	 * @see Precision#DOUBLE
 	 */
 	public static BinaryFPPrecision IEEE754Double() {
@@ -198,14 +177,12 @@ public final class FloatAid {
 	 * Time created: 02:40:11--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 11 bits for
-	 * the exponent field and 53 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding. This is the same
-	 * as the standard double (or 64 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 11 bits for the exponent field and 53 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding. This is the same as the standard double (or 64 bit) precision in IEEE754 (hence the
+	 * name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double (64
-	 *         bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double (64 bit) precision
 	 * @see Precision#DOUBLE
 	 * @param rm a given rounding mode of the precision
 	 */
@@ -218,15 +195,12 @@ public final class FloatAid {
 	 * Time created: 20:52:15--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 15 bits for
-	 * the exponent field and 65 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
-	 * double extended (a.k.a long double or 80 bit extended) precision in IEEE754
-	 * (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 15 bits for the exponent field and 65 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}. This is the same as the standard double extended (a.k.a long double or 80 bit extended)
+	 * precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double
-	 *         extended (80 bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double extended (80 bit) precision
 	 * @see Precision#EXTENDED
 	 */
 	public static BinaryFPPrecision IEEE754x86Extended() {
@@ -238,15 +212,12 @@ public final class FloatAid {
 	 * Time created: 02:40:28--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 15 bits for
-	 * the exponent field and 65 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding. This is the same
-	 * as the standard double extended (a.k.a long double or 80 bit extended)
-	 * precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 15 bits for the exponent field and 65 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding. This is the same as the standard double extended (a.k.a long double or 80 bit
+	 * extended) precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double
-	 *         extended (80 bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's double extended (80 bit) precision
 	 * @see Precision#EXTENDED
 	 * @param rm a given rounding mode of the precision
 	 */
@@ -259,14 +230,11 @@ public final class FloatAid {
 	 * Time created: 21:08:27--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 15 bits for
-	 * the exponent field and 113 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
-	 * quadruple (or 128 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 15 bits for the exponent field and 113 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}. This is the same as the standard quadruple (or 128 bit) precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's quadruple
-	 *         (128 bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's quadruple (128 bit) precision
 	 * @see Precision#QUADRUPLE
 	 */
 	public static BinaryFPPrecision IEEE754Quadruple() {
@@ -278,14 +246,12 @@ public final class FloatAid {
 	 * Time created: 02:40:47--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 15 bits for
-	 * the exponent field and 113 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding. This is the same
-	 * as the standard quadruple (or 128 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 15 bits for the exponent field and 113 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding. This is the same as the standard quadruple (or 128 bit) precision in IEEE754 (hence
+	 * the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's quadruple
-	 *         (128 bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's quadruple (128 bit) precision
 	 * @see Precision#QUADRUPLE
 	 * @param rm a given rounding mode of the precision
 	 */
@@ -298,14 +264,11 @@ public final class FloatAid {
 	 * Time created: 21:10:57--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 19 bits for
-	 * the exponent field and 237 bits for the significand (including the implicit
-	 * bit) and a of {@link RoundingMode#HALF_UP}. This is the same as the standard
-	 * octuple (or 256 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 19 bits for the exponent field and 237 bits for the significand (including the implicit bit) and a of
+	 * {@link RoundingMode#HALF_UP}. This is the same as the standard octuple (or 256 bit) precision in IEEE754 (hence the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's octuple
-	 *         (256 bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's octuple (256 bit) precision
 	 * @see Precision#OCTUPLE
 	 */
 	public static BinaryFPPrecision IEEE754Octuple() {
@@ -317,14 +280,12 @@ public final class FloatAid {
 	 * Time created: 02:41:13--------------------------------------------
 	 */
 	/**
-	 * Method for constructing a {@link BinaryFPPrecision} object which is
-	 * equivalent to creating a {@code BinaryFPPrecision} object using 19 bits for
-	 * the exponent field and 237 bits for the significand (including the implicit
-	 * bit) using a given {@code RoundingMode} object for rounding. This is the same
-	 * as the standard octuple (or 256 bit) precision in IEEE754 (hence the name).
+	 * Method for constructing a {@link BinaryFPPrecision} object which is equivalent to creating a {@code BinaryFPPrecision} object
+	 * using 19 bits for the exponent field and 237 bits for the significand (including the implicit bit) using a given
+	 * {@code RoundingMode} object for rounding. This is the same as the standard octuple (or 256 bit) precision in IEEE754 (hence
+	 * the name).
 	 * 
-	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's octuple
-	 *         (256 bit) precision
+	 * @return a {@code BinaryFPPrecision} object equivalent to IEE754's octuple (256 bit) precision
 	 * @see Precision#OCTUPLE
 	 * @param rm a given rounding mode of the precision
 	 */
@@ -337,25 +298,18 @@ public final class FloatAid {
 	 * Time created: 21:12:09--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout, to it's
-	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision}
-	 * object that contains 8 bits of precision (equivalent to
-	 * {@link #IEEE754Bit8()}). This is analogous to using
-	 * {@link Double#longBitsToDouble(long)} to create a {@code double} or using
-	 * {@link Float#intBitsToFloat(int)} to create a {@code float}, in both cases,
-	 * the value returned is the exact translation the input bit layout as specified
-	 * by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid
-	 * floating point number.
+	 * Converts the argument, which is assumed to be a bit layout, to it's corresponding {@code BinaryFP} object using a
+	 * {@code BinaryFPPrecision} object that contains 8 bits of precision (equivalent to {@link #IEEE754Bit8()}). This is analogous
+	 * to using {@link Double#longBitsToDouble(long)} to create a {@code double} or using {@link Float#intBitsToFloat(int)} to
+	 * create a {@code float}, in both cases, the value returned is the exact translation the input bit layout as specified by
+	 * IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid floating point number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param b a {@code byte} value that is the direct integer representation of
-	 *          the bit layout of the floating point value to be returned
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned does not use
-	 *         a standard IEEE754 precision but a precision equal to
-	 *         {@link #IEEE754Bit8()}.
+	 * @param b a {@code byte} value that is the direct integer representation of the bit layout of the floating point value to be
+	 *          returned
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned does not use a standard IEEE754 precision but a precision equal to {@link #IEEE754Bit8()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -368,24 +322,18 @@ public final class FloatAid {
 	 * Time created: 21:31:22--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout, to it's
-	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision}
-	 * object that contains 16 bits of precision (equivalent to
-	 * {@link #IEEE754Half()}). This is analogous to using
-	 * {@link Double#longBitsToDouble(long)} to create a {@code double} or using
-	 * {@link Float#intBitsToFloat(int)} to create a {@code float}, in both cases,
-	 * the value returned is the exact translation the input bit layout as specified
-	 * by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid
-	 * floating point number.
+	 * Converts the argument, which is assumed to be a bit layout, to it's corresponding {@code BinaryFP} object using a
+	 * {@code BinaryFPPrecision} object that contains 16 bits of precision (equivalent to {@link #IEEE754Half()}). This is analogous
+	 * to using {@link Double#longBitsToDouble(long)} to create a {@code double} or using {@link Float#intBitsToFloat(int)} to
+	 * create a {@code float}, in both cases, the value returned is the exact translation the input bit layout as specified by
+	 * IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid floating point number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param s a {@code short} value that is the direct integer representation of
-	 *          the bit layout of the floating point value to be returned
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned uses a
-	 *         standard IEEE754 precision equal to {@link #IEEE754Half()}.
+	 * @param s a {@code short} value that is the direct integer representation of the bit layout of the floating point value to be
+	 *          returned
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned uses a standard IEEE754 precision equal to {@link #IEEE754Half()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -398,23 +346,18 @@ public final class FloatAid {
 	 * Time created: 21:36:02--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout, to it's
-	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision}
-	 * object that contains 32 bits of precision (equivalent to
-	 * {@link #IEEE754Single()}). This is the same as using
-	 * {@link Float#intBitsToFloat(int)} to create a {@code float}, the value
-	 * returned is the exact translation the input bit layout as specified by
-	 * IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid
-	 * floating point number.
+	 * Converts the argument, which is assumed to be a bit layout, to it's corresponding {@code BinaryFP} object using a
+	 * {@code BinaryFPPrecision} object that contains 32 bits of precision (equivalent to {@link #IEEE754Single()}). This is the
+	 * same as using {@link Float#intBitsToFloat(int)} to create a {@code float}, the value returned is the exact translation the
+	 * input bit layout as specified by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid floating point
+	 * number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param i an {@code int} value that is the direct integer representation of
-	 *          the bit layout of the floating point value to be returned
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned uses a
-	 *         standard IEEE754 precision equal to {@link #IEEE754Single()}.
+	 * @param i an {@code int} value that is the direct integer representation of the bit layout of the floating point value to be
+	 *          returned
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned uses a standard IEEE754 precision equal to {@link #IEEE754Single()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -427,23 +370,18 @@ public final class FloatAid {
 	 * Time created: 21:38:32--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout, to it's
-	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision}
-	 * object that contains 64 bits of precision (equivalent to
-	 * {@link #IEEE754Double()}). This is the same as using
-	 * {@link Double#longBitsToDouble(long)} to create a {@code double}, the value
-	 * returned is the exact translation the input bit layout as specified by
-	 * IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid
-	 * floating point number.
+	 * Converts the argument, which is assumed to be a bit layout, to it's corresponding {@code BinaryFP} object using a
+	 * {@code BinaryFPPrecision} object that contains 64 bits of precision (equivalent to {@link #IEEE754Double()}). This is the
+	 * same as using {@link Double#longBitsToDouble(long)} to create a {@code double}, the value returned is the exact translation
+	 * the input bit layout as specified by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid floating point
+	 * number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param l a {@code long} value that is the direct integer representation of
-	 *          the bit layout of the floating point value to be returned
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned uses a
-	 *         standard IEEE754 precision equal to {@link #IEEE754Double()}.
+	 * @param l a {@code long} value that is the direct integer representation of the bit layout of the floating point value to be
+	 *          returned
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned uses a standard IEEE754 precision equal to {@link #IEEE754Double()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -456,33 +394,23 @@ public final class FloatAid {
 	 * Time created: 21:50:48--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout of 80 bits split
-	 * into 64 most significant bits and 16 least significant bits, to it's
-	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision}
-	 * object that contains 80 bits of precision (equivalent to
-	 * {@link #IEEE754x86Extended()}). This is analogous to using
-	 * {@link Double#longBitsToDouble(long)} to create a {@code double} or using
-	 * {@link Float#intBitsToFloat(int)} to create a {@code float}, in both cases,
-	 * the value returned is the exact translation the input bit layout as specified
-	 * by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid
-	 * floating point number.
+	 * Converts the argument, which is assumed to be a bit layout of 80 bits split into 64 most significant bits and 16 least
+	 * significant bits, to it's corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision} object that contains 80
+	 * bits of precision (equivalent to {@link #IEEE754x86Extended()}). This is analogous to using
+	 * {@link Double#longBitsToDouble(long)} to create a {@code double} or using {@link Float#intBitsToFloat(int)} to create a
+	 * {@code float}, in both cases, the value returned is the exact translation the input bit layout as specified by IEEE754, this
+	 * may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid floating point number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param high a {@code long} value that is high 64 bits of the direct integer
-	 *             representation of the bit layout of the floating point value to
-	 *             be returned. The high 64 bits of an integer are the first 64 bits
-	 *             from the left (in big-endian format) or the first 64 bits from
-	 *             the right (in big-endian format).
-	 * @param low  a {@code short} value that is low 16 bits of the direct integer
-	 *             representation of the bit layout of the floating point value to
-	 *             be returned. The low 16 bits of an integer are the last 16 bits
-	 *             from the left (in big-endian format) or the last 16 bits from the
-	 *             right (in big-endian format).
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned uses a
-	 *         standard IEEE754 precision equal to {@link #IEEE754x86Extended()}.
+	 * @param high a {@code long} value that is high 64 bits of the direct integer representation of the bit layout of the floating
+	 *             point value to be returned. The high 64 bits of an integer are the first 64 bits from the left (in big-endian
+	 *             format) or the first 64 bits from the right (in big-endian format).
+	 * @param low  a {@code short} value that is low 16 bits of the direct integer representation of the bit layout of the floating
+	 *             point value to be returned. The low 16 bits of an integer are the last 16 bits from the left (in big-endian
+	 *             format) or the last 16 bits from the right (in big-endian format).
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned uses a standard IEEE754 precision equal to {@link #IEEE754x86Extended()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -495,33 +423,23 @@ public final class FloatAid {
 	 * Time created: 21:50:48--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout of 128 bits split
-	 * into 64 most significant bits and 64 least significant bits, to it's
-	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision}
-	 * object that contains 128 bits of precision (equivalent to
-	 * {@link #IEEE754Quadruple()}). This is analogous to using
-	 * {@link Double#longBitsToDouble(long)} to create a {@code double} or using
-	 * {@link Float#intBitsToFloat(int)} to create a {@code float}, in both cases,
-	 * the value returned is the exact translation the input bit layout as specified
-	 * by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid
-	 * floating point number.
+	 * Converts the argument, which is assumed to be a bit layout of 128 bits split into 64 most significant bits and 64 least
+	 * significant bits, to it's corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision} object that contains 128
+	 * bits of precision (equivalent to {@link #IEEE754Quadruple()}). This is analogous to using
+	 * {@link Double#longBitsToDouble(long)} to create a {@code double} or using {@link Float#intBitsToFloat(int)} to create a
+	 * {@code float}, in both cases, the value returned is the exact translation the input bit layout as specified by IEEE754, this
+	 * may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a valid floating point number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param high a {@code long} value that is high 64 bits of the direct integer
-	 *             representation of the bit layout of the floating point value to
-	 *             be returned. The high 64 bits of an integer are the first 64 bits
-	 *             from the left (in big-endian format) or the first 64 bits from
-	 *             the right (in big-endian format).
-	 * @param low  a {@code long} value that is low 64 bits of the direct integer
-	 *             representation of the bit layout of the floating point value to
-	 *             be returned. The low 64 bits of an integer are the last 64 bits
-	 *             from the left (in big-endian format) or the last 64 bits from the
-	 *             right (in big-endian format).
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned uses a
-	 *         standard IEEE754 precision equal to {@link #IEEE754Quadruple()}.
+	 * @param high a {@code long} value that is high 64 bits of the direct integer representation of the bit layout of the floating
+	 *             point value to be returned. The high 64 bits of an integer are the first 64 bits from the left (in big-endian
+	 *             format) or the first 64 bits from the right (in big-endian format).
+	 * @param low  a {@code long} value that is low 64 bits of the direct integer representation of the bit layout of the floating
+	 *             point value to be returned. The low 64 bits of an integer are the last 64 bits from the left (in big-endian
+	 *             format) or the last 64 bits from the right (in big-endian format).
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned uses a standard IEEE754 precision equal to {@link #IEEE754Quadruple()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -534,24 +452,18 @@ public final class FloatAid {
 	 * Time created: 22:33:01--------------------------------------------
 	 */
 	/**
-	 * Converts the argument, which is assumed to be a bit layout of 256 bits split
-	 * into 64 bits pairs in big-endian order, to it's corresponding
-	 * {@code BinaryFP} object using a {@code BinaryFPPrecision} object that
-	 * contains 256 bits of precision (equivalent to {@link #IEEE754Octuple()}).
-	 * This is analogous to using {@link Double#longBitsToDouble(long)} to create a
-	 * {@code double} or using {@link Float#intBitsToFloat(int)} to create a
-	 * {@code float}, in both cases, the value returned is the exact translation the
-	 * input bit layout as specified by IEEE754, this may be an NaN, an Infinity, a
-	 * Zero (-0.0, +0.0) or a valid floating point number.
+	 * Converts the argument, which is assumed to be a bit layout of 256 bits split into 64 bits pairs in big-endian order, to it's
+	 * corresponding {@code BinaryFP} object using a {@code BinaryFPPrecision} object that contains 256 bits of precision
+	 * (equivalent to {@link #IEEE754Octuple()}). This is analogous to using {@link Double#longBitsToDouble(long)} to create a
+	 * {@code double} or using {@link Float#intBitsToFloat(int)} to create a {@code float}, in both cases, the value returned is the
+	 * exact translation the input bit layout as specified by IEEE754, this may be an NaN, an Infinity, a Zero (-0.0, +0.0) or a
+	 * valid floating point number.
 	 * <p>
-	 * Please see the {@link Precision} documentation for details on what a floating
-	 * point bit layout is.
+	 * Please see the {@link Precision} documentation for details on what a floating point bit layout is.
 	 * 
-	 * @param layout a {@link Tuple.Quadruple} that contains 64 bits in each slot
-	 *               grouped in big-endian order
-	 * @return a {@code BinaryFP} object which is the floating point representation
-	 *         of the bit layout argument. Note that the value returned uses a
-	 *         standard IEEE754 precision equal to {@link #IEEE754Octuple()}.
+	 * @param layout a {@link Tuple.Quadruple} that contains 64 bits in each slot grouped in big-endian order
+	 * @return a {@code BinaryFP} object which is the floating point representation of the bit layout argument. Note that the value
+	 *         returned uses a standard IEEE754 precision equal to {@link #IEEE754Octuple()}.
 	 * @see Float#intBitsToFloat(int)
 	 * @see Double#longBitsToDouble(long)
 	 */
@@ -565,16 +477,12 @@ public final class FloatAid {
 	 * Time created: 22:11:45--------------------------------------------
 	 */
 	/**
-	 * Creates a {@code BinaryFP} representing 32 bit floating point number from a
-	 * {@code float}
+	 * Creates a {@code BinaryFP} representing 32 bit floating point number from a {@code float}
 	 * 
-	 * @param f a {@code float} value, this includes {@link Float#isNaN()},
-	 *          {@link Float#POSITIVE_INFINITY}, {@link Float#NEGATIVE_INFINITY},
-	 *          -0.0f
-	 * @return a {@code BinaryFP} representation of the {@code float} argument using
-	 *         a {@linkplain BinaryFPPrecision precision object} that uses 8 bit
-	 *         exponent field and 24 bit significand to interpret values (similar to
-	 *         a {@code float}).
+	 * @param f a {@code float} value, this includes {@link Float#isNaN()}, {@link Float#POSITIVE_INFINITY},
+	 *          {@link Float#NEGATIVE_INFINITY}, -0.0f
+	 * @return a {@code BinaryFP} representation of the {@code float} argument using a {@linkplain BinaryFPPrecision precision
+	 *         object} that uses 8 bit exponent field and 24 bit significand to interpret values (similar to a {@code float}).
 	 */
 	public static BinaryFPPrecision.BinaryFP createFP(float f) {
 		return IEEE754Single().createFP(Float.toString(f));
@@ -585,16 +493,12 @@ public final class FloatAid {
 	 * Time created: 22:19:38--------------------------------------------
 	 */
 	/**
-	 * Creates a {@code BinaryFP} representing 64 bit floating point number from a
-	 * {@code float}
+	 * Creates a {@code BinaryFP} representing 64 bit floating point number from a {@code float}
 	 * 
-	 * @param d a {@code double} value, this includes {@link Double#isNaN()},
-	 *          {@link Double#POSITIVE_INFINITY}, {@link Double#NEGATIVE_INFINITY},
-	 *          -0.0d
-	 * @return a {@code BinaryFP} representation of the {@code double} argument
-	 *         using a {@linkplain BinaryFPPrecision precision object} that uses 11
-	 *         bit exponent field and 53 bit significand to interpret values
-	 *         (similar to a {@code double}).
+	 * @param d a {@code double} value, this includes {@link Double#isNaN()}, {@link Double#POSITIVE_INFINITY},
+	 *          {@link Double#NEGATIVE_INFINITY}, -0.0d
+	 * @return a {@code BinaryFP} representation of the {@code double} argument using a {@linkplain BinaryFPPrecision precision
+	 *         object} that uses 11 bit exponent field and 53 bit significand to interpret values (similar to a {@code double}).
 	 */
 	public static BinaryFPPrecision.BinaryFP createFP(double d) {
 		return IEEE754Double().createFP(Double.toString(d));
@@ -605,11 +509,9 @@ public final class FloatAid {
 	 * Time created: 14:45:00--------------------------------------------
 	 */
 	/**
-	 * Performs a radix-based right shift on the given {@code BigInteger} and
-	 * returns the shifted value as the result. The difference between a radix-based
-	 * shift and {@link BigInteger#shiftRight(int)} is that the latter is a binary
-	 * right shift while the former is a shift based on the given radix. For
-	 * example:
+	 * Performs a radix-based right shift on the given {@code BigInteger} and returns the shifted value as the result. The
+	 * difference between a radix-based shift and {@link BigInteger#shiftRight(int)} is that the latter is a binary right shift
+	 * while the former is a shift based on the given radix. For example:
 	 * 
 	 * <pre>
 	 * <code>
@@ -622,11 +524,9 @@ public final class FloatAid {
 	 * @param n      the {@code BigInteger} as the value to be shifted
 	 * @param places the number of places to the right that this will be shifted
 	 * @param radix  the radix in which the sift is done
-	 * @return returns the {@code BigInteger} argument right shifted to the given
-	 *         first {@code int} argument in the radix of the second {@code int}
-	 *         argument. This may cause a zero value to be returned, if the digits
-	 *         in the specified radix is less than the given <i>right-shift</i>
-	 *         places.
+	 * @return returns the {@code BigInteger} argument right shifted to the given first {@code int} argument in the radix of the
+	 *         second {@code int} argument. This may cause a zero value to be returned, if the digits in the specified radix is less
+	 *         than the given <i>right-shift</i> places.
 	 */
 	public static BigInteger shiftRight(BigInteger n, int places, int radix) {
 		if (places < 0)
@@ -643,10 +543,9 @@ public final class FloatAid {
 	 * Time created: 14:53:13--------------------------------------------
 	 */
 	/**
-	 * Performs a radix-based left shift on the given {@code BigInteger} and returns
-	 * the shifted value as the result. The difference between a radix-based shift
-	 * and {@link BigInteger#shiftLeft(int)} is that the latter is a binary left
-	 * shift while the former is a shift based on the given radix. For example:
+	 * Performs a radix-based left shift on the given {@code BigInteger} and returns the shifted value as the result. The difference
+	 * between a radix-based shift and {@link BigInteger#shiftLeft(int)} is that the latter is a binary left shift while the former
+	 * is a shift based on the given radix. For example:
 	 * 
 	 * <pre>
 	 * <code>
@@ -656,15 +555,13 @@ public final class FloatAid {
 	 * </code>
 	 * </pre>
 	 * 
-	 * This will return zero if (and only if) the the {@code BigInteger} argument is
-	 * 0.
+	 * This will return zero if (and only if) the the {@code BigInteger} argument is 0.
 	 * 
 	 * @param n      the {@code BigInteger} as the value to be shifted
 	 * @param places the number of places to the left that this will be shifted
 	 * @param radix  the radix in which the sift is done
-	 * @return returns the {@code BigInteger} argument left shifted to the given
-	 *         first {@code int} argument in the radix of the second {@code int}
-	 *         argument.
+	 * @return returns the {@code BigInteger} argument left shifted to the given first {@code int} argument in the radix of the
+	 *         second {@code int} argument.
 	 */
 	public static BigInteger shiftLeft(BigInteger n, int places, int radix) {
 		if (places < 0)
@@ -677,8 +574,8 @@ public final class FloatAid {
 	 * Time created: 22:42:51--------------------------------------------
 	 */
 	/**
-	 * Switches off the first <code><i>n</i></code> bits from the left (most
-	 * significant bits a.k.a MSB) in the given {@code BigInteger} by doing:
+	 * Switches off the first <code><i>n</i></code> bits from the left (most significant bits a.k.a MSB) in the given
+	 * {@code BigInteger} by doing:
 	 * 
 	 * <pre>
 	 * <code>
@@ -687,12 +584,10 @@ public final class FloatAid {
 	 * </code>
 	 * </pre>
 	 * 
-	 * @param i the {@code BigInteger} value whose most significant bits is to be
-	 *          cleared.
+	 * @param i the {@code BigInteger} value whose most significant bits is to be cleared.
 	 * @param n the number of high bits to be cleared.
-	 * @return {@code i} with the high <code><i>n</i></code> bits cleared. Returns
-	 *         <code>i</code> if {@code n == 0} and returns {@code 0} if
-	 *         {@code i == 0}
+	 * @return {@code i} with the high <code><i>n</i></code> bits cleared. Returns <code>i</code> if {@code n == 0} and returns
+	 *         {@code 0} if {@code i == 0}
 	 * @throws ArithmeticException if {@code i.bitLength() < n}
 	 */
 	public static BigInteger clearMSB(BigInteger i, int n) throws ArithmeticException {
@@ -703,13 +598,12 @@ public final class FloatAid {
 	}
 
 	/**
-	 * Gets the first <span style="font-style:italic">n</span> bits (or more technically, the
-	 * the first <span style="font-style:italic">n</span> high order or most significant bits)
-	 * in the given {@code BigInteger} and returns it as a {@code BigInteger}.
+	 * Gets the first <span style="font-style:italic">n</span> bits (or more technically, the the first
+	 * <span style="font-style:italic">n</span> high order or most significant bits) in the given {@code BigInteger} and returns it
+	 * as a {@code BigInteger}.
 	 * 
 	 * @param i a {@code BigInteger}
-	 * @param n the number of most significant bits to be extracted from the {@code BigInteger}
-	 * value
+	 * @param n the number of most significant bits to be extracted from the {@code BigInteger} value
 	 * @throws ArithmeticException if {@code i.bitLength() < n}
 	 */
 	public static BigInteger getHigh(BigInteger i, int n) throws ArithmeticException {
@@ -721,13 +615,12 @@ public final class FloatAid {
 	}
 
 	/**
-	 * Gets the last <span style="font-style:italic">n</span> bits (or more technically, the
-	 * the first <span style="font-style:italic">n</span> low order or least significant bits)
-	 * in the given {@code BigInteger} and returns it as a {@code BigInteger}.
+	 * Gets the last <span style="font-style:italic">n</span> bits (or more technically, the the first
+	 * <span style="font-style:italic">n</span> low order or least significant bits) in the given {@code BigInteger} and returns it
+	 * as a {@code BigInteger}.
 	 * 
 	 * @param i a {@code BigInteger}
-	 * @param n the number of least significant bits to be extracted from the {@code BigInteger}
-	 * value
+	 * @param n the number of least significant bits to be extracted from the {@code BigInteger} value
 	 * @throws ArithmeticException if {@code i.bitLength() < n}
 	 */
 	public static BigInteger getLow(BigInteger i, int n) throws ArithmeticException {
@@ -741,14 +634,12 @@ public final class FloatAid {
 	 * Time created: 22:56:36--------------------------------------------
 	 */
 	/**
-	 * Converts {@code numOfDigits} which is assumed to be in {@code fromRadix} to
-	 * it's equivalent truncated representation in {@code toRadix}.
+	 * Converts {@code numOfDigits} which is assumed to be in {@code fromRadix} to it's equivalent truncated representation in
+	 * {@code toRadix}.
 	 * <p>
-	 * This is useful for telling how many mantissa (or significand) a certain
-	 * number converted from one radix to the another will have, hence the name of
-	 * the method. For example, a binary fraction
-	 * {@code 1.1011 1101 0000 1111 1111 0010} will have exactly 7 digits of
-	 * mantissa after converted to decimal by doing:
+	 * This is useful for telling how many mantissa (or significand) a certain number converted from one radix to the another will
+	 * have, hence the name of the method. For example, a binary fraction {@code 1.1011 1101 0000 1111 1111 0010} will have exactly
+	 * 7 digits of mantissa after converted to decimal by doing:
 	 * 
 	 * <pre>
 	 * <code> int digits = calculateSignificandDigits(2, 24, 10);// 7 </code>
@@ -763,8 +654,7 @@ public final class FloatAid {
 	 * </code>
 	 * </pre>
 	 * 
-	 * to know how many digits is in the decimal representation of the
-	 * {@code BigInteger}.
+	 * to know how many digits is in the decimal representation of the {@code BigInteger}.
 	 * 
 	 * @param fromRadix   the radix of the {@code numOfDigits}
 	 * @param numOfDigits the number of significant digits
@@ -782,14 +672,12 @@ public final class FloatAid {
 	 * Time created: 07:07:17--------------------------------------------
 	 */
 	/**
-	 * Converts {@code numOfDigits} which is assumed to be in {@code fromRadix} to
-	 * it's equivalent truncated representation in {@code toRadix}.
+	 * Converts {@code numOfDigits} which is assumed to be in {@code fromRadix} to it's equivalent truncated representation in
+	 * {@code toRadix}.
 	 * <p>
-	 * This is useful for telling how many mantissa (or significand) a certain
-	 * number converted from one radix to the another will have, hence the name of
-	 * the method. For example, a binary fraction
-	 * {@code 1.1011 1101 0000 1111 1111 0010} will have exactly 7 digits of
-	 * mantissa after converted to decimal by doing:
+	 * This is useful for telling how many mantissa (or significand) a certain number converted from one radix to the another will
+	 * have, hence the name of the method. For example, a binary fraction {@code 1.1011 1101 0000 1111 1111 0010} will have exactly
+	 * 7 digits of mantissa after converted to decimal by doing:
 	 * 
 	 * <pre>
 	 * <code> BigInteger digits = calculateSignificandDigits(2, i(24), 10);// 7 </code>
@@ -804,8 +692,7 @@ public final class FloatAid {
 	 * </code>
 	 * </pre>
 	 * 
-	 * to know how many digits is in the decimal representation of the
-	 * {@code BigInteger}.
+	 * to know how many digits is in the decimal representation of the {@code BigInteger}.
 	 * 
 	 * @param fromRadix   the radix of the {@code numOfDigits}
 	 * @param numOfDigits the number of significant digits
@@ -816,8 +703,7 @@ public final class FloatAid {
 	static BigInteger calculateSignificandDigits(int fromRadix, BigInteger numOfDigits, int toRadix)
 			throws ArithmeticException {
 //		return (int) Math.ceil(numOfDigits * FastMath.log(toRadix, fromRadix));
-		return d(numOfDigits).multiply(log(d(toRadix), d(fromRadix), mc(Integer.MAX_VALUE)))
-				.toBigInteger();
+		return d(numOfDigits).multiply(log(d(toRadix), d(fromRadix), mc(Integer.MAX_VALUE))).toBigInteger();
 	}
 
 	/*
@@ -825,8 +711,7 @@ public final class FloatAid {
 	 * Time created: 23:15:00--------------------------------------------
 	 */
 	/**
-	 * Checks if the first argument is null then return it if it isn't or else
-	 * returns the second argument
+	 * Checks if the first argument is null then return it if it isn't or else returns the second argument
 	 * 
 	 * @param <T>         the type of object to tested and returned
 	 * @param s           the current value
@@ -842,13 +727,11 @@ public final class FloatAid {
 	 * Time created: 23:19:11--------------------------------------------
 	 */
 	/**
-	 * Calculates and returns an unsigned {@code BigInteger} whose bit length is exactly
-	 * {@code numOfBits} with all bits set to 1. Will return -1 if the argument is
-	 * negative and 0 if the argument is 0.
+	 * Calculates and returns an unsigned {@code BigInteger} whose bit length is exactly {@code numOfBits} with all bits set to 1.
+	 * Will return -1 if the argument is negative and 0 if the argument is 0.
 	 * 
 	 * @param numOfBits the bit length of the returned value
-	 * @return an unsigned {@code BigInteger} that has a bit length and bit count is specified
-	 *         by the argument
+	 * @return an unsigned {@code BigInteger} that has a bit length and bit count is specified by the argument
 	 */
 	public static BigInteger getAllOnes(int numOfBits) {
 		return i(1).shiftLeft(numOfBits).subtract(i(1));
@@ -859,13 +742,10 @@ public final class FloatAid {
 	 * Time created: 23:22:47--------------------------------------------
 	 */
 	/**
-	 * Calculates and returns a {@code BigInteger} whose bit count is 1 and bit
-	 * length is the argument + 1 i.e value where {@code 1 << numOfTrailingZeros}.
-	 * Will return 0 if the argument is negative and will return 1 if the argument
-	 * is 0.
+	 * Calculates and returns a {@code BigInteger} whose bit count is 1 and bit length is the argument + 1 i.e value where
+	 * {@code 1 << numOfTrailingZeros}. Will return 0 if the argument is negative and will return 1 if the argument is 0.
 	 * 
-	 * @param numOfTrailingZeros the number of off bits (zeros) in the returned
-	 *                           value
+	 * @param numOfTrailingZeros the number of off bits (zeros) in the returned value
 	 * @return {@code 1 << numOfTrailingZeros}
 	 */
 	public static BigInteger getTrailingZeros(int numOfTrailingZeros) {
@@ -877,14 +757,12 @@ public final class FloatAid {
 	 * Time created: 23:31:16--------------------------------------------
 	 */
 	/**
-	 * Computes <code>radix<sup>exponent</sup></code> and returns the result as a
-	 * {@code BigInteger}.
+	 * Computes <code>radix<sup>exponent</sup></code> and returns the result as a {@code BigInteger}.
 	 * 
 	 * @param radix    the base of the exponent
 	 * @param exponent the value by which radix is to be raised
 	 * @return <code>radix<sup>exponent</sup></code>
-	 * @throws ArithmeticException      if {@code exponent} is negative. (This would
-	 *                                  cause the operation to yield a non-integer
+	 * @throws ArithmeticException      if {@code exponent} is negative. (This would cause the operation to yield a non-integer
 	 *                                  value.)
 	 * @throws IllegalArgumentException if radix < 2
 	 */
@@ -904,31 +782,26 @@ public final class FloatAid {
 	 * Time created: 23:51:15--------------------------------------------
 	 */
 	/**
-	 * Decomposes the {@code BigDecimal} argument to a 4-length {@code BigInteger}
-	 * array using a fast version of the basic secondary school algorithm for
-	 * converting decimals to other bases. The returned array contains the
-	 * following:
+	 * Decomposes the {@code BigDecimal} argument to a 4-length {@code BigInteger} array using a fast version of the basic secondary
+	 * school algorithm for converting decimals to other bases. The returned array contains the following:
 	 * <ol>
-	 * <li>The sign of the {@code BigDecimal} argument represented by 0 for
-	 * non-negative arguments and 1 for negative arguments.</li>
+	 * <li>The sign of the {@code BigDecimal} argument represented by 0 for non-negative arguments and 1 for negative
+	 * arguments.</li>
 	 * <li>The integer portion of the argument.</li>
-	 * <li>The mantissa, without any leading zero (but may have lots of trailing
-	 * ones), in a form that exactly represents the mantissa of the value without
-	 * any leading zero. This may not have the same amount of digits as is specified
-	 * in {@code mantissaDigits} argument due to leading zeros making up for the
-	 * rest. Leading zeros may also cause this value to be zero even when
-	 * {@code mantissaDigits} is greater than 0.</li>
-	 * <li>The number of mantissa digits in the third index of the array, this
-	 * includes leading and trailing zeros. This value, when not a zero, is always
-	 * negative. In reality, if the mantissa is not zero this value is
-	 * {@code -mantissaDigits} else it is {@code 0}.</li>
+	 * <li>The mantissa, without any leading zero (but may have lots of trailing ones), in a form that exactly represents the
+	 * mantissa of the value. This may not have the same amount of digits as is specified in {@code mantissaDigits} argument due to
+	 * leading zeros making up for the rest. Leading zeros may also cause this value to be zero even when {@code mantissaDigits} is
+	 * greater than 0.</li>
+	 * <li>The number of mantissa digits in the third index of the array, this includes leading and trailing zeros. This value, when
+	 * not a zero, is always negative. In reality, if the mantissa is not zero this value is {@code -mantissaDigits} else it is
+	 * {@code 0}.</li>
 	 * </ol>
 	 * The following code describes the process:
 	 * 
 	 * <pre>
 	 * <code>
 	 *	BigDecimal n = new BigDecimal("-123567890.0123456789");
-	 *	int fracDig = Utility.numOfFractionalDigits(n);//store the number of digits to the left of the decimal point
+	 *	int fracDig = Utility.numOfFractionalDigits(n);//store the number of digits to the right of the decimal point
 	 *	//the value below will return 0 for small mantissaDigits arguments!
 	 *	int binDig = FloatAid.calculateSignificandDigits(10, fracDig, 2);//convert decimal fractional digits to number of binary fractional digits
 	 *	BigInteger[] b = FloatAid.fromDecimal(n, 2, binDig);
@@ -945,25 +818,16 @@ public final class FloatAid {
 	 * 
 	 * @param n              the value from which the radix conversion is to be made
 	 * @param radix          the radix of the final result
-	 * @param mantissaDigits the number of digits needed in the mantissa portion.
-	 *                       This includes leading and trailing zeros
-	 * @return a 4-length {@code BigInteger} array containing the sign, integer,
-	 *         mantissa and exponent
+	 * @param mantissaDigits the number of digits needed in the mantissa portion. This includes leading and trailing zeros
+	 * @return a 4-length {@code BigInteger} array containing the sign, integer, mantissa and exponent
 	 * @throws ArithmeticException      if {@code mantissaDigit < 0}
-	 * @throws IllegalArgumentException if
-	 *                                  <code>radix < {@link Character#MIN_RADIX}</code>
-	 * 
-	 * @implNote While this method supports radixes bigger than
-	 *           {@link Character#MAX_RADIX}, {@code BigInteger} cannot represent
-	 *           strings of radix higher than {@link Character#MAX_RADIX}. As such,
-	 *           the point of using a radix bigger than {@link Character#MAX_RADIX}
-	 *           is moot unless the user has an alternative way to represent the
-	 *           string in the given radix of their choice, e.g a static method than
-	 *           convert a {@code BigInteger} to it's corresponding string in a
+	 * @throws IllegalArgumentException if <code>radix < {@link Character#MIN_RADIX}</code>
+	 * @implNote While this method supports radixes bigger than {@link Character#MAX_RADIX}, {@code BigInteger} cannot represent
+	 *           strings of radix higher than {@link Character#MAX_RADIX}. As such, the point of using a radix bigger than
+	 *           {@link Character#MAX_RADIX} is moot unless the user has an alternative way to represent the string in the given
+	 *           radix of their choice, e.g a static method than convert a {@code BigInteger} to it's corresponding string in a
 	 *           radix above {@link Character#MAX_RADIX}.
-	 * 
-	 * @apiNote In future releases, I aim to include argument for rounding at a
-	 *          specified point in the mantissa
+	 * @apiNote In future releases, I aim to include argument for rounding at a specified point in the mantissa
 	 */
 	public static BigInteger[] fromDecimal(BigDecimal n, int radix, int mantissaDigits/* , boolean binaryRound */)
 			throws ArithmeticException, IllegalArgumentException {
@@ -989,9 +853,8 @@ public final class FloatAid {
 	 * Time created: 19:31:54--------------------------------------------
 	 */
 	/**
-	 * Computes the decimal equivalent of the non-negative fraction represented in a
-	 * certain radix and returns the result as a {@code BigDecimal} using the
-	 * algorithm:<br>
+	 * Computes the decimal equivalent of the non-negative fraction represented in a certain radix and returns the result as a
+	 * {@code BigDecimal} using the algorithm:<br>
 	 * let {@code nonZeroMantissaSignificand} be x, <br>
 	 * let {@code radix} be r, <br>
 	 * let {@code numOfLeadingZeros} be z, <br>
@@ -1001,10 +864,8 @@ public final class FloatAid {
 	 * <code>x &div; r<sup>z + n</sup></code>
 	 * </pre>
 	 * 
-	 * using the provided {@code MathContext} to round the result. This algorithm is
-	 * faster and more efficient than the brute force iterative division taught in
-	 * secondary school (on which the
-	 * {@link Utility#toDecimal(String, Radix, Precision)} is based)
+	 * using the provided {@code MathContext} to round the result. This algorithm is faster and more efficient than the brute force
+	 * iterative division taught in secondary school (on which the {@link Utility#toDecimal(String, Radix, Precision)} is based)
 	 * <p>
 	 * For example to convert <code>0.00abed<sub>16</sub></code> do:
 	 * 
@@ -1023,35 +884,24 @@ public final class FloatAid {
 	 * </code>
 	 * </pre>
 	 * 
-	 * Note that this method is intended for non-negative values in the range (0,
-	 * 1), the value returned is always within this range.
+	 * Note that this method is intended for non-negative values in the range (0, 1), the value returned is always within this
+	 * range.
 	 * 
-	 * @param nonZeroMantissaSignificand the non-negative significant digits of the
-	 *                                   mantissa portion of a value. The
-	 *                                   significant digits of a mantissa are all
-	 *                                   the digits after the radix point beginning
-	 *                                   with the first non-zero digit. e.g in
-	 *                                   0.02345 the significant mantissa is 2345
-	 * @param numOfLeadingZeros          the number of leading zero(s) after the
-	 *                                   decimal point. This does not include
-	 *                                   zero(s) inside the significand (of the
-	 *                                   mantissa) or trailing zero(s).
-	 * @param radix                      the base that the argument is represented
-	 *                                   in
+	 * @param nonZeroMantissaSignificand the non-negative significant digits of the mantissa portion of a value. The significant
+	 *                                   digits of a mantissa are all the digits after the radix point beginning with the first
+	 *                                   non-zero digit. e.g in 0.02345 the significant mantissa is 2345
+	 * @param numOfLeadingZeros          the number of leading zero(s) after the decimal point. This does not include zero(s) inside
+	 *                                   the significand (of the mantissa) or trailing zero(s).
+	 * @param radix                      the base that the argument is represented in
 	 * @param mc                         a rounding context
 	 * @return a {@code BigDecimal} in which is equivalent to the argument.
-	 * @throws ArithmeticException      if
-	 *                                  <code>nonZeroMantissaSignificand &lt; 0</code>
-	 *                                  or if <code>numOfLeadingZeros &lt; 0</code>
+	 * @throws ArithmeticException      if <code>nonZeroMantissaSignificand &lt; 0</code> or if
+	 *                                  <code>numOfLeadingZeros &lt; 0</code>
 	 * @throws IllegalArgumentException if radix &lt; 2
-	 * 
-	 * @implNote While this method supports radixes bigger than
-	 *           {@link Character#MAX_RADIX}, {@code BigInteger} cannot represent
-	 *           strings of radix higher than {@link Character#MAX_RADIX}. As such,
-	 *           the point of using a radix bigger than {@link Character#MAX_RADIX}
-	 *           is moot unless the user has an alternative way to represent the
-	 *           string in the given radix of their choice, e.g a static method than
-	 *           convert a {@code BigInteger} to it's corresponding string in a
+	 * @implNote While this method supports radixes bigger than {@link Character#MAX_RADIX}, {@code BigInteger} cannot represent
+	 *           strings of radix higher than {@link Character#MAX_RADIX}. As such, the point of using a radix bigger than
+	 *           {@link Character#MAX_RADIX} is moot unless the user has an alternative way to represent the string in the given
+	 *           radix of their choice, e.g a static method than convert a {@code BigInteger} to it's corresponding string in a
 	 *           radix above {@link Character#MAX_RADIX}.
 	 */
 	public static BigDecimal toDecimal(BigInteger nonZeroMantissaSignificand, int numOfLeadingZeros, int radix,
@@ -1069,22 +919,15 @@ public final class FloatAid {
 	 * Time created: 20:38:02--------------------------------------------
 	 */
 	/**
-	 * Does the same work as {@link #toDecimal(BigInteger, int, int, MathContext)}
-	 * but with a provided non-negative integer.
+	 * Does the same work as {@link #toDecimal(BigInteger, int, int, MathContext)} but with a provided non-negative integer.
 	 * 
 	 * @param integer                    the non-negative integer part of the number
-	 * @param nonZeroMantissaSignificand the non-negative significant digits of the
-	 *                                   mantissa portion of a value. The
-	 *                                   significant digits of a mantissa are all
-	 *                                   the digits after the radix point beginning
-	 *                                   with the first non-zero digit. e.g in
-	 *                                   1.02345 the significant mantissa is 2345
-	 * @param numOfLeadingZeros          the number of leading zero(s) after the
-	 *                                   decimal point. This does not include
-	 *                                   zero(s) inside the significand (of the
-	 *                                   mantissa) or trailing zero(s).
-	 * @param radix                      the base that the argument is represented
-	 *                                   in
+	 * @param nonZeroMantissaSignificand the non-negative significant digits of the mantissa portion of a value. The significant
+	 *                                   digits of a mantissa are all the digits after the radix point beginning with the first
+	 *                                   non-zero digit. e.g in 1.02345 the significant mantissa is 2345
+	 * @param numOfLeadingZeros          the number of leading zero(s) after the decimal point. This does not include zero(s) inside
+	 *                                   the significand (of the mantissa) or trailing zero(s).
+	 * @param radix                      the base that the argument is represented in
 	 * @param mc                         a rounding context
 	 * @return a {@code BigDecimal} in which is equivalent to the argument.
 	 * @throws ArithmeticException if {@code integer} is negative
@@ -1102,24 +945,17 @@ public final class FloatAid {
 	 * Time created: 20:43:26--------------------------------------------
 	 */
 	/**
-	 * Does the same job as
-	 * {@link #toDecimal(BigInteger, BigInteger, int, int, MathContext)} but
-	 * supports negative value via the {@code signum} argument
+	 * Does the same job as {@link #toDecimal(BigInteger, BigInteger, int, int, MathContext)} but supports negative value via the
+	 * {@code signum} argument
 	 * 
 	 * @param signum                     the signum of the entire number
 	 * @param integer                    the non-negative integer part of the number
-	 * @param nonZeroMantissaSignificand the non-negative significant digits of the
-	 *                                   mantissa portion of a value. The
-	 *                                   significant digits of a mantissa are all
-	 *                                   the digits after the radix point beginning
-	 *                                   with the first non-zero digit. e.g in
-	 *                                   1.02345 the significant mantissa is 2345
-	 * @param numOfLeadingZeros          the number of leading zero(s) after the
-	 *                                   decimal point. This does not include
-	 *                                   zero(s) inside the significand (of the
-	 *                                   mantissa) or trailing zero(s).
-	 * @param radix                      the base that the argument is represented
-	 *                                   in
+	 * @param nonZeroMantissaSignificand the non-negative significant digits of the mantissa portion of a value. The significant
+	 *                                   digits of a mantissa are all the digits after the radix point beginning with the first
+	 *                                   non-zero digit. e.g in 1.02345 the significant mantissa is 2345
+	 * @param numOfLeadingZeros          the number of leading zero(s) after the decimal point. This does not include zero(s) inside
+	 *                                   the significand (of the mantissa) or trailing zero(s).
+	 * @param radix                      the base that the argument is represented in
 	 * @param mc                         a rounding context
 	 * @return a {@code BigDecimal} in which is equivalent to the argument.
 	 * @see #toDecimal(BigInteger, BigInteger, int, int, MathContext)
@@ -1144,61 +980,44 @@ public final class FloatAid {
 	 * expected to be in the same radix as the number part
 	 */
 	/**
-	 * Parses the string argument, which is expected to be in the same radix as the
-	 * {@code int} argument, into a {@code BigDecimal} using the provided rounding
-	 * context to truncate or add trailing zeros to the result.
+	 * Parses the string argument, which is expected to be in the same radix as the {@code int} argument, into a {@code BigDecimal}
+	 * using the provided rounding context to truncate or add trailing zeros to the result.
 	 * <h2>Exponents</h2>
 	 * <p>
-	 * This method accepts fractional arguments (such as
-	 * <code>2face.ace<sub>16</sub></code>) and even those with exponents
-	 * (<code>111101.001e100<sub>2</sub></code>,
-	 * <code>11b.00ffce4p-a<sub>16</sub></code>), values can be signed (negative).
-	 * Only 2 exponent characters are allowed i.e 'e' and 'p'. Both characters are
-	 * parsed as case insensitive i.e whether the upper case variant or the lower
-	 * case variant is used it will be parsed the same. However, exponents should
-	 * always be signed as they may be parsed as digits if unsigned (with either '+'
-	 * or '-') and the exponent character is a valid digit in that radix - for
-	 * example <code>3b8e4<sub>16</sub></code> which may be intended as
-	 * <code>3b8e+4<sub>16</sub></code> because the 'e' character in the value is a
-	 * valid hex digit. Also, exponents must have their respective exponent be in
-	 * the same radix as the value or else a {@code NumberFormatException} will be
-	 * thrown when parsing the exponent or the value may not be considered as a
-	 * valid number.
+	 * This method accepts fractional arguments (such as <code>2face.ace<sub>16</sub></code>) and even those with exponents
+	 * (<code>111101.001e100<sub>2</sub></code>, <code>11b.00ffce4p-a<sub>16</sub></code>), values can be signed (negative). Only 2
+	 * exponent characters are allowed i.e 'e' and 'p'. Both characters are parsed as case insensitive i.e whether the upper case
+	 * variant or the lower case variant is used it will be parsed the same. However, exponents should always be signed as they may
+	 * be parsed as digits if unsigned (with either '+' or '-') and the exponent character is a valid digit in that radix - for
+	 * example <code>3b8e4<sub>16</sub></code> which may be intended as <code>3b8e+4<sub>16</sub></code> because the 'e' character
+	 * in the value is a valid hex digit. Also, exponents must have their respective exponent be in the same radix as the value or
+	 * else a {@code NumberFormatException} will be thrown when parsing the exponent or the value may not be considered as a valid
+	 * number.
 	 * <h3>The 'p' exponent character</h3>
 	 * <p>
-	 * If the exponent is the normalised binary floating point (use the 'p'
-	 * character), then the significand (integer and mantissa) is normalised to the
-	 * form <code>1.xxxxxx</code> and the exponent is incremented or decremented
-	 * (depending on the position of the radix point). Therefore one can deduce that
-	 * <code>8a.e5p-b != 8a.e5 &times 2<sup>-b</sup></code>, because {@code 8a.e5}
-	 * must be converted to binary fraction, then the radix point must be normalised
-	 * (binary scientific notation), the exponent must also be adjusted, the
-	 * normalised binary fraction (without the normalised exponent) can now be
-	 * converted to the specified radix then multiplied by 2^normalised exponent.
-	 * Any exponent above <code>abs({@link Integer#MAX_VALUE})</code> may cause
+	 * If the exponent is the normalised binary floating point (use the 'p' character), then the significand (integer and mantissa)
+	 * is normalised to the form <code>1.xxxxxx</code> and the exponent is incremented or decremented (depending on the position of
+	 * the radix point). Therefore one can deduce that <code>8a.e5p-b != 8a.e5 &times 2<sup>-b</sup></code>, because {@code 8a.e5}
+	 * must be converted to binary fraction, then the radix point must be normalised (binary scientific notation), the exponent must
+	 * also be adjusted, the normalised binary fraction (without the normalised exponent) can now be converted to the specified
+	 * radix then multiplied by 2^normalised exponent. Any exponent above <code>abs({@link Integer#MAX_VALUE})</code> may cause
 	 * undefined behaviour.
 	 * <h3>The 'e' exponent character</h3>
 	 * <p>
-	 * This is the parsed as [sign][integer].[mantissa]&times;[radix]<sup>[exponent
-	 * sign][exponent magnitude]</sup> <br>
+	 * This is the parsed as [sign][integer].[mantissa]&times;[radix]<sup>[exponent sign][exponent magnitude]</sup> <br>
 	 * <br>
 	 * <br>
 	 * <p>
 	 * Negative zero is not supported, neither are NaNs and Infinities.
 	 * 
-	 * @param n     a number in string format that may or may not have an exponent
-	 *              (e or p)
+	 * @param n     a number in string format that may or may not have an exponent (e or p)
 	 * @param radix the radix that the string argument is presented in.
 	 *              <p>
-	 *              Note that in some radixes the exponent characters 'e' and 'p'
-	 *              (the former for radixes greater than 14 and the latter for
-	 *              radixes greater than 25) may be parsed as actual digits unless a
-	 *              sign is appended to them. For example, the value
-	 *              <code>0.00hxw93270udwfnnepr<sub>36</sub></code> will be parsed
-	 *              as having no exponent value even though the second and third
-	 *              characters (from the right) are valid exponent characters. If an
-	 *              exponent was intended, it may be re-written as in one of the
-	 *              following ways:
+	 *              Note that in some radixes the exponent characters 'e' and 'p' (the former for radixes greater than 14 and the
+	 *              latter for radixes greater than 25) may be parsed as actual digits unless a sign is appended to them. For
+	 *              example, the value <code>0.00hxw93270udwfnnepr<sub>36</sub></code> will be parsed as having no exponent value
+	 *              even though the second and third characters (from the right) are valid exponent characters. If an exponent was
+	 *              intended, it may be re-written as in one of the following ways:
 	 * 
 	 *              <pre>
 	 *              <code>
@@ -1209,20 +1028,13 @@ public final class FloatAid {
 	 *              </code>
 	 *              </pre>
 	 * 
-	 *              The appended sign distinguishes it from the prior format and
-	 *              changes the value to be returned
-	 * @param mc    a rounding context if truncation or trailing zero(s) is required
-	 *              else can be left as null. It is advised that null should not be
-	 *              used for numbers with little significant digits (especially when
-	 *              converting from a radix higher than 10) because it can cause a
-	 *              precision {@link MathContext} to be used
-	 * @return a {@code BigDecimal} in which is equivalent to the argument after
-	 *         successfully parsing it.
-	 * @throws NumberFormatException if the string argument cannot be parsed into a
-	 *                               number using the given radix or if radix is
-	 *                               outside of the range
-	 *                               ({@link Character#MIN_RADIX},
-	 *                               {@link Character#MAX_RADIX})
+	 *              The appended sign distinguishes it from the prior format and changes the value to be returned
+	 * @param mc    a rounding context if truncation or trailing zero(s) is required else can be left as null. It is advised that
+	 *              null should not be used for numbers with little significant digits (especially when converting from a radix
+	 *              higher than 10) because it can cause a precision {@link MathContext} to be used
+	 * @return a {@code BigDecimal} in which is equivalent to the argument after successfully parsing it.
+	 * @throws NumberFormatException if the string argument cannot be parsed into a number using the given radix or if radix is
+	 *                               outside of the range ({@link Character#MIN_RADIX}, {@link Character#MAX_RADIX})
 	 * @implNote This algorithm is fast and efficient.
 	 */
 	public static BigDecimal toDecimal(String n, int radix, MathContext mc) throws NumberFormatException {
@@ -1266,8 +1078,9 @@ public final class FloatAid {
 					int lz = (shift) - (mantissa.signum() == 0 ? 0 : mantissa.bitLength());// leading zeros
 					// save the implicit bit
 					integer = i(1);
-					BigDecimal val = mantissa.signum() != 0 ? toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa,
-							lz, 2, mc(mc.getPrecision() + 10)) : d(integer);
+					BigDecimal val = mantissa.signum() != 0
+							? toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa, lz, 2, mc(mc.getPrecision() + 10))
+							: d(integer);
 					return val.multiply(d(2).pow(exp, mc(mc.getPrecision() + 20)), mc);
 				} else if (radix != 10 && c[4] != null && c[4].equalsIgnoreCase("e")) {
 					return d(integer.multiply(powerOfRadix(radix, Integer.parseInt(exponent, radix))));
@@ -1276,8 +1089,8 @@ public final class FloatAid {
 						.scaleByPowerOfTen(Integer.parseInt(exponent, radix));
 			} else if (isNormalised) {
 				if (radix == 10 && integer.compareTo(i(1)) == 0)
-					return d(integer.multiply(i(c[0].equals("-") ? -1 : 1))).multiply(
-							d(2).pow(Integer.parseInt(exponent, radix), mc(mc.getPrecision() + 10)), mc);
+					return d(integer.multiply(i(c[0].equals("-") ? -1 : 1)))
+							.multiply(d(2).pow(Integer.parseInt(exponent, radix), mc(mc.getPrecision() + 10)), mc);
 				// leading zeros
 				int lz = Math.max(0, c[3].length() - calculateSignificandDigits(2, mantissa.bitLength(), radix));
 				BigDecimal val;
@@ -1305,8 +1118,7 @@ public final class FloatAid {
 					// the mantissa such as 1.011 = 11 therefore lz = 1
 					lz = Math.max(0, (b[2].bitLength() - 1) - mantissa.bitLength());
 					// calculate the actual decimal fraction of the binary significand
-					val = toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa, lz, 2,
-							mc(mc.getPrecision() + 10));
+					val = toDecimal(c[0].equals("-") ? -1 : 1, integer, mantissa, lz, 2, mc(mc.getPrecision() + 10));
 					// normalise the answer by multiplying the exponent
 					return val.multiply(d(2).pow(exp, mc(mc.getPrecision() + 20)), mc);
 				}
@@ -1352,36 +1164,25 @@ public final class FloatAid {
 	 * Time created: 18:47:09--------------------------------------------
 	 */
 	/**
-	 * Parses the {@code String} argument - which is assumed to be in the radix
-	 * specified the {@code fromRadix} parameter - then coverts the parsed value to
-	 * a {@code String} in the radix specified as the parameter {@code toRadix} then
-	 * returns it. All trailing zeros are clipped even though the given
-	 * {@code digits} parameter covers said digit(s). If
-	 * {@code fromRadix == toRadix} and there is no properly signed binary exponent
-	 * within range then n is returned unparsed.
+	 * Parses the {@code String} argument - which is assumed to be in the radix specified the {@code fromRadix} parameter - then
+	 * coverts the parsed value to a {@code String} in the radix specified as the parameter {@code toRadix} then returns it. All
+	 * trailing zeros are clipped even though the given {@code digits} parameter covers said digit(s). If
+	 * {@code fromRadix == toRadix} and there is no properly signed binary exponent within range then n is returned unparsed.
 	 * <p>
-	 * This method supports exponent character ('e' or 'p') but with caveat for
-	 * radixes whose digits may include the exponent character such as 15 and 26.
-	 * The exponent is also expected to be in the same radix as the number
-	 * (significand). Please see {@link #toDecimal(String, int, MathContext)} for
-	 * explanation on how to form an exponent.
+	 * This method supports exponent character ('e' or 'p') but with caveat for radixes whose digits may include the exponent
+	 * character such as 15 and 26. The exponent is also expected to be in the same radix as the number (significand). Please see
+	 * {@link #toDecimal(String, int, MathContext)} for explanation on how to form an exponent.
 	 * 
-	 * @param n         the number string to be parsed which is expected to be in
-	 *                  the radix specified by {@code fromRadix} parameter
+	 * @param n         the number string to be parsed which is expected to be in the radix specified by {@code fromRadix} parameter
 	 * @param fromRadix the radix of the given number string.
 	 * @param toRadix   the radix to which the conversion is to be made.
-	 * @param mc        a rounding context to determine the number of digits in
-	 *                  final value. Can be left {@code null}. If
-	 *                  {@link MathContext#getPrecision()} is less than 2 or
-	 *                  {@code null}, then the final value will have as much digits
-	 *                  as the value to be converted
-	 * @return a {@code String} which is equivalent to the argument after
-	 *         successfully parsing it with a trailing point and a mantissa (0 for
-	 *         integers). No exponent field is returned with the number.
-	 * @throws NumberFormatException if the {@code String} parameter cannot be
-	 *                               parsed or if radix is outside of the range
-	 *                               ({@link Character#MIN_RADIX},
-	 *                               {@link Character#MAX_RADIX})
+	 * @param mc        a rounding context to determine the number of digits in final value. Can be left {@code null}. If
+	 *                  {@link MathContext#getPrecision()} is less than 2 or {@code null}, then the final value will have as much
+	 *                  digits as the value to be converted
+	 * @return a {@code String} which is equivalent to the argument after successfully parsing it with a trailing point and a
+	 *         mantissa (0 for integers). No exponent field is returned with the number.
+	 * @throws NumberFormatException if the {@code String} parameter cannot be parsed or if radix is outside of the range
+	 *                               ({@link Character#MIN_RADIX}, {@link Character#MAX_RADIX})
 	 * @see {@link #toDecimal(String, int, MathContext)}
 	 */
 	public static String toString(String n, int fromRadix, int toRadix, MathContext mc) throws NumberFormatException {
@@ -1423,26 +1224,19 @@ public final class FloatAid {
 	 * Time created: 06:20:28--------------------------------------------
 	 */
 	/**
-	 * Does the same function as {@link #toString(String, int, int, MathContext)}
-	 * except the value may have an exponent field. Note that this exponent is 'e'
-	 * (signed) and in the same radix as {@code toRadix}.
+	 * Does the same function as {@link #toString(String, int, int, MathContext)} except the value may have an exponent field. Note
+	 * that this exponent is 'e' (signed) and in the same radix as {@code toRadix}.
 	 * 
-	 * @param n         the number string to be parsed which is expected to be in
-	 *                  the radix specified by {@code fromRadix} parameter
+	 * @param n         the number string to be parsed which is expected to be in the radix specified by {@code fromRadix} parameter
 	 * @param fromRadix the radix of the given number string.
 	 * @param toRadix   the radix to which the conversion is to be made.
-	 * @param mc        a rounding context to determine the number of digits in
-	 *                  final value. Can be left {@code null}. If
-	 *                  {@link MathContext#getPrecision()} is less than 2 or
-	 *                  {@code null}, then the final value will have as much digits
-	 *                  as the value to be converted
-	 * @return a {@code String} which is equivalent to the argument after
-	 *         successfully parsing it with a trailing point and a mantissa (for
-	 *         fractional numbers) along with an exponent field.
-	 * @throws NumberFormatException if the {@code String} parameter cannot be
-	 *                               parsed or if radix is outside of the range
-	 *                               ({@link Character#MIN_RADIX},
-	 *                               {@link Character#MAX_RADIX})
+	 * @param mc        a rounding context to determine the number of digits in final value. Can be left {@code null}. If
+	 *                  {@link MathContext#getPrecision()} is less than 2 or {@code null}, then the final value will have as much
+	 *                  digits as the value to be converted
+	 * @return a {@code String} which is equivalent to the argument after successfully parsing it with a trailing point and a
+	 *         mantissa (for fractional numbers) along with an exponent field.
+	 * @throws NumberFormatException if the {@code String} parameter cannot be parsed or if radix is outside of the range
+	 *                               ({@link Character#MIN_RADIX}, {@link Character#MAX_RADIX})
 	 * @see {@link #toString(String, int, int, MathContext)}
 	 */
 	public static String toScientificString(String n, int fromRadix, int toRadix, MathContext mc)
@@ -1461,7 +1255,8 @@ public final class FloatAid {
 			return d.toString();
 		else if (mathaid.calculator.base.util.Utility.isInteger(d)) {
 			StringBuilder val = new StringBuilder(d.toBigInteger().toString(toRadix));
-			if(val.length() > mc.getPrecision()) val = val.delete(mc.getPrecision(), val.length());
+			if (val.length() > mc.getPrecision())
+				val = val.delete(mc.getPrecision(), val.length());
 			int exp = val.length() - 1;
 			assert exp >= 0;
 			if (val.length() > 1)
@@ -1484,7 +1279,9 @@ public final class FloatAid {
 		if (b[1].signum() == 0) {
 			exp = -(lz.length() + 1);
 			assert exp < 0;
-			sb.append(String.format("%1$se%2$s", mantissa.length() <= mc.getPrecision() ? mantissa : mantissa.substring(0, mc.getPrecision()), Integer.toString(exp, toRadix)));
+			sb.append(String.format("%1$se%2$s",
+					mantissa.length() <= mc.getPrecision() ? mantissa : mantissa.substring(0, mc.getPrecision()),
+					Integer.toString(exp, toRadix)));
 			if (mantissa.length() > 1)
 				sb.insert(1, '.');
 			return sb.toString();
@@ -1492,7 +1289,9 @@ public final class FloatAid {
 		exp = integer.length() - 1;
 		assert exp >= 0;
 		String welded = String.format("%1$s%2$s%3$s", integer, lz, mantissa);
-		sb.append(String.format("%1$se+%2$s", welded.length() <= mc.getPrecision() ? welded : welded.substring(0, mc.getPrecision()), Integer.toString(exp, toRadix)));
+		sb.append(String.format("%1$se+%2$s",
+				welded.length() <= mc.getPrecision() ? welded : welded.substring(0, mc.getPrecision()),
+				Integer.toString(exp, toRadix)));
 		if (welded.length() > 1)
 			sb.insert(1, '.');
 		return sb.toString();
@@ -1503,13 +1302,11 @@ public final class FloatAid {
 	 * Time created: 05:29:50--------------------------------------------
 	 */
 	/**
-	 * Checks and returns true if the {@code char} argument is a digit in the given
-	 * radix else returns false
+	 * Checks and returns true if the {@code char} argument is a digit in the given radix else returns false
 	 * 
 	 * @param digit a valid digit as a {@code char}
 	 * @param radix the radix of the digit
-	 * @return {@code true} if the first argument is a valid digit in the specified
-	 *         radix else returns {@code false}
+	 * @return {@code true} if the first argument is a valid digit in the specified radix else returns {@code false}
 	 */
 	public static boolean isNumber(char digit, int radix) {
 		if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
@@ -1523,53 +1320,36 @@ public final class FloatAid {
 	 * Time created: 05:34:13--------------------------------------------
 	 */
 	/**
-	 * Parses and decomposes the {@code String} parameter into the individual
-	 * components of a numerical value and returns a {@code String} array of those
-	 * components (with each index containing a component) - or an array of
-	 * {@code null} {@code String} objects if the {@code String} parameter is not a
-	 * valid number - using the specified radix.
-	 * 
+	 * Parses and decomposes the {@code String} parameter into the individual components of a numerical value and returns a
+	 * {@code String} array of those components (with each index containing a component) - or an array of {@code null}
+	 * {@code String} objects if the {@code String} parameter is not a valid number - using the specified radix.
 	 * <p>
-	 * The Array that is returned is always a 7-length array with it's content
-	 * indexed in the following order:
+	 * The Array that is returned is always a 7-length array with it's content indexed in the following order:
 	 * <ul>
-	 * <li>The sign of the value (either a "-" for negative values or a "+" for
-	 * non-negative values).</li>
-	 * <li>The integer digits including any leading zeros (without a sign) in the
-	 * specified radix.</li>
+	 * <li>The sign of the value (either a "-" for negative values or a "+" for non-negative values).</li>
+	 * <li>The integer digits including any leading zeros (without a sign) in the specified radix.</li>
 	 * <li>The radix point or {@code null} if no radix point.</li>
-	 * <li>The mantissa digits, including any leading and trailing zeros in the
-	 * specified radix or {@code null} if no mantissa part. This value does not
-	 * contain a sign or point.</li>
-	 * <li>The exponent character or {@code null} if no exponent part. The only
-	 * valid ones are 'e' a 'p' (case insensitive). This value does not contain a
-	 * sign or point. Note that the exponent character <b>will</b> be not counted as
-	 * an exponent character but as a digit if the character is part of the radix
-	 * and there is not sign ("+" or "-") after this character.</li>
-	 * <li>The exponent's sign (either a "-" for negative values or a "+" for
-	 * non-negative values) or {@code null} if no exponent part. Note that the
-	 * exponent character <b>will</b> be not counted as an exponent character but as
-	 * a digit if the character is part of the radix and there is not sign ("+" or
-	 * "-") after this character.</li>
-	 * <li>The exponent digits i.e the exponent magnitude, including any leading
-	 * zeros without any sign or exponent character or {@code null} if no exponent
-	 * part. This value is assumed to be in the same radix as the number and is
-	 * considered invalid if a character that is not a digit in the specified radix
-	 * is present. Note that the exponent character <b>will</b> be not counted as an
-	 * exponent character but as a digit if the character is part of the radix and
-	 * there is not sign ("+" or "-") after this character.</li>
+	 * <li>The mantissa digits, including any leading and trailing zeros in the specified radix or {@code null} if no mantissa part.
+	 * This value does not contain a sign or point.</li>
+	 * <li>The exponent character or {@code null} if no exponent part. The only valid ones are 'e' a 'p' (case insensitive). This
+	 * value does not contain a sign or point. Note that the exponent character <b>will</b> be not counted as an exponent character
+	 * but as a digit if the character is part of the radix and there is not sign ("+" or "-") after this character.</li>
+	 * <li>The exponent's sign (either a "-" for negative values or a "+" for non-negative values) or {@code null} if no exponent
+	 * part. Note that the exponent character <b>will</b> be not counted as an exponent character but as a digit if the character is
+	 * part of the radix and there is not sign ("+" or "-") after this character.</li>
+	 * <li>The exponent digits i.e the exponent magnitude, including any leading zeros without any sign or exponent character or
+	 * {@code null} if no exponent part. This value is assumed to be in the same radix as the number and is considered invalid if a
+	 * character that is not a digit in the specified radix is present. Note that the exponent character <b>will</b> be not counted
+	 * as an exponent character but as a digit if the character is part of the radix and there is not sign ("+" or "-") after this
+	 * character.</li>
 	 * </ul>
-	 * If the value is found to be ill-formed (a point in the exponent part, sign in
-	 * the mantissa or an illegal character), an array filled with {@code null}
-	 * {@code String} values will be returned to indicate that the value could not
-	 * be parsed. Even if the value is well formed, one or more indexes may still
-	 * contain {@code null} if that part was not found. For example: the value
-	 * {@code 1} may return {@code null} in the point , mantissa and exponent
-	 * indexes.
+	 * If the value is found to be ill-formed (a point in the exponent part, sign in the mantissa or an illegal character), an array
+	 * filled with {@code null} {@code String} values will be returned to indicate that the value could not be parsed. Even if the
+	 * value is well formed, one or more indexes may still contain {@code null} if that part was not found. For example: the value
+	 * {@code 1} may return {@code null} in the point , mantissa and exponent indexes.
 	 * 
 	 * @param n     the value to be parsed
-	 * @param radix the radix of the {@code String} value as stipulated by the
-	 *              {@link Character} class.
+	 * @param radix the radix of the {@code String} value as stipulated by the {@link Character} class.
 	 * @return a {@code String} array of the parts of the input value
 	 */
 	public static String[] getComponents(String n, int radix) {
@@ -1694,13 +1474,10 @@ public final class FloatAid {
 	 * Time created: 06:42:15--------------------------------------------
 	 */
 	/**
-	 * Returns {@code true} if there is an exponent component and this component is
-	 * a "p" exponent else {@code false}.
+	 * Returns {@code true} if there is an exponent component and this component is a "p" exponent else {@code false}.
 	 * 
-	 * @param components a {@code String} array in the same format returned by
-	 *                   {@link #getComponents(String, int)}
-	 * @return {@code true} if there is an exponent component and this component is
-	 *         a "p" exponent else {@code false}.
+	 * @param components a {@code String} array in the same format returned by {@link #getComponents(String, int)}
+	 * @return {@code true} if there is an exponent component and this component is a "p" exponent else {@code false}.
 	 */
 	public static boolean isNormalised(String[] components) {
 		return components[4] != null && components[4].equalsIgnoreCase("p");
@@ -1711,8 +1488,7 @@ public final class FloatAid {
 	 * Time created: 19:21:45--------------------------------------------
 	 */
 	/**
-	 * Returns a {@code Radix} object appropriate for the given argument which is
-	 * specified by the int value for that base.
+	 * Returns a {@code Radix} object appropriate for the given argument which is specified by the int value for that base.
 	 * 
 	 * @param r one of the values given by the constants 2, 8, 10, 16.
 	 * @return a {@code Radix} object.
@@ -1735,9 +1511,8 @@ public final class FloatAid {
 	 * Time created: 07:20:26--------------------------------------------
 	 */
 	/**
-	 * Parses the string in the given radix and returns a 2-length array containing
-	 * the significand (may also contain a sign, the radix point and the mantissa if
-	 * any) and the exponent (with no exponent character)
+	 * Parses the string in the given radix and returns a 2-length array containing the significand (may also contain a sign, the
+	 * radix point and the mantissa if any) and the exponent (with no exponent character)
 	 * 
 	 * @param s the value to be parsed
 	 * @param r the radix of the argument
@@ -1763,14 +1538,10 @@ public final class FloatAid {
 	/**
 	 * Attempts to normalise a fraction into floating point.
 	 * 
-	 * @param normalisedComponents a {@code String} array in the same format
-	 *                             returned by {@link #getComponents(String, int)}
-	 *                             which is assumed to have used the binary exponent
-	 *                             'p'. If it dooes not have a binary exponent, then
-	 *                             it is assumed that it's binary exponent is equal
-	 *                             to 'p0'
-	 * @param bits                 the number of bits the final floating point
-	 *                             should use
+	 * @param normalisedComponents a {@code String} array in the same format returned by {@link #getComponents(String, int)} which
+	 *                             is assumed to have used the binary exponent 'p'. If it dooes not have a binary exponent, then it
+	 *                             is assumed that it's binary exponent is equal to 'p0'
+	 * @param bits                 the number of bits the final floating point should use
 	 * @param radix                the radix of the number
 	 * @return a {@code FloatPoint} representing the argument
 	 */
@@ -1781,8 +1552,7 @@ public final class FloatAid {
 			normalisedComponents[6] = "0";
 		} else if (!isNormalised(normalisedComponents))
 			throw new ArithmeticException("irregular normalised form");
-		BigInteger binExp = i(String.format("%1$s%2$s", normalisedComponents[5], normalisedComponents[6]),
-				radix);
+		BigInteger binExp = i(String.format("%1$s%2$s", normalisedComponents[5], normalisedComponents[6]), radix);
 		if (normalisedComponents[2] == null)
 			normalisedComponents[2] = ".";
 		if (normalisedComponents[3] == null)
@@ -1798,13 +1568,10 @@ public final class FloatAid {
 	 * Time created: 06:53:03--------------------------------------------
 	 */
 	/**
-	 * Returns {@code true} if the array is not filled with {@code null} values else
-	 * {@code false}.
+	 * Returns {@code true} if the array is not filled with {@code null} values else {@code false}.
 	 * 
-	 * @param c a {@code String} array in the same format returned by
-	 *          {@link #getComponents(String, int)}
-	 * @return {@code true} if the array is not filled with {@code null} values else
-	 *         {@code false}.
+	 * @param c a {@code String} array in the same format returned by {@link #getComponents(String, int)}
+	 * @return {@code true} if the array is not filled with {@code null} values else {@code false}.
 	 */
 	public static boolean isNumber(String[] c) {
 //		boolean isNull;

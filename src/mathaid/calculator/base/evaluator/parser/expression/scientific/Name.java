@@ -171,7 +171,7 @@ public class Name extends EvaluatableExpression<Name.Params> {
 			int MFRAC = 5;
 			/**
 			 * The {@code int} constant that specifies that all result output formats must be non-numeric. For example the expression
-			 * {@code sin(60)} may in {@code sqrt(3)/2} instead of {@code 0.866025403784439}.
+			 * {@code sin(60)} may result in {@code sqrt(3)/2} instead of {@code 0.866025403784439}.
 			 */
 			int EXPRESSION = 6;
 		}
@@ -479,7 +479,7 @@ public class Name extends EvaluatableExpression<Name.Params> {
 		 * of functions.
 		 * 
 		 * @return the identifier used by the underlying CAS to represent the {@code gamma} function in expressions.
-		 * @implNote The current implementation is to return {@link "Gamma"} because of the definition of the identifier of the gamma
+		 * @implNote The current implementation is to return {@code "Gamma"} because of the definition of the identifier of the gamma
 		 *           function in SYMJA. In the future this may change as an in-house CAS is developed.
 		 */
 		default String getGamma() {
@@ -499,7 +499,7 @@ public class Name extends EvaluatableExpression<Name.Params> {
 		 * of functions.
 		 * 
 		 * @return the identifier used by the underlying CAS to represent the {@code pow} function in expressions.
-		 * @implNote The current implementation is to return {@link "Power"} because of the definition of the identifier of the power
+		 * @implNote The current implementation is to return {@code "Power"} because of the definition of the identifier of the power
 		 *           function in SYMJA. In the future this may change as an in-house CAS is developed.
 		 */
 		default String getPow() {

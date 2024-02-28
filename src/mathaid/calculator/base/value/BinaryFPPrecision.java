@@ -4159,7 +4159,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 		 * name: SBigD------------------------------------------------
 		 */
 		/**
-		 * A Special BigDecimal that can print out infinity and NaN values and negative
+		 * A Special BigDecimal that can print out infinity, NaN values and negative
 		 * zero, without throwing an exception.
 		 * 
 		 * @author Oruovo Anthony Etineakpopha

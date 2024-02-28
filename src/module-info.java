@@ -19,13 +19,56 @@ import mathaid.spi.LangResourceProvider;
  * 
  */
 /**
- * Defines foundational packages, classes, interfaces, enums, and annotations
- * for the calculator API.
+ * Defines foundational packages, classes, interfaces, enums, and annotations for the calculator API.
  *
- * @uses org.jsoup for the converter API.
- * @uses matheclipse.core as a primary CAS for the scientific calculator.
- * @uses apfloat for general big number functions.
- * @uses {@link mathaid.spi.LangResourceProvider} for the translation messages.
+ * @uses <code><em><strong>org.jsoup</strong></em></code> for the converter API. An example of jsoup in action:
+ * 
+ *       <pre>
+ * <code>
+ *	var connection = Jsoup.connect("https://en.wikipedia.org/wiki/List_of_colors_(alphabetical)");
+ *	var document = connection.get();
+ *	Files.write(Paths.get(Device.getProjectPath(), "\\res\\List_of_colors_(alphabetical).html"),
+ *			document.toString().getBytes(), StandardOpenOption.CREATE);
+ *			</code>
+ *       </pre>
+ * 
+ *       Another example:
+ * 
+ *       <pre>
+ * <code>
+ *
+ *	var document = Jsoup.parse(
+ *			Paths.get(Device.getProjectPath(), "\\res\\List_of_colors_(alphabetical).html").toFile(), "UTF-8");
+ *	
+ *	StringBuilder sb = new StringBuilder("&lt;table border=\"1\"&gt;\n&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Hex code&lt;/th&gt;&lt;th&gt;Sample&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;\n&lt;tbody&gt;");
+ *	
+ *	document.select("div &gt; p[title]")
+ *	.forEach(x -&gt; {
+ *		var t = x.attr("title");
+ *		sb.append("&lt;tr&gt;")
+ *		.append("&lt;td&gt;&lt;code&gt;")
+ *		.append(x.parent().text().trim().toLowerCase())
+ *		.append("&lt;/code&gt;&lt;/td&gt;")
+ *		.append("&lt;td&gt;")
+ *		.append(t.substring(t.indexOf('#')))
+ *		.append("&lt;/td&gt;")
+ *		.append("&lt;td&gt;")
+ *		.append("&lt;div style='width:40px;height:20px;border:.5px solid black;background-color:")
+ *		.append(t.substring(t.indexOf('#')))
+ *		.append("'&gt;&lt;/div&gt;")
+ *		.append("&lt;/td&gt;")
+ *		.append("&lt;/tr&gt;\n")
+ *		;
+ *	})
+ *	;
+ *	sb.append("&lt;/tbody&gt;\n&lt;/table&gt;");
+ *	out.println(sb);
+ * </code>
+ *       </pre>
+ * 
+ * @uses <code><em><strong>matheclipse.core</strong></em></code> as a primary CAS for the scientific calculator.
+ * @uses <code><em><strong>apfloat</strong></em></code> for general big number functions.
+ * @uses <code><em><strong>{@link mathaid.spi.LangResourceProvider}</strong></em></code> for the translation messages.
  * @author Oruovo Anthony Etineakpopha
  */
 module CalculatorProject {
@@ -35,50 +78,6 @@ module CalculatorProject {
 	requires apfloat;
 	requires hipparchus.core;
 	/**
-	 * An example of jsoup in action:
-	 * 
-	 * <pre>
-	 * <code>
-		var connection = Jsoup.connect("https://en.wikipedia.org/wiki/List_of_colors_(alphabetical)");
-		var document = connection.get();
-		Files.write(Paths.get(Device.getProjectPath(), "\\res\\List_of_colors_(alphabetical).html"),
-				document.toString().getBytes(), StandardOpenOption.CREATE);
-				</code>
-	 * </pre>
-	 * 
-	 * Another example:
-	 * 
-	 * <pre>
-	 * <code>
-	
-		var document = Jsoup.parse(
-				Paths.get(Device.getProjectPath(), "\\res\\List_of_colors_(alphabetical).html").toFile(), "UTF-8");
-		
-		StringBuilder sb = new StringBuilder("<table border=\"1\">\n<thead><tr><th>Name</th><th>Hex code</th><th>Sample</th></tr></thead>\n<tbody>");
-		
-		document.select("div > p[title]")
-		.forEach(x -> {
-			var t = x.attr("title");
-			sb.append("<tr>")
-			.append("<td><code>")
-			.append(x.parent().text().trim().toLowerCase())
-			.append("</code></td>")
-			.append("<td>")
-			.append(t.substring(t.indexOf('#')))
-			.append("</td>")
-			.append("<td>")
-			.append("<div style='width:40px;height:20px;border:.5px solid black;background-color:")
-			.append(t.substring(t.indexOf('#')))
-			.append("'></div>")
-			.append("</td>")
-			.append("</tr>\n")
-			;
-		})
-		;
-		sb.append("</tbody>\n</table>");
-		out.println(sb);
-	 * </code>
-	 * </pre>
 	 */
 	requires org.jsoup;
 	requires log4j;

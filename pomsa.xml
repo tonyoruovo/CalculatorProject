@@ -1,0 +1,11 @@
+<project>
+	<build>
+		<sourceDirectory>C:\Users\Ruona Oruovo\Desktop\segment\Software\Versions\CalculatorProject\src</sourceDirectory>
+		<outputDirectory>C:\Users\Ruona Oruovo\Desktop\segment\Software\Versions\CalculatorProject\src\target</outputDirectory>
+	</build>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>10</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+</project>

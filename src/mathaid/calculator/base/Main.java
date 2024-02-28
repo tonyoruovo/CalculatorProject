@@ -31,6 +31,7 @@ import mathaid.calculator.base.typeset.Digits;
 import mathaid.calculator.base.typeset.Formatter;
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.Segment;
+import mathaid.calculator.base.typeset.NumberAdapter;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.util.Arith;
 import mathaid.calculator.base.util.Constants;
@@ -81,7 +82,7 @@ public class Main {
 				break;
 			case "s":
 				f.set(e, String.valueOf(cmds[3]));
-				System.out.println("Stringt field set");
+				System.out.println("String field set");
 				break;
 			default:
 				System.err.println(cmds[1] + " is an unknown type!");
@@ -97,7 +98,7 @@ public class Main {
 	 * boolean fields s is for String fields
 	 */
 	static void get(Evaluator<?> e, String cmd) {
-		String[] cmds = cmd.toLowerCase().split("\\s");
+		String[] cmds = cmd.split("\\s");
 		Class<?> c = e.getClass();
 		Field f;
 		try {
@@ -109,7 +110,7 @@ public class Main {
 		}
 		f.setAccessible(true);
 		try {
-			switch (cmds[1]) {
+			switch (cmds[1].toLowerCase()) {
 			case "i":
 				System.out.println(cmds[2] + " = " + f.getInt(e));
 				break;
@@ -132,7 +133,7 @@ public class Main {
 
 		Scanner sc = new Scanner(in);
 
-		StringBuilder sb = new StringBuilder();
+		Appendable sb = new NumberAdapter();
 		List<Integer> l = new ArrayList<>(Arrays.asList(-1));
 		while (true) {
 			String cmd = sc.nextLine();
@@ -149,10 +150,9 @@ public class Main {
 				Segment s = e.evaluate(cmd);
 				s.toString(sb, null, l);
 				err.println(sb);
-				sb.delete(0, sb.length());
 				l.clear();
 				l.add(-1);
-				s.format(sb, Formatter.empty(), l);
+				s.format(sb.delete(0, sb.length()), Formatter.empty(), l);
 				out.println(sb);
 			} catch (Throwable t) {
 				t.printStackTrace();
@@ -173,16 +173,7 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		out.println(Arrays.toString(new Object[] { err, in, out }));
 		
-		BigDecimal n = new BigDecimal("-123567890.0123456789");
-		int fracDig = Utility.numOfFractionalDigits(n);//store the number of digits to the left of the decimal point
-		//the value below will return 0 for small mantissaDigits arguments!
-		int binDig = FloatAid.calculateSignificandDigits(10, fracDig, 2);//convert decimal fractional digits to number of binary fractional digits
-		BigInteger[] b = FloatAid.fromDecimal(n, 2, binDig);
-		String lz = Utility.string('0', b[3].abs().intValue() - b[2].bitLength());//leading zeros
-		//-111010111010111111100010010.0000001100101001000101100001111100
-		System.out.println(String.format("%1$s%2$s.%3$s%4$s", b[0].compareTo(BigInteger.valueOf(0L)) > 0 ? "-" : "", b[1].toString(2), lz, b[2].toString(2)));
-		
-//		eval(new Scientific());
+		eval(new Scientific());
 
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;

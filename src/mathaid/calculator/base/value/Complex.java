@@ -59,16 +59,16 @@ import mathaid.calculator.base.util.Utility;
  * {@link #isImaginary() check} for the imaginary unit support for all
  * elementary functions, a {@link #round(int) rounding mechanism} and some
  * extras. All methods that take in a complex value as argument have an
- * alternative method that take in a {@code java.lan.Number} value as an
+ * alternative method that take in a {@code java.lang.Number} value as an
  * argument, this is simply for convenience. Note that all trigonometrical
  * operations return their values in radians.
  * 
  * </p>
  * <p>
- * A {@code Complex} object can also be used like a decimal real number. For
+ * A {@code Complex} object can also be used like a real number. For
  * example:
  * 
- * <pre>
+ * <pre><code>
  * Complex z = new Complex("25")&semi;
  * // perform basic arithmetic operations on it
  * z = z.negate()&semi;
@@ -76,7 +76,7 @@ import mathaid.calculator.base.util.Utility;
  * z = z.add(Complex.I)&semi;
  * z = z.subtract(new Complex("5i"))&semi;
  * z = z.pow(2)&semi; // now a real value
- * </pre>
+ * </code></pre>
  * 
  * So from the above, we can see that a {@code Complex} object may not start as
  * a complex number at first therefore, {@code Complex} object are dynamic

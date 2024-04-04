@@ -348,8 +348,8 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 	 *         using this {@code BinaryFPPrecision}
 	 */
 	public BinaryFP getMaxValue() {
-//		return new BinaryFP(d(i(1).shiftLeft(getMaxExponent() + 1),
-//				getMathContext(10, false, significandLength, rm("HALF_EVEN"))));
+		/*return new BinaryFP(d(i(1).shiftLeft(getMaxExponent() + 1),
+				getMathContext(10, false, significandLength, rm("HALF_EVEN"))));*/
 		return new BinaryFP(
 				iEEE754(i(0), getAllOnes(exponentLength - 1).shiftLeft(1), getAllOnes(significandLength - 1)), 0, 0);
 	}
@@ -833,7 +833,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 			return getNegativeZero();
 		else if (isNumber(n) && d(n).signum() == 0)
 			return createFP(d(0));
-//		BigDecimal d = toDecimal(n, radix);
+		/*BigDecimal d = toDecimal(n, radix);*/
 		String s = FloatAid.toString(n, radix, 10, getMathContext(10, false, significandLength));
 		return new BinaryFP(d(s), 0, 0);
 	}
@@ -1690,7 +1690,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 		 * @param carry     the current carry
 		 */
 		BinaryFP(BigDecimal n, int exception, int carry) {
-//			this(toIEEE754Layout(n), exception, carry);
+			/*this(toIEEE754Layout(n), exception, carry);*/
 			BigInteger[] b = toBits(n);
 			val = b[0];
 			this.carry = b[4];
@@ -2323,7 +2323,7 @@ public class BinaryFPPrecision implements Comparable<BinaryFPPrecision>, Seriali
 		public BinaryFP ieeeRemainder(BinaryFP f) {
 			final int c = getPrecision().compareTo(f.getPrecision());
 			if (c == 0) {
-//				BigInteger sign = getAllOnes(getBitLength() - 1).or(val.and(getSignMask(true)));
+				//BigInteger sign = getAllOnes(getBitLength() - 1).or(val.and(getSignMask(true)));
 
 				if (isNaN() || f.isNaN())
 					return getNaN();

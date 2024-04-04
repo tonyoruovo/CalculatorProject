@@ -230,7 +230,7 @@ public interface FunctionName {
 	 * (or function name)
 	 */
 	String NOR = "nor";
-//	String REM = "rem";//No rem use % instead
+	//String REM = "rem";//No rem use % instead
 	/**
 	 * The {@code String} constant which serves as an identifier for the {@linkplain Math#rint(double) rint} function for a
 	 * floating-point.

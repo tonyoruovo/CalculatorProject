@@ -5,6 +5,7 @@
 /lib
 /res/*.html
 /res/npm
+/res/mathjax
 
 *.vscode
 

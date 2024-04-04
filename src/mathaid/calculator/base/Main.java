@@ -6,39 +6,25 @@ package mathaid.calculator.base;
 import static java.lang.System.err;
 import static java.lang.System.in;
 import static java.lang.System.out;
-import static mathaid.calculator.base.util.Utility.*;
-import static mathaid.calculator.base.util.Constants.*;
-import static mathaid.calculator.base.util.Arith.*;
-import static mathaid.calculator.base.typeset.Digits.*;
-import static mathaid.calculator.base.typeset.Segments.*;
-import static mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression.*;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import mathaid.calculator.base.evaluator.Evaluator;
-import mathaid.calculator.base.evaluator.Scientific;
-import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
-import mathaid.calculator.base.evaluator.parser.expression.scientific.Name.Params;
 import mathaid.calculator.base.typeset.DigitPunc;
 import mathaid.calculator.base.typeset.Digits;
+import mathaid.calculator.base.typeset.ErrorMarker;
 import mathaid.calculator.base.typeset.Formatter;
+import mathaid.calculator.base.typeset.ForwardRunningMarker;
+import mathaid.calculator.base.typeset.ForwardRunningMarker.InputMode;
 import mathaid.calculator.base.typeset.LinkedSegment;
-import mathaid.calculator.base.typeset.Segment;
 import mathaid.calculator.base.typeset.NumberAdapter;
+import mathaid.calculator.base.typeset.Segment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
-import mathaid.calculator.base.util.Arith;
-import mathaid.calculator.base.util.Constants;
-import mathaid.calculator.base.util.Tuple;
-import mathaid.calculator.base.util.Utility;
-import mathaid.calculator.base.value.FloatAid;
-import mathaid.functional.Supplier;
+import mathaid.calculator.base.typeset.Segments;
 
 /*
  * Date: 18 Mar 2020----------------------------------------------------
@@ -173,7 +159,44 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		out.println(Arrays.toString(new Object[] { err, in, out }));
 		
-		eval(new Scientific());
+//		eval(new Scientific());
+
+		DigitPunc dp = new DigitPunc();
+		// Notice that the order of the insert calls (for child segments) do not matter
+		SegmentBuilder formula = new SegmentBuilder()
+				.insert(Segments.freeVariable("x", "x"), 0)
+				.insert(Segments.operator("=", "="), 1)
+				.insert(Segments.fraction(null, null), 2)// null not ideal. Should use the Empty segment instead
+				// numerator
+				.insert(Digits.prefixMinus(), 2, 0, 0)
+				.insert(Segments.freeVariable("b", "b"), 2, 0, 1)
+				.insert(Segments.operator("\\pm", "-"), 2, 0, 2)
+				// inside the sqrt symbol
+				.insert(Segments.sqrt(null), 2, 0, 3)
+				//inside b squared
+				.insert(Segments.pow(null, null), 2, 0, 3, 0, 0)
+				.insert(Segments.freeVariable("b", "b"), 2, 0, 3, 0, 0, 0, 0)
+				.insert(Digits.integer('2', dp), 2, 0, 3, 0, 0, 1, 0)// end b squared
+				.insert(Segments.operator("-", "-"), 2, 0, 3, 0, 1)
+				.insert(Digits.integer('4', dp), 2, 0, 3, 0, 2)
+				.insert(Segments.freeVariable("a", "a"), 2, 0, 3, 0, 3)
+				.insert(Segments.freeVariable("c", "c"), 2, 0, 3, 0, 4)// end numerator
+				// denominator
+				.insert(Digits.integer('2', dp), 2, 1, 0)
+				.insert(Segments.freeVariable("a", "a"), 2, 1, 1);// end denominator
+
+
+		NumberAdapter sb = new NumberAdapter();
+		Formatter f = Formatter.empty();
+		f.addMarker(Formatter.CARET, new ForwardRunningMarker());
+		f.addMarker(Formatter.ERROR, new ErrorMarker());
+//		ForwardRunningMarker caret = f.getCaretMarker();
+//		caret.setInputMode(InputMode.APPEND);
+		formula.setFocus(true, 2, 0, 3, 0, 0, 1);
+		List<Integer> l = new ArrayList<>();
+		l.add(-1);
+		formula.toSegment().format(sb, f, l);
+		out.println(sb);
 
 //		SegmentBuilder sb = new SegmentBuilder();
 //		int type = Segment.INT_DIGIT_SEGMENT, iSize = 3, mSize = 3, numOfRepeats = 3;

@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression;
+import mathaid.calculator.base.evaluator.parser.expression.programmer.PExpression.Params.ResultType;
 import mathaid.calculator.base.value.BinaryFPPrecision;
 import mathaid.calculator.base.value.BinaryFPPrecision.BinaryFP;
 import mathaid.calculator.base.value.BinaryRep;
@@ -241,6 +242,94 @@ public abstract class PExpression extends EvaluatableExpression<PExpression.Para
 	}
 
 	/*
+	 * Date: 7 Apr 2024 -----------------------------------------------------------
+	 * Time created: 05:49:21 ---------------------------------------------------
+	 */
+	/**
+	 * Converts a {@code BigInteger} (see {@link TC#fromDecimal(int, BigInteger[])} for details on the array form) between the
+	 * various supported bit representations;
+	 * @param fromRep the bit representation from which the conversion is to be made. It may be any one of the following values:
+	 * <ul>
+	 * 	<li>{@link ResultType#REP_EXCESS_K}</li>
+	 * 	<li>{@link ResultType#REP_FLOATING_POINT}</li>
+	 * 	<li>{@link ResultType#REP_MATH}</li>
+	 * 	<li>{@link ResultType#REP_NEGABINARY}</li>
+	 * 	<li>{@link ResultType#REP_ONE_C}</li>
+	 * 	<li>{@link ResultType#REP_SMR}</li>
+	 * 	<li>{@link ResultType#REP_TWO_C}</li>
+	 * 	<li>{@link ResultType#REP_UNSIGNED}</li>
+	 * </ul>
+	 * @param val the value to be converted. See {@link TC#fromDecimal(int, BigInteger[])} for details on the format.
+	 * @param bound the bitlength of the given value. It is a dyadic value to which calculation will limit the bit-length.
+	 * See {@link TC#fromDecimal(int, BigInteger[])} for details on the format.
+	 * @param toRep any of the valid values stated in {@code fromRep}
+	 * @return {@code val} converted to the same bit representation specified by toRep
+	 */
+	protected static BigInteger[] convert(int fromRep, BigInteger[] val, int bound, int toRep) {
+		switch(fromRep) {
+		case ResultType.REP_TWO_C:{
+			MT.fromTC(bound, val);
+			break;
+		}
+		case ResultType.REP_SMR:{
+			MT.fromSMR(bound, val);
+			break;
+		}
+		case ResultType.REP_UNSIGNED:{
+			MT.fromUS(bound, val);
+			break;
+		}
+		case ResultType.REP_ONE_C:{
+			MT.fromOC(bound, val);
+			break;
+		}
+		case ResultType.REP_EXCESS_K:{
+			MT.fromEx(bound, val);
+			break;
+		}
+		case ResultType.REP_NEGABINARY:{
+			MT.fromNB(bound, val);
+			break;
+		}
+		default:
+		case ResultType.REP_MATH:{
+			break;
+		}
+		}
+		switch(toRep) {
+		case ResultType.REP_TWO_C:{
+			TC.fromDecimal(bound, val);
+			break;
+		}
+		case ResultType.REP_SMR:{
+			SMR.fromDecimal(bound, val);
+			break;
+		}
+		case ResultType.REP_UNSIGNED:{
+			US.fromDecimal(bound, val);
+			break;
+		}
+		case ResultType.REP_ONE_C:{
+			OC.fromDecimal(bound, val);
+			break;
+		}
+		case ResultType.REP_EXCESS_K:{
+			Ex.fromDecimal(bound, val);
+			break;
+		}
+		case ResultType.REP_NEGABINARY:{
+			NB.fromDecimal(bound, val);
+			break;
+		}
+		default:
+		case ResultType.REP_MATH:{
+			break;
+		}
+		}
+		return val;
+	}
+	
+	/*
 	 * Date: 29 Nov 2022-----------------------------------------------------------
 	 * Time created: 20:46:37---------------------------------------------------
 	 */
@@ -469,6 +558,30 @@ public abstract class PExpression extends EvaluatableExpression<PExpression.Para
 	 * @return {@code this} as a floating point.
 	 */
 	abstract BinaryFP getFloatingPoint();
+
+	/*
+	 * Date: 4 Apr 2024 -----------------------------------------------------------
+	 * Time created: 23:00:44 ---------------------------------------------------
+	 */	
+	/**
+	 * Converts this integer to a floating-point (if {@code isInteger == true}) whose bits are represented by this integer.
+	 * If this expression is already a floating-point, then returns {@code this}.
+	 * @return {@code this} as a floating-point whereby {@code isInteger == false} and {@code isFloatingPoint == true}
+	 * after this method returns.
+	 */
+	abstract Name toFloatingPoint();
+
+	/*
+	 * Date: 4 Apr 2024 -----------------------------------------------------------
+	 * Time created: 23:00:44 ---------------------------------------------------
+	 */	
+	/**
+	 * Converts this floating-point to an integer (if {@code isFloatingPoint == true}) whose bits are represented by this floating-point.
+	 * If this expression is already an integer, then returns {@code this}.
+	 * @return {@code this} as an integer whereby {@code isInteger == true} and {@code isFloatingPoint == false}
+	 * after this method returns.
+	 */
+	abstract Name toInteger();
 
 	/*
 	 * Date: 30 Nov 2023 -----------------------------------------------------------

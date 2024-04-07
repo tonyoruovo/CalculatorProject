@@ -4,6 +4,8 @@
 package mathaid.calculator.base.evaluator.parser.expression.programmer;
 
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.BOOLEAN_NOT;
+import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.C_DECREMENT;
+import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.C_INCREMENT;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.C_NOT;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.MATH_NOT;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.MINUS;
@@ -223,13 +225,137 @@ public class Prefix extends Name {
 				}
 				}
 			}
+			break;
+		}
+		case C_INCREMENT: {
+			PExpression x = right.evaluate();
+			if(x.isFloatingPoint()) return new Name(x.getFloatingPoint().add(getPrecision().createFP("1")), p);
+			else if(x.isInteger()) {
+				switch (getRep()) {
+				case EXCESS_K: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromEx(p.getBitLength(), r);
+					r[0] = r[0].add(Utility.i(1));
+					Ex.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case MATH: {
+					BigInteger n = x.getInteger().add(Utility.i(1));
+					BigInteger c = x.getCarry();
+					if (n.abs().bitLength() > p.getBitLength()) {
+						c = n.shiftRight(p.getBitLength()).testBit(0) ? BigInteger.ONE : BigInteger.ZERO;
+						int sign = n.signum();
+						n = FloatAid.clearMSB(n.abs(), n.abs().bitLength() - p.getBitLength()).multiply(BigInteger.valueOf(sign));
+					}
+					return new Name(n, c, p);
+				}
+				case NEGABINARY: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromNB(p.getBitLength(), r);
+					r[0] = r[0].add(Utility.i(1));
+					NB.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case ONE_C: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromOC(p.getBitLength(), r);
+					r[0] = r[0].add(Utility.i(1));
+					OC.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case SMR: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromSMR(p.getBitLength(), r);
+					r[0] = r[0].add(Utility.i(1));
+					SMR.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				default:
+				case TWO_C: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromTC(p.getBitLength(), r);
+					r[0] = r[0].add(Utility.i(1));
+					TC.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case UNSIGNED: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromUS(p.getBitLength(), r);
+					r[0] = r[0].add(Utility.i(1));
+					US.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				}
+			}
+			break;
+		}
+		case C_DECREMENT: {
+			PExpression x = right.evaluate();
+			if(x.isFloatingPoint()) return new Name(x.getFloatingPoint().subtract(getPrecision().createFP("1")), p);
+			else if(x.isInteger()) {
+				switch (getRep()) {
+				case EXCESS_K: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromEx(p.getBitLength(), r);
+					r[0] = r[0].subtract(Utility.i(1));
+					Ex.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case MATH: {
+					BigInteger n = x.getInteger().subtract(Utility.i(1));
+					BigInteger c = x.getCarry();
+					if (n.abs().bitLength() > p.getBitLength()) {
+						c = n.shiftRight(p.getBitLength()).testBit(0) ? BigInteger.ONE : BigInteger.ZERO;
+						int sign = n.signum();
+						n = FloatAid.clearMSB(n.abs(), n.abs().bitLength() - p.getBitLength()).multiply(BigInteger.valueOf(sign));
+					}
+					return new Name(n, c, p);
+				}
+				case NEGABINARY: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromNB(p.getBitLength(), r);
+					r[0] = r[0].subtract(Utility.i(1));
+					NB.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case ONE_C: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromOC(p.getBitLength(), r);
+					r[0] = r[0].subtract(Utility.i(1));
+					OC.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case SMR: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromSMR(p.getBitLength(), r);
+					r[0] = r[0].subtract(Utility.i(1));
+					SMR.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				default:
+				case TWO_C: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromTC(p.getBitLength(), r);
+					r[0] = r[0].subtract(Utility.i(1));
+					TC.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				case UNSIGNED: {
+					BigInteger[] r = { x.getInteger(), x.getCarry() };
+					MT.fromUS(p.getBitLength(), r);
+					r[0] = r[0].subtract(Utility.i(1));
+					US.fromDecimal(p.getBitLength(), r);
+					return new Name(r[0], r[1], p);
+				}
+				}
+			}
+			break;
 		}
 		case NOT:
 		case BOOLEAN_NOT:
 		case MATH_NOT:
 		case C_NOT: {
-			PExpression x = this.right.evaluate();
-			if (x.isInteger()) {
+			var x = this.right.evaluate().toInteger();
 				switch (getRep()) {
 				case EXCESS_K: {
 					BigInteger[] r = { x.getInteger(), x.getCarry() };
@@ -283,9 +409,8 @@ public class Prefix extends Name {
 					return new Name(r[0], r[1], p);
 				}
 				}
-			}
-			throw new ArithmeticException(
-					"Cannot apply \"not\" to a floating point. Please convert to bits or cast it to integer");
+			//throw new ArithmeticException(
+					//"Cannot apply \"not\" to a floating point. Please convert to bits or cast it to integer");
 		}
 		default:
 		}

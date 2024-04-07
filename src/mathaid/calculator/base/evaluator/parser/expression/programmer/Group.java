@@ -100,7 +100,8 @@ public class Group extends PExpression {
 	 */
 	@Override
 	public BigInteger getCarry() {
-		throw new IllegalStateException("has no value to produce");
+//		throw new IllegalStateException("has no value to produce");
+		return content.getCarry();
 	}
 
 	/*
@@ -115,7 +116,7 @@ public class Group extends PExpression {
 	@Override
 	BinaryFP getFloatingPoint() {
 //		throw new IllegalStateException("has no value to produce");
-		return null;
+		return content.getFloatingPoint();
 	}
 
 	/*
@@ -130,7 +131,33 @@ public class Group extends PExpression {
 	@Override
 	BigInteger getInteger() {
 //		throw new IllegalStateException("has no value to produce");
-		return null;
+		return content.getInteger();
+	}
+
+	/*
+	 * Date: 4 Apr 2024 -----------------------------------------------------------
+	 * Time created: 23:02:51 ---------------------------------------------------
+	 */
+	/**
+	 * {@inheritDoc}
+	 * @return
+	 */
+	@Override
+	Name toFloatingPoint() {
+		return content.toFloatingPoint();
+	}
+
+	/*
+	 * Date: 4 Apr 2024 -----------------------------------------------------------
+	 * Time created: 23:02:51 ---------------------------------------------------
+	 */
+	/**
+	 * {@inheritDoc}
+	 * @return
+	 */
+	@Override
+	Name toInteger() {
+		return content.toInteger();
 	}
 
 	/*

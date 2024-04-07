@@ -123,6 +123,14 @@ public interface FunctionName {
 	 * The {@code String} constant which serves as an identifier for the C-style bitwise right-shift operator.
 	 */
 	String C_RIGHT_SHIFT = ">>";
+	/**
+	 * The {@code String} constant which serves as an identifier for the C-style increment operator.
+	 */
+	String C_INCREMENT = "++";
+	/**
+	 * The {@code String} constant which serves as an identifier for the C-style decrement operator.
+	 */
+	String C_DECREMENT = "--";
 
 	// Function names
 
@@ -230,7 +238,17 @@ public interface FunctionName {
 	 * (or function name)
 	 */
 	String NOR = "nor";
+	/**
+	 * The {@code String} constant which serves as an identifier for the function name of a bitwise function that calculates the bit
+	 * a given index in a bit pattern. It uses the format <code>nth(BigInteger i, int n)</code>
+	 */
+	String NTH = "nth";
 	//String REM = "rem";//No rem use % instead
+	/**
+	 * The {@code String} constant which serves as an identifier for the function name of a bitwise function that calculates a bit
+	 * pattern where all bits are 'on' and has the same count as the specified value. It's format is <code>on(int n)</code>
+	 */
+	String ON = "on";
 	/**
 	 * The {@code String} constant which serves as an identifier for the {@linkplain Math#rint(double) rint} function for a
 	 * floating-point.

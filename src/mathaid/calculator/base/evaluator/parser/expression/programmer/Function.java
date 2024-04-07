@@ -26,6 +26,8 @@ import static mathaid.calculator.base.evaluator.parser.expression.programmer.Fun
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.NEXT_DOWN;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.NEXT_UP;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.NOR;
+import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.NTH;
+import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.ON;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.RINT;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.ROUND;
 import static mathaid.calculator.base.evaluator.parser.expression.programmer.FunctionName.SIGNIFICAND;
@@ -43,6 +45,7 @@ import mathaid.calculator.base.evaluator.parser.expression.EvaluatableExpression
 import mathaid.calculator.base.typeset.LinkedSegment;
 import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.typeset.Segments;
+import mathaid.calculator.base.util.Utility;
 import mathaid.calculator.base.value.Ex;
 import mathaid.calculator.base.value.FloatAid;
 import mathaid.calculator.base.value.NB;
@@ -175,7 +178,7 @@ public class Function extends Name {
 			}
 			throw new ArithmeticException("argument must be floating point");
 		}
-		case FLOAT_CAST: {// integer cast
+		case FLOAT_CAST: {// float cast
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
 			PExpression arg = args.get(0).evaluate();
@@ -230,44 +233,32 @@ public class Function extends Name {
 		case BIT_COUNT: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				BigInteger i = BigInteger.valueOf(arg.getInteger().bitCount());
-				return new Name(i, arg.getCarry(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toInteger();
+			BigInteger i = BigInteger.valueOf(arg.getInteger().bitCount());
+			return new Name(i, arg.getCarry(), getParams());
 
 		}
 		case BIT_LENGTH: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				BigInteger i = BigInteger.valueOf(arg.getInteger().bitLength());
-				return new Name(i, arg.getCarry(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toInteger();
+			BigInteger i = BigInteger.valueOf(arg.getInteger().bitLength());
+			return new Name(i, arg.getCarry(), getParams());
 
 		}
 		case CEIL: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isFloatingPoint()) {
-				return new Name(arg.getFloatingPoint().ceil(), getParams());
-			}
-			throw new ArithmeticException("argument must be floating point");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().ceil(), getParams());
 
 		}
 		case EXPONENT: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isFloatingPoint()) {
-				BigInteger i = BigInteger.valueOf(arg.getFloatingPoint().getExponent());
-				return new Name(i, BigInteger.valueOf(0), getParams());
-			}
-			throw new ArithmeticException("argument must be floating point");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			BigInteger i = BigInteger.valueOf(arg.getFloatingPoint().getExponent());
+			return new Name(i, BigInteger.valueOf(0), getParams());
 
 		}
 		case FMA: {
@@ -277,276 +268,231 @@ public class Function extends Name {
 		case FLOOR: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				return new Name(arg.getFloatingPoint().floor(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().floor(), getParams());
 
 		}
 		case FROM_INTEGER: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			BigInteger x = args.get(0).evaluate().getInteger();
-			if (x != null) {
-				return new Name(getPrecision().fromBitLayout(x), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			BigInteger x = args.get(0).evaluate().toInteger().getInteger();
+			return new Name(getPrecision().fromBitLayout(x), getParams());
 		}
 		case GCD: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger i = arg1.toDecimal().getInteger().gcd(arg2.toDecimal().getInteger());
-				return new Name(i, BigInteger.ZERO, getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger i = arg1.toDecimal().getInteger().gcd(arg2.toDecimal().getInteger());
+			return new Name(i, BigInteger.ZERO, getParams()).fromDecimal();
 
 		}
 		case IEEE_REM: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isFloatingPoint() && arg2.isFloatingPoint()) {
-				return new Name(arg1.getFloatingPoint().ieeeRemainder(arg2.getFloatingPoint()), getParams())
-						.fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be floating point");
+			PExpression arg1 = args.get(0).evaluate().toFloatingPoint();
+			PExpression arg2 = args.get(1).evaluate().toFloatingPoint();
+			return new Name(arg1.getFloatingPoint().ieeeRemainder(arg2.getFloatingPoint()), getParams())
+					.fromDecimal();
 
 		}
 		case HIGH: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.getInteger();
-				int length;
-				try {
-					length = arg2.getInteger().intValueExact();
-				} catch (ArithmeticException e) {
-					throw new ArithmeticException(
-							"this argument must be less then the bit length of the first argument");
-				}
-				return new Name(x.shiftRight(getParams().getBitLength() - length), arg1.getCarry(), getParams());
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.getInteger();
+			int length;
+			try {
+				length = arg2.getInteger().intValueExact();
+			} catch (ArithmeticException e) {
+				throw new ArithmeticException(
+						"this argument must be less then the bit length of the first argument");
 			}
-			throw new ArithmeticException("arguments must all be integer");
-
+			return new Name(x.shiftRight(getParams().getBitLength() - length), arg1.getCarry(), getParams());
 		}
 		case LCM: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				mathaid.calculator.base.value.BigFraction x = new mathaid.calculator.base.value.BigFraction(
-						arg1.toDecimal().getInteger(), BigInteger.ONE);
-				mathaid.calculator.base.value.BigFraction y = new mathaid.calculator.base.value.BigFraction(
-						arg2.toDecimal().getInteger(), BigInteger.ONE);
-				return new Name(x.lcm(y), arg1.getCarry(), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			mathaid.calculator.base.value.BigFraction x = new mathaid.calculator.base.value.BigFraction(
+					arg1.toDecimal().getInteger(), BigInteger.ONE);
+			mathaid.calculator.base.value.BigFraction y = new mathaid.calculator.base.value.BigFraction(
+					arg2.toDecimal().getInteger(), BigInteger.ONE);
+			return new Name(x.lcm(y), arg1.getCarry(), getParams()).fromDecimal();
 
 		}
 		case LOW: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.getInteger();
-				int length;
-				try {
-					length = arg2.getInteger().intValueExact();
-				} catch (ArithmeticException e) {
-					throw new ArithmeticException(
-							"this argument must be less then the bit length of the first argument");
-				}
-				return new Name(FloatAid.clearMSB(x, getParams().getBitLength() - length), arg1.getCarry(),
-						getParams());
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.getInteger();
+			int length;
+			try {
+				length = arg2.getInteger().intValueExact();
+			} catch (ArithmeticException e) {
+				throw new ArithmeticException(
+						"this argument must be less then the bit length of the first argument");
 			}
-			throw new ArithmeticException("arguments must all be integer");
+			return new Name(FloatAid.clearMSB(x, getParams().getBitLength() - length), arg1.getCarry(),
+					getParams());
 
 		}
 		case MAX: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.toDecimal().getInteger();
-				BigInteger y = arg2.toDecimal().getInteger();
-				return new Name(x.max(y), arg1.getCarry(), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.toDecimal().getInteger();
+			BigInteger y = arg2.toDecimal().getInteger();
+			return new Name(x.max(y), arg1.getCarry(), getParams()).fromDecimal();
 
 		}
 		case MIN: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.toDecimal().getInteger();
-				BigInteger y = arg2.toDecimal().getInteger();
-				return new Name(x.min(y), arg1.getCarry(), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.toDecimal().getInteger();
+			BigInteger y = arg2.toDecimal().getInteger();
+			return new Name(x.min(y), arg1.getCarry(), getParams()).fromDecimal();
 
 		}
 		case MOD: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.toDecimal().getInteger();
-				BigInteger y = arg2.toDecimal().getInteger();
-				return new Name(x.mod(y), arg1.getCarry(), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.toDecimal().getInteger();
+			BigInteger y = arg2.toDecimal().getInteger();
+			return new Name(x.mod(y), arg1.getCarry(), getParams()).fromDecimal();
 		}
 		case NAND: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.toDecimal().getInteger();
-				BigInteger y = arg2.toDecimal().getInteger();
-				return new Name(x.and(y).not(), arg1.getCarry(), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.toDecimal().getInteger();
+			BigInteger y = arg2.toDecimal().getInteger();
+			return new Name(x.and(y).not(), arg1.getCarry(), getParams()).fromDecimal();
 		}
 		case NEXT_AFTER: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isFloatingPoint() && arg2.isFloatingPoint()) {
-				return new Name(arg1.getFloatingPoint().nextAfter(arg2.getFloatingPoint()), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be floating point");
+			PExpression arg1 = args.get(0).evaluate().toFloatingPoint();
+			PExpression arg2 = args.get(1).evaluate().toFloatingPoint();
+			return new Name(arg1.getFloatingPoint().nextAfter(arg2.getFloatingPoint()), getParams()).fromDecimal();
 
 		}
 		case NEXT_DOWN: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				return new Name(arg.getFloatingPoint().nextDown(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().nextDown(), getParams());
 
 		}
 		case NEXT_UP: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				return new Name(arg.getFloatingPoint().nextUp(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().nextUp(), getParams());
 
 		}
 		case NOR: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.toDecimal().getInteger();
+			BigInteger y = arg2.toDecimal().getInteger();
+			return new Name(x.or(y).not(), arg1.getCarry(), getParams()).fromDecimal();
+		}
+		case NTH: {
+			if (args.size() != 2)
+				throw new ArithmeticException("unknown argument(s) found");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
 			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.toDecimal().getInteger();
-				BigInteger y = arg2.toDecimal().getInteger();
-				return new Name(x.or(y).not(), arg1.getCarry(), getParams()).fromDecimal();
+			BigInteger x = arg1.toDecimal().getInteger();
+			int y;
+			try {				
+				y = arg2.isInteger() ? arg2.getInteger().intValueExact() : arg2.getFloatingPoint().trunc().intValueExact();
+			} catch (ArithmeticException e) {
+				throw new ArithmeticException("second argument too big");
 			}
-			throw new ArithmeticException("arguments must all be integer");
+			return new Name(x.testBit(y) ? Utility.i(1) : Utility.i(0), arg1.getCarry(), getParams());
+		}
+		case ON: {
+			if (args.size() != 1)
+				throw new ArithmeticException("unknown argument(s) found");
+			PExpression arg = args.get(0).evaluate();
+			int x;
+			try {				
+				x = arg.isInteger() ? arg.getInteger().intValueExact() : arg.getFloatingPoint().trunc().intValueExact();
+			} catch (ArithmeticException e) {
+				throw new ArithmeticException("second argument too big");
+			}
+			return new Name(FloatAid.getAllOnes(x), arg.getCarry(), getParams());
 		}
 		case RINT: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				return new Name(arg.getFloatingPoint().rint(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
-
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().rint(), getParams());
 		}
 		case ROUND: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				return new Name(arg.getFloatingPoint().round(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().round(), getParams());
 		}
 		case SIGNIFICAND: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isFloatingPoint()) {
-				BigInteger i = arg.getFloatingPoint().getSignificand();
-				return new Name(i, BigInteger.valueOf(0), getParams());
-			}
-			throw new ArithmeticException("argument must be floating point");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			BigInteger i = arg.getFloatingPoint().getSignificand();
+			return new Name(i, BigInteger.valueOf(0), getParams());
 
 		}
 		case SIGNUM: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isFloatingPoint()) {
-				BigInteger i = BigInteger.valueOf(arg.getFloatingPoint().signum());
-				return new Name(i, BigInteger.valueOf(0), getParams());
-			}
-			throw new ArithmeticException("argument must be floating point");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			BigInteger i = BigInteger.valueOf(arg.getFloatingPoint().signum());
+			return new Name(i, BigInteger.valueOf(0), getParams());
 
 		}
 		case TO_INTEGER: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isFloatingPoint()) {
-				BigInteger i = arg.getFloatingPoint().toBigInteger();
-				return new Name(i, BigInteger.valueOf(0), getParams());
-			}
-			throw new ArithmeticException("argument must be floating point");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			BigInteger i = arg.getFloatingPoint().toBigInteger();
+			return new Name(i, BigInteger.valueOf(0), getParams());
 
 		}
 		case TRUNC: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isFloatingPoint()) {
-				BigInteger i = arg.getFloatingPoint().trunc();
-				return new Name(i, BigInteger.valueOf(0), getParams());
-			}
-			throw new ArithmeticException("argument must be floating point");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			BigInteger i = arg.getFloatingPoint().trunc();
+			return new Name(i, BigInteger.valueOf(0), getParams());
 
 		}
 		case ULP: {
 			if (args.size() != 1)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg = args.get(0).evaluate();
-			if (arg.isInteger()) {
-				return new Name(arg.getFloatingPoint().ulp(), getParams());
-			}
-			throw new ArithmeticException("argument must be integer");
+			PExpression arg = args.get(0).evaluate().toFloatingPoint();
+			return new Name(arg.getFloatingPoint().ulp(), getParams());
 		}
 		case XNOR: {
 			if (args.size() != 2)
 				throw new ArithmeticException("unknown argument(s) found");
-			PExpression arg1 = args.get(0).evaluate();
-			PExpression arg2 = args.get(1).evaluate();
-			if (arg1.isInteger() && arg2.isInteger()) {
-				BigInteger x = arg1.toDecimal().getInteger();
-				BigInteger y = arg2.toDecimal().getInteger();
-				return new Name(x.and(y).or(x.not().and(y.not())), arg1.getCarry(), getParams()).fromDecimal();
-			}
-			throw new ArithmeticException("arguments must all be integer");
+			PExpression arg1 = args.get(0).evaluate().toInteger();
+			PExpression arg2 = args.get(1).evaluate().toInteger();
+			BigInteger x = arg1.toDecimal().getInteger();
+			BigInteger y = arg2.toDecimal().getInteger();
+			return new Name(x.and(y).or(x.not().and(y.not())), arg1.getCarry(), getParams()).fromDecimal();
 		}
 		default:
 		}

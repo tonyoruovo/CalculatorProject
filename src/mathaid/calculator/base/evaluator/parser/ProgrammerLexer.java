@@ -85,7 +85,9 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 		// expressions like Sin[x]
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.LEFT_BRACKET), new FunctionParselet());
 		b.registerPrefixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.PLUS), new PrefixParselet());
+		b.registerPrefixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.INCREMENT), new PrefixParselet());
 		b.registerPrefixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.MINUS), new PrefixParselet());
+		b.registerPrefixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.DECREMENT), new PrefixParselet());
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.BANG), new PrefixParselet());
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.TILDE), new PrefixParselet());
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.NEGATION), new PrefixParselet());
@@ -107,6 +109,9 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.RIGHT_LAMBDA), new OperatorParselet(true));
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.RIGHT_SHIFT), new OperatorParselet(true));
 		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.LEFT_SHIFT), new OperatorParselet(true));
+
+		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.INCREMENT), new PostfixParselet());
+		b.registerInfixParselet(CommonSyntax.COMMON_TYPES.get(CommonSyntax.DECREMENT), new PostfixParselet());
 
 		return b.build();
 	}
@@ -332,6 +337,20 @@ public class ProgrammerLexer implements Iterator<Token<String>> {
 			if (ch == '<') {
 				index += 1;
 				return new Token<>(CommonSyntax.COMMON_TYPES.get(CommonSyntax.LEFT_SHIFT),
+						String.format("%1$s%2$s", c, ch));
+			}
+		} else if(c == '+' && index < src.length()) {// for ++
+			char ch = src.charAt(index);
+			if (ch == '+') {
+				index += 1;
+				return new Token<>(CommonSyntax.COMMON_TYPES.get(CommonSyntax.INCREMENT),
+						String.format("%1$s%2$s", c, ch));
+			}
+		} else if(c == '-' && index < src.length()) {// for --
+			char ch = src.charAt(index);
+			if (ch == '-') {
+				index += 1;
+				return new Token<>(CommonSyntax.COMMON_TYPES.get(CommonSyntax.DECREMENT),
 						String.format("%1$s%2$s", c, ch));
 			}
 		}

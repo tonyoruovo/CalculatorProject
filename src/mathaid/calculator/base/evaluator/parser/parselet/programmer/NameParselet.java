@@ -112,7 +112,7 @@ public class NameParselet implements
 	 * @param lexerReference     {@inheritDoc}
 	 * @param syntax             {@inheritDoc}
 	 * @param params             {@inheritDoc}
-	 * @return a new {@code Name} objec.
+	 * @return a new {@code Name} object.
 	 */
 	// Endianess is applied here
 	@Override
@@ -124,7 +124,7 @@ public class NameParselet implements
 				|| yetToBeParsedToken.getName().contains("e-") || yetToBeParsedToken.getName().contains("E+")
 				|| yetToBeParsedToken.getName().contains("E-") || yetToBeParsedToken.getName().contains("p+")
 				|| yetToBeParsedToken.getName().contains("p-") || yetToBeParsedToken.getName().contains("P+")
-				|| yetToBeParsedToken.getName().contains("P-"))
+				|| yetToBeParsedToken.getName().contains("P-") || params.getBitRepresentation() == ResultType.REP_FLOATING_POINT)
 			return new Name(getPrecision(params).createFP(yetToBeParsedToken.getName(), params.getRadix()), params);
 		else if (Utility.isNumber(yetToBeParsedToken.getName(), params.getRadix())) {
 			BigInteger i = new BigInteger(yetToBeParsedToken.getName(), params.getRadix());

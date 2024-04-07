@@ -180,10 +180,12 @@ public class Operator extends Name {
 					BinaryFP fpl = getPrecision().createFP(left.getInteger().toString(p.getRadix()), p.getRadix());
 					BinaryFP fpr = right.getFloatingPoint();
 					return new Name(fpl.add(fpr), p);
+				} else if(!right.isFloatingPoint()) {
+					BinaryFP fpl = left.getFloatingPoint();
+					BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
+					return new Name(fpl.add(fpr), p);
 				}
-				BinaryFP fpl = left.getFloatingPoint();
-				BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
-				return new Name(fpl.add(fpr), p);
+				return new Name(left.getFloatingPoint().add(right.getFloatingPoint()), p);
 			}
 			BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
 			r[0] = r[0].add(r[1]);
@@ -196,10 +198,12 @@ public class Operator extends Name {
 					BinaryFP fpl = getPrecision().createFP(left.getInteger().toString(p.getRadix()), p.getRadix());
 					BinaryFP fpr = right.getFloatingPoint();
 					return new Name(fpl.subtract(fpr), p);
+				} else if(!right.isFloatingPoint()) {
+					BinaryFP fpl = left.getFloatingPoint();
+					BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
+					return new Name(fpl.subtract(fpr), p);
 				}
-				BinaryFP fpl = left.getFloatingPoint();
-				BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
-				return new Name(fpl.subtract(fpr), p);
+				return new Name(left.getFloatingPoint().subtract(right.getFloatingPoint()), p);
 			}
 			BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
 			r[0] = r[0].subtract(r[1]);
@@ -212,10 +216,12 @@ public class Operator extends Name {
 					BinaryFP fpl = getPrecision().createFP(left.getInteger().toString(p.getRadix()), p.getRadix());
 					BinaryFP fpr = right.getFloatingPoint();
 					return new Name(fpl.multiply(fpr), p);
+				} else if(!right.isFloatingPoint()) {
+					BinaryFP fpl = left.getFloatingPoint();
+					BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
+					return new Name(fpl.multiply(fpr), p);
 				}
-				BinaryFP fpl = left.getFloatingPoint();
-				BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
-				return new Name(fpl.multiply(fpr), p);
+				return new Name(left.getFloatingPoint().multiply(right.getFloatingPoint()), p);
 			}
 			BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
 			r[0] = r[0].multiply(r[1]);
@@ -228,10 +234,12 @@ public class Operator extends Name {
 					BinaryFP fpl = getPrecision().createFP(left.getInteger().toString(p.getRadix()), p.getRadix());
 					BinaryFP fpr = right.getFloatingPoint();
 					return new Name(fpl.divide(fpr), p);
+				} else if(!right.isFloatingPoint()) {
+					BinaryFP fpl = left.getFloatingPoint();
+					BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
+					return new Name(fpl.divide(fpr), p);
 				}
-				BinaryFP fpl = left.getFloatingPoint();
-				BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
-				return new Name(fpl.divide(fpr), p);
+				return new Name(left.getFloatingPoint().divide(right.getFloatingPoint()), p);
 			}
 			BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
 			r[0] = r[0].divide(r[1]);
@@ -244,10 +252,12 @@ public class Operator extends Name {
 					BinaryFP fpl = getPrecision().createFP(left.getInteger().toString(p.getRadix()), p.getRadix());
 					BinaryFP fpr = right.getFloatingPoint();
 					return new Name(fpl.fmod(fpr), p);
+				} else if(!right.isFloatingPoint()) {
+					BinaryFP fpl = left.getFloatingPoint();
+					BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
+					return new Name(fpl.fmod(fpr), p);
 				}
-				BinaryFP fpl = left.getFloatingPoint();
-				BinaryFP fpr = getPrecision().createFP(right.getInteger().toString(p.getRadix()), p.getRadix());
-				return new Name(fpl.fmod(fpr), p);
+				return new Name(left.getFloatingPoint().fmod(right.getFloatingPoint()), p);
 			}
 			BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
 			r[0] = r[0].remainder(r[1]);
@@ -257,41 +267,31 @@ public class Operator extends Name {
 		case C_AND:
 		case MATH_AND:
 		case AND: {
-			if (left.isInteger() && right.isInteger()) {
-				BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
-				r[0] = r[0].and(r[1]);
-				r[1] = BigInteger.ZERO;
-				return new Name(r[0], r[1], p).fromDecimal();
-			}
-			throw new ArithmeticException("and can only be performed on integers");
+			BigInteger[] r = { left.toInteger().toDecimal().getInteger(), right.toInteger().toDecimal().getInteger() };
+			r[0] = r[0].and(r[1]);
+			r[1] = BigInteger.ZERO;
+			return new Name(r[0], r[1], p).fromDecimal();
 		}
 		case C_OR:
 		case MATH_OR:
 		case OR: {
-			if (left.isInteger() && right.isInteger()) {
-				BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
+				BigInteger[] r = { left.toInteger().toDecimal().getInteger(), right.toInteger().toDecimal().getInteger() };
 				r[0] = r[0].or(r[1]);
 				r[1] = BigInteger.ZERO;
 				return new Name(r[0], r[1], p).fromDecimal();
-			}
-			throw new ArithmeticException("or can only be performed on integers");
 		}
 		case C_XOR:
 		case XOR: {
-			if (left.isInteger() && right.isInteger()) {
-				BigInteger[] r = { left.toDecimal().getInteger(), right.toDecimal().getInteger() };
+				BigInteger[] r = { left.toInteger().toDecimal().getInteger(), right.toInteger().toDecimal().getInteger() };
 				r[0] = r[0].xor(r[1]);
 				r[1] = BigInteger.ZERO;
 				return new Name(r[0], r[1], p).fromDecimal();
-			}
-			throw new ArithmeticException("xor can only be performed on integers");
 		}
 		case C_LEFT_SHIFT: {
-			if (left.isInteger() && right.isInteger()) {
-				BigInteger[] r = { left.getInteger(), left.getCarry() };
+				BigInteger[] r = { left.toInteger().getInteger(), left.getCarry() };
 				int shift;
 				try {
-					shift = right.toDecimal().getInteger().intValueExact();
+					shift = right.isInteger() ? right.getInteger().intValueExact() : right.toFloatingPoint().getFloatingPoint().trunc().intValueExact();
 				} catch (ArithmeticException e) {
 					throw new ArithmeticException("right side is too big.");
 				}
@@ -419,15 +419,12 @@ public class Operator extends Name {
 					}
 				}
 				}
-			}
-			throw new ArithmeticException("shift can only be performed on integers");
 		}
 		case C_RIGHT_SHIFT: {
-			if (left.isInteger() && right.isInteger()) {
-				BigInteger[] r = { left.getInteger(), left.getCarry() };
+				BigInteger[] r = { left.toInteger().getInteger(), left.getCarry() };
 				int shift;
 				try {
-					shift = right.getInteger().intValueExact();
+					shift = right.isInteger() ? right.getInteger().intValueExact() : right.toFloatingPoint().getFloatingPoint().trunc().intValueExact();
 				} catch (ArithmeticException e) {
 					throw new ArithmeticException("right side is too big.");
 				}
@@ -594,8 +591,6 @@ public class Operator extends Name {
 					}
 				}
 				}
-			}
-			throw new ArithmeticException("shift can only be performed on integers");
 		}
 		/*
 		 * This radix conversion will be evaluated at the same place that recurring

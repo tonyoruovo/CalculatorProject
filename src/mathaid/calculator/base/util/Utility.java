@@ -3656,11 +3656,23 @@ public final class Utility {
 	 * @return a string where each subsequent value is preceded by a comma.
 	 */
 	public static <T> String toCSV(List<T> l) {
-		StringBuilder sb = new StringBuilder(l.size() * 2);
-		for (int i = 0; i < l.size(); i++, sb.append(",")) {
-			sb.append(l.get(i));
-		}
-		return sb.toString();
+//		StringBuilder sb = new StringBuilder(l.size() * 2);
+//		for (int i = 0; i < l.size(); i++, sb.append(",")) {
+//			sb.append(l.get(i));
+//		}
+//		return sb.toString();
+
+		return l.stream()
+				.reduce("",
+						(t, u) -> t.concat(t.length() > 0 ? "," : "").concat(u.toString()),
+						(t, u) -> t.concat(u)
+				);
+//		return l.stream()
+//				.collect(
+//						() -> new StringBuilder(),
+//						(sb, e) -> sb.append(sb.length() > 0 ? "," : "").append(e),
+//						(e1, e2) -> e1.append(e2)
+//				).toString();
 	}
 
 	/*

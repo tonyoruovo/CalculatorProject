@@ -188,6 +188,18 @@ public interface CommonSyntax<E extends EvaluatableExpression<A>, P extends Pars
 	 */
 	String LEFT_SHIFT = "leftShift";
 	/**
+	 * The {@code String} constant for the increment (java) "<code>++</code>"
+	 * token which can be used for retrieving the corresponding type from
+	 * {@link #COMMON_TYPES} or {@link #BASIC_TYPES}.
+	 */
+	String INCREMENT = "increment";
+	/**
+	 * The {@code String} constant for the decrement (java) "<code>--</code>"
+	 * token which can be used for retrieving the corresponding type from
+	 * {@link #COMMON_TYPES} or {@link #BASIC_TYPES}.
+	 */
+	String DECREMENT = "decrement";
+	/**
 	 * The {@code String} constant for the right shift (java)
 	 * "<code>&gt;&gt;</code>" token which can be used for retrieving the
 	 * corresponding type from {@link #COMMON_TYPES} or {@link #BASIC_TYPES}.
@@ -418,6 +430,9 @@ public interface CommonSyntax<E extends EvaluatableExpression<A>, P extends Pars
 		m.put(LOGICAL_AND, new Type<>("\u2227", Precedence.INFIX_2));
 		m.put(AND, new Type<>("&", Precedence.INFIX_2));
 		m.put(PERCENT, new Type<>("%", Precedence.INFIX_2));
+		// increment and decrement
+		m.put(INCREMENT, new Type<>("++", Precedence.PREFIX_1));
+		m.put(DECREMENT, new Type<>("--", Precedence.PREFIX_1));
 		return Collections.unmodifiableMap(m);
 	}
 
@@ -474,6 +489,9 @@ public interface CommonSyntax<E extends EvaluatableExpression<A>, P extends Pars
 		m.put(LOGICAL_AND, new Type<>("\u2227", Precedence.HIGHEST));
 		m.put(AND, new Type<>("&", Precedence.HIGHEST));
 		m.put(PERCENT, new Type<>("%", Precedence.HIGHEST));
+		// increment and decrement
+		m.put(INCREMENT, new Type<>("++", Precedence.HIGHEST));
+		m.put(DECREMENT, new Type<>("--", Precedence.HIGHEST));
 		return Collections.unmodifiableMap(m);
 	}
 

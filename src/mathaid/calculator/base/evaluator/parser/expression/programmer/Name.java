@@ -16,7 +16,14 @@ import mathaid.calculator.base.typeset.SegmentBuilder;
 import mathaid.calculator.base.typeset.Segments;
 import mathaid.calculator.base.value.BinaryFPPrecision;
 import mathaid.calculator.base.value.BinaryFPPrecision.BinaryFP;
+import mathaid.calculator.base.value.Ex;
 import mathaid.calculator.base.value.FloatAid;
+import mathaid.calculator.base.value.MT;
+import mathaid.calculator.base.value.NB;
+import mathaid.calculator.base.value.OC;
+import mathaid.calculator.base.value.SMR;
+import mathaid.calculator.base.value.TC;
+import mathaid.calculator.base.value.US;
 
 /*
  * Date: 8 Oct 2022----------------------------------------------------------- 
@@ -69,7 +76,7 @@ public class Name extends PExpression {
 			this.integer = null;
 			this.fp = getPrecision().createFP(name, params.getRadix());
 			this.name = null;
-			this.carry = null;
+			this.carry = fp.getCarry();
 		} else if (k.equals(String.class)) {
 			this.fp = null;
 			this.integer = null;
@@ -151,15 +158,15 @@ public class Name extends PExpression {
 		String[] c = FloatAid.getComponents(name, getParams().getRadix());
 		if (FloatAid.isNumber(c))
 			switch (getParams().getBitRepresentation()) {
-			case Params.ResultType.REP_FLOATING_POINT: {
-				formatBuilder.append(Digits.toSegment(fp, getParams().getRadix(), 10,
-						getParams().getResultType() == ResultType.NORMALISED,
-						EvaluatableExpression.fromParams(getParams(), Segment.Type.VINCULUM)));
-			}
-			default: {
-				formatBuilder.append(Digits.toRadixedSegment(integer, getParams().getRadix(),
-						EvaluatableExpression.fromParams(getParams(), Segment.Type.VINCULUM)));
-			}
+				case Params.ResultType.REP_FLOATING_POINT: {
+					formatBuilder.append(Digits.toSegment(toFloatingPoint().fp, getParams().getRadix(), 10,
+							getParams().getResultType() == ResultType.NORMALISED,
+							EvaluatableExpression.fromParams(getParams(), Segment.Type.VINCULUM)));
+				}
+				default: {
+					formatBuilder.append(Digits.toRadixedSegment(toInteger().integer, getParams().getRadix(),
+							EvaluatableExpression.fromParams(getParams(), Segment.Type.VINCULUM)));
+				}
 			}
 		else if (getParams().getConstants().containsKey(getName())) {
 			formatBuilder.append(Segments.constant(getParams().getConstants().get(getName()).get(), getName()));
@@ -240,6 +247,106 @@ public class Name extends PExpression {
 	@Override
 	public BigInteger getInteger() {
 		return integer;
+	}
+
+	/*
+	 * Date: 4 Apr 2024 -----------------------------------------------------------
+	 * Time created: 23:02:51 ---------------------------------------------------
+	 */
+	/**
+	 * {@inheritDoc}
+	 * @return {@inheritDoc}
+	 */
+	@Override
+	Name toFloatingPoint() {
+		if(!isInteger()) return this;
+		BigInteger[] integer = {getInteger(), getCarry()};
+		switch(getParams().getBitRepresentation()) {
+		default:
+		case ResultType.REP_TWO_C:{
+			break;
+		}
+		case ResultType.REP_MATH:{
+			TC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_EXCESS_K:{
+			MT.fromEx(getParams().getBitLength(), integer);
+			TC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_NEGABINARY:{
+			MT.fromNB(getParams().getBitLength(), integer);
+			TC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_ONE_C:{
+			MT.fromOC(getParams().getBitLength(), integer);
+			TC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_SMR:{
+			MT.fromSMR(getParams().getBitLength(), integer);
+			TC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_UNSIGNED:{
+			MT.fromUS(getParams().getBitLength(), integer);
+			TC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		}
+		return new Name(getPrecision().fromBitLayout(integer[0]), getParams());
+	}
+
+	/*
+	 * Date: 4 Apr 2024 -----------------------------------------------------------
+	 * Time created: 23:02:51 ---------------------------------------------------
+	 */
+	/**
+	 * {@inheritDoc}
+	 * @return {@inheritDoc}
+	 */
+	@Override
+	Name toInteger() {
+		if(!isInteger()) return this;
+		BigInteger[] integer = {getFloatingPoint().toBigInteger(), getCarry()};
+		switch(getParams().getBitRepresentation()) {
+		default:
+		case ResultType.REP_TWO_C:{
+			break;
+		}
+		case ResultType.REP_MATH:{
+			MT.fromTC(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_EXCESS_K:{
+			MT.fromTC(getParams().getBitLength(), integer);
+			Ex.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_NEGABINARY:{
+			MT.fromTC(getParams().getBitLength(), integer);
+			NB.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_ONE_C:{
+			MT.fromTC(getParams().getBitLength(), integer);
+			OC.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_SMR:{
+			MT.fromTC(getParams().getBitLength(), integer);
+			SMR.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		case ResultType.REP_UNSIGNED:{
+			MT.fromTC(getParams().getBitLength(), integer);
+			US.fromDecimal(getParams().getBitLength(), integer);
+			break;
+		}
+		}
+		return new Name(integer[0], getCarry(), getParams());
 	}
 
 	/*

@@ -119,7 +119,7 @@ public class Main {
 
 		Scanner sc = new Scanner(in);
 
-		Appendable sb = new NumberAdapter();
+		NumberAdapter sb = new NumberAdapter();
 		List<Integer> l = new ArrayList<>(Arrays.asList(-1));
 		while (true) {
 			String cmd = sc.nextLine();

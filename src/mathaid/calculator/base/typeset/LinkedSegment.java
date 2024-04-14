@@ -454,6 +454,27 @@ public interface LinkedSegment extends Segment {
 	 */
 	LinkedSegment concat(LinkedSegment s) throws NullPointerException;
 	
+	/**
+	 * Concatenates (appends) <code>this</code> to the argument and returns the resultant tree i.e
+	 * prepends the argument to <code>this</code>.
+	 * @param s the value that will be the head of the tree when this method returns. <code>null</code>
+	 * values may be used here, which will cause the current tree to be returned 'as is'.
+	 * @return a new {@code LinkedSegment} tree with the root (head) being the argument.
+	 */
+	default LinkedSegment preConcat(LinkedSegment s) {
+		return java.util.Objects.requireNonNullElse(s, Segments.empty("")).concat(this);
+	}
+	
+	/**
+	 * Same as {@link #preConcat(LinkedSegment)}.
+	 * @param s the value to be prepended
+	 * @return a new {@code LinkedSegment} tree with the argument as the head or root.
+	 * @see {@link #preConcat(LinkedSegment)}
+	 */
+	default LinkedSegment prepend(LinkedSegment s) {
+		return preConcat(s);
+	}
+	
 	/*
 	 * Date: 14 Nov 2023 -----------------------------------------------------------
 	 * Time created: 07:35:47 ---------------------------------------------------

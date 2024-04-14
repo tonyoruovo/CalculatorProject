@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script id="MathJax-script" src="./mathjax/es5/tex-svg-full.js"></script>
+    <link rel="stylesheet" href="style.css" id="default-theme">
+    <style>
+      #caret use[data-c="7C"],
+      #caret use[data-c="230B"],
+      #caret use[data-c="230A"],
+      #caret rect {
+        /*
+			If APPEND THEN SELECTOR = #caret use[data-c="230B"]
+			If PREPEND THEN SELECTOR = #caret use[data-c="230A"]
+			If OVERWRITE THEN SELECTOR = #caret rect
+			If INSERT THEN SELECTOR = #caret use[data-c="7C"]
+			*/
+        animation: caret 950ms linear infinite;
+      }
+
+      @keyframes caret {
+
+        0% {
+          opacity: 1;
+        }
+
+        20% {
+          opacity: 1;
+        }
+
+        40% {
+          opacity: 1;
+        }
+
+        60% {
+          opacity: 0;
+        }
+
+        80% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      :root,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      * {
+		  -webkit-touch-callout: none; /* iOS Safari */
+		    -webkit-user-select: none; /* Safari */
+		     -khtml-user-select: none; /* Konqueror HTML */
+		       -moz-user-select: none; /* Old versions of Firefox */
+		        -ms-user-select: none; /* Internet Explorer/Edge */
+		            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div class="math">
+   \[ x= \frac{\textrm{-}b\pm \sqrt{\cssId{caret}{\left|b ^{2 }\right.}-4ac } }{2a} \]
+  </div> -->
+    <section class="calculator">
+      <div class="tabs">
+        <div class="tab-layout">
+          <button class="tab current" onclick="switchTab(this)" data-for="sci">Scientific</button>
+          <button class="tab" onclick="switchTab(this)" data-for="pro">Programmer</button>
+          <!-- <button class="tab" onclick="switchTab(this)" data-for="con">Converter</button> -->
+        </div>
+      </div>
+      <div class="interface active" data-id="sci">
+        <div class="displays">
+          <div class="mods top">
+            <div class="mod" onclick='priMod(this, 1)' style="width:4em">SHIFT</div>
+            <div class="mod" onclick='priMod(this, 2)' style="width:3em">HYP</div>
+            <div class="mod" onclick='priMod(this, 4)' style="width:3em">RCL</div>
+            <div class="mod" onclick='priMod(this, 8)' style="width:5.8em">CAPS-LOCK</div>
+            <div class="mod" onclick='priMod(this, 16)' style="width:5.8em">NUM-LOCK</div>
+          </div>
+          <div class="in display">
+            <div class="lcd">
+              \[ \cssId{caret}{\left|\Box\right.} ^{\Box } \]
+            </div>
+          </div>
+          <div class="msg display info">
+            <div class="lcd">No Error(s) recorded. This is a vvvvveeeeeeeerrrrrrrrrrrrrrryyyy long text</div>
+            <span class="msg_toggle" onclick="(()=>{const a=['INFO','WARN','ERR','SUCCESS'];let i=Number(this.dataset.msg);let c = this.parentElement.classList;c.remove(a[i].toLowerCase());i=i===a.length-1?0:i+1;this.textContent=a[i];this.dataset.msg=i;c.add(a[i].toLowerCase());})()" data-msg="0">INFO</span>
+          </div>
+          <div class="out display">
+            <div class="lcd">\[ \frac{200x}{50y^2} \]</div>
+          </div>
+          <div class="mods bottom">
+            <div class="mod active" onclick='triMod(this, ["dec", "frac", "mfrac", "fix", "sci", "eng"], "im", 0)' data-im="0" style="width:4em">DEC</div>
+            <div class="mod" onclick='priMod(this, 32)' style="width:3em">EXPR</div>
+            <div class="mod active" onclick='secMod(this, ["deg", "rad", "grad"], "im", 0)' data-im="0" style="width:3em;">DEG</div>
+            <div class="mod" onclick='priMod(this, 64)' style="width:3em">COMP</div>
+            <div class="mod" onclick='priMod(this, 128)' style="width:4em">SUFFIX</div>
+            <div class="mod active" onclick='triMod(this, ["insert", "overwrite", "prepend", "append"], "im", 3)' data-im="0" style="width:6.5em">INSERT</div>
+          </div>
+        </div>
+        <div class="pad">
+          <div class="keys ctrl"></div>
+          <div class="keys fn"></div>
+          <div class="keys num"></div>
+        </div>
+      </div>
+      <div class="interface" data-id="pro">
+        <div class="displays">
+          <div class="mods top">
+            <div class="mod" onclick='priMod(this, 1, "pro")' style="width:4em">SHIFT</div>
+            <div class="mod" onclick='priMod(this, 2, "pro")' style="width:5.8em">CAPS-LOCK</div>
+            <div class="mod" onclick='priMod(this, 4, "pro")' style="width:5.8em">NUM-LOCK</div>
+            <div class="mod" onclick='priMod(this, 8, "pro")' style="width:3em">NORM</div>
+            <div class="mod active" onclick='triMod(this, ["two", "one", "smr", "unsigned", "excess", "math", "nega", "float"], "im", 0, "pro", 4,3)' data-im="0" style="width:4.5em">TWO</div>
+          </div>
+          <div class="in display">
+            <div class="lcd">
+              \[ \mathtt{1100\,1001 &lt;&lt; 5\cssId{caret}{\left|\right.}} \]
+            </div>
+          </div>
+          <div class="msg display info">
+            <div class="lcd">No Error(s) recorded. This is a vvvvveeeeeeeerrrrrrrrrrrrrrryyyy long text</div>
+            <span class="msg_toggle" onclick="(()=>{const a=['INFO','WARN','ERR','SUCCESS'];let i=Number(this.dataset.msg);let c=this.parentElement.classList;c.remove(a[i].toLowerCase());i=i===a.length-1?0:i+1;this.textContent=a[i];this.dataset.msg=i;c.add(a[i].toLowerCase());})()" data-msg="0">INFO</span>
+          </div>
+          <div class="out display">
+            <div class="lcd">\[ \mathtt{0011\,1001} \]</div>
+          </div>
+          <div class="mods bottom">
+            <div class="mod active" onclick='triMod(this, ["logic", "arith", "rotate", "rot-carry"], "im", 3, "pro", 4,3)' data-im="0" style="width:5em">LOGIC</div>
+            <div class="mod active" onclick='triMod(this, ["8", "16", "32", "64", "80", "128", "256"], "im", 5, "pro", 4,3)' data-im="2" style="width:2em">32</div>
+            <div class="mod active" onclick='secMod(this, ["big", "pdp_11", "little"], "im", 0, "pro", 4)' data-im="0" style="width:3.5em">BIG</div>
+            <div class="mod active" onclick='rax(this)' data-im="0" style="width:2.5em">BIN</div>
+            <div class="mod active" onclick='triMod(this, ["ceil", "up", "half-up", "half-even", "half-down", "down", "floor", "no-round"], "im", 14, "pro", 4,3)' data-im="3" style="width:5.5em">HALF-EVEN</div>
+            <div class="mod active" onclick='triMod(this, ["insert", "overwrite", "prepend", "append"], "im", 18, "pro", 4,3)' data-im="0" style="width:5.5em">INSERT</div>
+          </div>
+        </div>
+        <div class="pad">
+          <div class="keys ctrl"></div>
+          <div class="keys fn"></div>
+          <div class="keys num"></div>
+        </div>
+      </div>
+      <div class="drawer">
+        <div class="content"><div class="floating"><div class="history btn"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#000" d="M3 5.67541V3C3 2.44772 2.55228 2 2 2C1.44772 2 1 2.44772 1 3V7C1 8.10457 1.89543 9 3 9H7C7.55229 9 8 8.55229 8 8C8
+          7.44772 7.55229 7 7 7H4.52186C4.54218 6.97505 4.56157 6.94914 4.57995 6.92229C5.621 5.40094 7.11009 4.22911 8.85191
+          3.57803C10.9074 2.80968 13.173 2.8196 15.2217 3.6059C17.2704 4.3922 18.9608 5.90061 19.9745 7.8469C20.9881 9.79319 21.2549
+          12.043 20.7247 14.1724C20.1945 16.3018 18.9039 18.1638 17.0959 19.4075C15.288 20.6513 13.0876 21.1909 10.9094 20.9247C8.73119
+          20.6586 6.72551 19.605 5.27028 17.9625C4.03713 16.5706 3.27139 14.8374 3.06527 13.0055C3.00352 12.4566 2.55674 12.0079 2.00446
+          12.0084C1.45217 12.0088 0.995668 12.4579 1.04626 13.0078C1.25994 15.3309 2.2082 17.5356 3.76666 19.2946C5.54703 21.3041 8.00084
+          22.5931 10.6657 22.9188C13.3306 23.2444 16.0226 22.5842 18.2345 21.0626C20.4464 19.541 22.0254 17.263 22.6741 14.6578C23.3228
+          12.0526 22.9963 9.30013 21.7562 6.91897C20.5161 4.53782 18.448 2.69239 15.9415 1.73041C13.4351 0.768419 10.6633 0.756291 8.14853
+          1.69631C6.06062 2.47676 4.26953 3.86881 3 5.67541Z"></path>
+          <path fill="black" d="M12 5C11.4477 5 11 5.44771 11 6V12.4667C11 12.4667 11 12.7274 11.1267 12.9235C11.2115 13.0898 11.3437 13.2344 11.5174 13.3346L16.1372
+          16.0019C16.6155 16.278 17.2271 16.1141 17.5032 15.6358C17.7793 15.1575 17.6155 14.546 17.1372 14.2698L13 11.8812V6C13 5.44772 12.5523 5 12 5Z"></path>
+        </svg></div><div class="settings btn"><svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#000000" d="M39.23,26a16.52,16.52,0,0,0,.14-2,16.52,16.52,0,0,0-.14-2l4.33-3.39a1,1,0,0,0,.25-1.31l-4.1-7.11a1,1,0,0,0-1.25-.44l-5.11,
+          2.06a15.68,15.68,0,0,0-3.46-2l-.77-5.43a1,1,0,0,0-1-.86H19.9a1,1,0,0,0-1,.86l-.77,5.43a15.36,15.36,0,0,0-3.46,2L9.54,9.75a1,1,
+          0,0,0-1.25.44L4.19,17.3a1,1,0,0,0,.25,1.31L8.76,22a16.66,16.66,0,0,0-.14,2,16.52,16.52,0,0,0,.14,2L4.44,29.39a1,1,0,0,0-.25,
+          1.31l4.1,7.11a1,1,0,0,0,1.25.44l5.11-2.06a15.68,15.68,0,0,0,3.46,2l.77,5.43a1,1,0,0,0,1,.86h8.2a1,1,0,0,0,1-.86l.77-5.43a15.36,
+          15.36,0,0,0,3.46-2l5.11,2.06a1,1,0,0,0,1.25-.44l4.1-7.11a1,1,0,0,0-.25-1.31ZM24,31.18A7.18,7.18,0,1,1,31.17,24,7.17,7.17,0,0,1,
+          24,31.18Z"></path></svg></div></div></div>
+        <div class="handle" onclick="this.parentElement.classList.toggle('open')"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 10L3 10M21 14L3 14M12 4L12 10M12 14L12 20M15 18L12 21L9 18M15 6L12 3L9 6" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      </div>
+    </section>
+    <script src="./script.js"></script>
+    <script>
+      /*MathJax = {
+        tex: {
+          packages: ["ams", "cancel", "unicode", "html", "bbox", "color"],
+          inlineMath: [
+            {
+              $$: "$$",
+            },
+          ],
+          displayMath: [
+            {
+              "\\[": "\\]",
+            },
+          ],
+        },
+        loader: {
+          load: [
+            "[tex]/ams",
+            "[tex]/cancel",
+            "[tex]/unicode",
+            "[tex]/html",
+            "[tex]/bbox",
+            "[tex]/colorv2",
+          ],
+        },
+        startup: {
+          input: ["tex"],
+          output: "svg",
+          typeset: true,
+          elements: [".math"],
+        },
+      };*/
+    </script>
+  </body>
+</html>

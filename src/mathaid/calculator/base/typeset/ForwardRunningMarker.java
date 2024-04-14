@@ -3,6 +3,7 @@
  */
 package mathaid.calculator.base.typeset;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -240,17 +241,6 @@ public class ForwardRunningMarker implements Marker {
 	 * @return the argument after formatting is done.
 	 */
 	private String getFormat(String math) {
-//		switch (mode) {
-//		case INSERT:
-//		default:
-//			return String.format("\\cssId{%1$s}{\\left|%2$s\\right.}", CARET_ID, math);
-//		case APPEND:
-//			return String.format("\\cssId{%1$s}{\\left\\lfloor %2$s \\right.}", CARET_ID, math);
-//		case OVERWRITE:
-//			return String.format("\\cssId{%1$s}{\\bbox[black]{ %2$s }}", CARET_ID, math);
-//		case PREPEND:
-//			return String.format("\\cssId{%1$s}{\\left. %2$s \\right\\rfloor}", CARET_ID, math);
-//		}
 		return mode.mark(math, CARET_ID);
 	}
 
@@ -305,6 +295,36 @@ public class ForwardRunningMarker implements Marker {
 	 */
 	public boolean equals(Object o) {
 		return (o instanceof ForwardRunningMarker);
+	}
+	
+	/**
+	 * Adds the caret at the end of the linked tree. This method exists so that it can be rendered
+	 * outside of a given valid index within the linked tree, so that calling {@link LinkedSegment#format}
+	 * will render the caret at the end of the expression.
+	 * 
+	 * @param s the tree on which to append the caret.
+	 * @return the same tree after the caret has been added to it.
+	 */
+	public LinkedSegment appendCaret(LinkedSegment s) {
+		if (isMarked() || s == null || (!s.isFocused()))
+			return s;
+//		if (s != null && !s.isFocused())
+//			return math;
+		current = Arrays.asList(s.length());
+		return s.concat(Segments.empty(getInputMode().mark("", CARET_ID)));
+	}
+
+	
+	/**
+	 * Adds the caret to the beginning of the linked tree. This method exists so that it can be rendered
+	 * outside of a given valid index within the linked tree, so that calling {@link LinkedSegment#format}
+	 * will render the caret at the start of the expression.
+	 * 
+	 * @param s the tree on which to prepend the caret.
+	 * @return the same tree after the caret has been added to it.
+	 */
+	public LinkedSegment prependCaret(LinkedSegment s) {
+		return Segments.empty(getInputMode().mark("", CARET_ID)).concat(s);
 	}
 
 	/**

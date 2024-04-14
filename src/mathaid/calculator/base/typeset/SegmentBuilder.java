@@ -668,14 +668,14 @@ public class SegmentBuilder implements Iterable<LinkedSegment> {
 	 * in this builder.
 	 */
 	private SegmentBuilder insert(int index, LinkedSegment s) throws IndexOutOfBoundsException {
-		if (index == 0) {
+		if (index == length()) {
+			head = head.concat(Objects.requireNonNull(s, "Cannot insert a null value"));
+		} else if (index == 0) {
 			head = Objects.requireNonNull(s, "Cannot insert a null value").concat(head);
 		} else if ((!isEmpty()) && index < head.length()) {
 			LinkedSegment segmentAtIndex = head.subsegment(index);
 			head = head.setSibling(index - 1,
 					Objects.requireNonNull(s, "Cannot insert a null value").concat(segmentAtIndex));
-		} else if (index == length()) {
-			head = head.concat(Objects.requireNonNull(s, "Cannot insert a null value"));
 		}
 		return this;
 	}
@@ -992,7 +992,7 @@ public class SegmentBuilder implements Iterable<LinkedSegment> {
 	 * @return this same builder object after the appendage has been completed.
 	 */
 	public SegmentBuilder append(LinkedSegment s) {
-		head = head.concat(Objects.requireNonNull(s, "Cannot append to null"));
+		head = s.getType() != Segment.Type.EMPTY ? head.concat(Objects.requireNonNull(s, "Cannot append to null")) : head;
 		return this;
 	}
 

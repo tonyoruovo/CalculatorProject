@@ -113,6 +113,20 @@ public class NumberAdapter implements Appendable, CharSequence {
 		this(c.length());
 		append(c);
 	}
+	
+	public NumberAdapter clear() {
+		buffer.delete(0, buffer.length());
+		lastNumericalStart = -1;
+		return this;
+	}
+	
+	public NumberAdapter deleteAll() {
+		return clear();
+	}
+	
+	public NumberAdapter removeAll() {
+		return clear();
+	}
 
 	/*
 	 * Most Recent Date: 27 Sep 2022-----------------------------------------------

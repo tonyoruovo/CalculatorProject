@@ -1,0 +1,326 @@
+section.calculator {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 30em;
+  height: 100vh;
+  border: 1px solid black;
+}
+
+section.calculator:first-child::before {
+  content: "";
+  display: block;
+  height: 1.3em;
+  width: 100%;
+}
+
+.tabs {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 2.17em;
+}
+
+.tabs .tab-layout {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.tabs .tab {
+  margin: 0;
+  padding: .1em;
+  border: none;
+  border-right: .1em solid black;
+  border-bottom: .1em solid black;
+}
+
+.tab h2 {
+  margin: 0;
+  padding: 0;
+  height: 1.5em;
+}
+
+.tab.current,
+.tab:hover {
+  background-color: white;
+  cursor: pointer;
+}
+
+.tab.current {
+  border-bottom: none;
+  cursor: default;
+}
+
+.tab-layout:last-child::after {
+  content: "";
+  height: 2.17em;
+  width: 100%;
+  border-bottom: .1em solid black;
+}
+
+.drawer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer .handle,
+.drawer .content {
+  width: 100%;
+  position: relative;
+}
+.drawer .content {
+  display: flex;
+  flex-direction: column;
+}
+.drawer .content .floating {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.drawer .content .btn {
+  width: 2em;
+  height: 2em;
+  border: .1em solid black;
+  cursor: pointer;
+}
+.drawer .content .btn:hover {
+  background-color: darkgray;
+}
+
+.drawer .handle {
+  background-color: white;
+  border: 1px solid blue;
+}
+
+.handle>* {
+  height: 1.5em;
+  width: 100%;
+}
+
+.drawer .content {
+  overflow: scroll;
+  background-color: white;
+  transition: height 750ms ease-out;
+  scrollbar-width: none;
+  display: block;
+}
+
+.drawer .content:not(.drawer.open .content) {
+  height: 0;
+}
+
+.drawer.open .content {
+  height: 96vh;
+}
+
+.err {
+  color: red;
+}
+
+.info {
+  color: blue;
+}
+
+.warn {
+  color: orange;
+}
+
+.success {
+  color: green;
+}
+
+.interface {
+  padding: 0 1em;
+  display: none;
+}
+
+.interface.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.displays {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 1em;
+  position: relative;
+}
+
+.display {
+  display: block;
+  width: 100%;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
+.in .lcd,
+.out .lcd {
+  float: right;
+  min-height: fit-content;
+  height: fit-content;
+  max-height: 75px;
+}
+
+.msg {
+  border-top: 0.5px solid black;
+  border-bottom: 0.5px solid black;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.msg .lcd {
+  overflow-x: scroll;
+  scrollbar-width: none;
+  white-space: nowrap;
+  margin-right: .5em;
+}
+.msg .lcd::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
+span.msg_toggle {
+  cursor: pointer;
+  border-radius: 5%;
+  background-color: rgb(238, 238, 238);
+  min-width: 4.5em;
+  max-width: 4.5em;
+  padding: .1em .5em;
+  text-align: center;
+  font-weight: 900;
+  text-shadow: -1px 1px 2px gray,
+                  1px 1px 2px gray,
+                  1px -1px 0 gray,
+                  -1px -1px 0 gray;
+}
+span.msg_toggle:hover {
+  background-color: rgb(209, 203, 203);
+}
+
+/*buttons*/
+.pad {
+  overflow: scroll;
+  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.keys {
+  margin: 0.8em 0 0 0;
+  padding: 0;
+  border: 1px solid black;
+  border-radius: 5px;
+  display: grid;
+}
+
+.key {
+  border: 1px solid black;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.key:hover {
+  background-color: lightblue;
+}
+
+.key>* {
+  cursor: pointer;
+}
+
+.key .pri {
+  /* border: 1px solid black; */
+  color: blue;
+  /* position: absolute;
+        left: 0;
+        bottom: 0; */
+  font-family: serif;
+  font-size: 17pt;
+  width: 100%;
+  height: 1.5em;
+  text-align: center;
+  line-height: 1.7em;
+}
+
+.key .sec {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: sans-serif;
+  font-size: 10pt;
+  /* max-width: 1.3em; */
+  max-height: 1.3em;
+}
+
+.key .mono {
+  font-family: monospace;
+}
+
+.keys.ctrl {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(2.5em, 1fr));
+}
+
+.keys.fn {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(2.1em, 1fr));
+}
+
+.keys.num {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(2.1em, 1fr));
+}
+
+div.mods {
+  position: absolute;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  /* justify-content: space-between; */
+}
+
+div.mods.top {
+  padding: .1em 0 0 .5em;
+  top: 0;
+}
+
+div.mods.bottom {
+  padding: 0 0 .1em .5em;
+  bottom: 0;
+}
+
+.mod {
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 1.3em;
+  color: rgb(158, 158, 158);
+  font-weight: 100;
+  text-align: center;
+  margin: 0;
+}
+
+.mod:hover {
+  background-color: #d1d1d1;
+  color: black;
+}
+
+.mod.active {
+  font-weight: 900;
+  color: black;
+}
